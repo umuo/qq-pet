@@ -9,8 +9,8 @@ class MainClass {
   }
 
   cleate() {
-    this.width = 560;
-    this.height = 680;
+    this.width = 800;
+    this.height = 600;
     let self = this;
 
     if (this.window && !this.window.isDestroyed()) {
@@ -31,8 +31,8 @@ class MainClass {
         height: this.height,
         notChangeSize: true,
         resizable: true,
-        minWidth: 380,
-        minHeight: 500,
+        minWidth: 600,
+        minHeight: 400,
         transparent: false,
         backgroundColor: "#12161f",
         hasShadow: true
