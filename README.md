@@ -11,6 +11,14 @@
 * 强大的 Agent 智能体模式，支持直接让企鹅帮你执行终端命令、查询系统状态等自动化操作！
 
 ## 开发与运行
+### macOS 安装提示
+由于本项目开源且未进行 Apple 开发者证书签名，首次打开下载的 `.dmg` 安装包中的应用时，macOS 可能会提示“已损坏，无法打开”或“无法验证开发者”。
+安装后，请在终端 (Terminal) 中运行以下命令来绕过安全限制：
+```bash
+sudo xattr -rd com.apple.quarantine /Applications/QQ宠物.app
+```
+
+### 本地开发
 确保你已经安装了 Node.js (推荐 v18+)。
 
 ```bash
