@@ -28,3 +28,9 @@ npm run build:dmg
 Agent 模式使用强大的大语言模型，赋予企鹅执行复杂任务的能力。
 * **安全沙箱**：自带基于工作目录的沙箱隔离和高危命令拦截（如 `rm -rf`, `sudo` 等），保护系统安全。
 * **自定义工具**：可以在 `src/service/piAgent.js` 中的 `createTools` 里扩展宠物的更多自动化能力。
+
+## 详细文档
+关于项目的深层机制和特殊玩法，请查阅以下文档：
+* 🎥 [Flash 动画库详解及调用机制](file:///Users/gitsilence/github/qq-pet/docs/animations.md)
+* 🏗️ [整体架构与模块设计](file:///Users/gitsilence/github/qq-pet/docs/architecture.md)
+* ⌨️ [开发者快捷键与隐藏作弊码](file:///Users/gitsilence/github/qq-pet/docs/shortcuts.md)
