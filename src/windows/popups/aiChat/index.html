@@ -1,0 +1,185 @@
+<div id="appMain" class="ai-chat-container">
+  <div class="chat-header notSelect">
+    <div class="header-left">
+      <div class="ai-logo fcc">🤖</div>
+      <div class="header-title">
+        <span class="title-text">Q宠 AI 智能助手</span>
+        <span class="status-badge" :class="isGenerating ? 'active' : ''">{{ isGenerating ? '处理中...' : '在线' }}</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="mode-switch">
+        <div 
+          class="mode-btn not_drag focusPress" 
+          :class="{ active: mode === 'chat' }"
+          @click="switchMode('chat')"
+          title="普通对话模式：快速响应，闲聊陪伴"
+        >
+          💬 闲聊模式
+        </div>
+        <div 
+          class="mode-btn agent-btn not_drag focusPress" 
+          :class="{ active: mode === 'agent' }"
+          @click="switchMode('agent')"
+          title="Agent 智能体模式：调用工具，操作宠物，监控系统"
+        >
+          ⚡ Agent 模式
+        </div>
+      </div>
+      <div class="header-tools">
+        <div class="tool-icon-btn not_drag focusPress" @click="clearCurrentHistory" title="清空当前模式会话记录">🗑️</div>
+        <div class="tool-icon-btn not_drag focusPress" :class="{ active: showParamsModal }" @click="toggleParamsModal" title="设置生成参数 (Temperature, TopP, MaxTokens)">⚙️</div>
+      </div>
+      <div class="win-btn minimize-btn not_drag focusPress" @click="minimizeWindow" title="最小化到后台 (桌宠将显示任务进度)">─</div>
+      <div class="win-btn close-btn not_drag focusPress" @click="closeWindow" title="关闭对话框">✕</div>
+    </div>
+  </div>
+
+  <div class="config-banner notSelect" v-if="config.modelName">
+    <span class="cfg-icon">⚙️</span>
+    <span class="cfg-text">当前模型: <b>{{ config.modelName }}</b> | 接口: <b>{{ config.baseUrl }}</b></span>
+  </div>
+
+  <div class="dir-banner notSelect" v-if="mode === 'agent'">
+    <div class="dir-left">
+      <span class="cfg-icon">📂</span>
+      <span class="cfg-text" v-if="agentDir">工作目录: <span class="dir-path" :title="agentDir">{{ agentDir }}</span></span>
+      <span class="cfg-text no-dir" v-else>⚠️ 请先选择工作目录，Agent 的操作将被限制在该目录内</span>
+    </div>
+    <div class="dir-right">
+      <button class="btn sm-btn focusPress" @click="selectAgentDir">{{ agentDir ? '更改' : '选择目录' }}</button>
+    </div>
+  </div>
+
+  <div class="params-modal" v-if="showParamsModal">
+    <div class="params-header">
+      <span>⚙️ 模型生成参数设置</span>
+      <span class="close-params focusPress" @click="showParamsModal = false">✕</span>
+    </div>
+    <div class="param-item">
+      <div class="param-label">
+        <span>Temperature (随机性与创造力)</span>
+        <span class="param-val">{{ genParams.temperature }}</span>
+      </div>
+      <input type="range" min="0" max="2" step="0.1" v-model.number="genParams.temperature" class="param-slider">
+      <div class="param-hint">值越低输出越稳定严肃，值越高输出越发散有创意。</div>
+    </div>
+    <div class="param-item">
+      <div class="param-label">
+        <span>Top P (核采样阈值)</span>
+        <span class="param-val">{{ genParams.topP }}</span>
+      </div>
+      <input type="range" min="0.1" max="1.0" step="0.05" v-model.number="genParams.topP" class="param-slider">
+      <div class="param-hint">控制词表候选集概率覆盖范围，建议与 Temperature 择一调优。</div>
+    </div>
+    <div class="param-item">
+      <div class="param-label">
+        <span>Max Tokens (单次最大生成长度)</span>
+        <span class="param-val">{{ genParams.maxTokens }}</span>
+      </div>
+      <select v-model.number="genParams.maxTokens" class="param-select">
+        <option :value="1024">1024 (简短文本)</option>
+        <option :value="2048">2048 (中等文本)</option>
+        <option :value="4096">4096 (标准推荐)</option>
+        <option :value="8192">8192 (长文与代码)</option>
+      </select>
+      <div class="param-hint">允许模型在单次回复中生成的最大 Token 数量。</div>
+    </div>
+    <div class="params-footer">
+      <button class="btn reset-param-btn focusPress" @click="resetParams">恢复默认</button>
+      <button class="btn save-param-btn focusPress" @click="showParamsModal = false">完成</button>
+    </div>
+  </div>
+
+  <div class="chat-messages" ref="messageContainer">
+    <div class="message-row assistant">
+      <div class="avatar fcc">🐧</div>
+      <div class="msg-content">
+        <div class="msg-bubble markdown-body">
+          <p>主人你好！我是你的全能 AI 桌宠 <b>Q宠企鹅</b> ~ 🌟</p>
+          <p>你可以切换上方不同的模式与我沟通：</p>
+          <ul>
+            <li><b>💬 闲聊模式</b>：与我顺畅对谈，写作、编程、创作无所不能。</li>
+            <li><b>⚡ Agent 模式</b>：我可以主动调用智能工具！帮你<b>喂食</b>、<b>洗澡</b>、<b>看病</b>、<b>控制企鹅在屏幕说话</b>，或者<b>监控电脑系统性能</b>！</li>
+          </ul>
+          <p>💡 <b>提示</b>：在 Agent 模式下创建任务后，如果点击右上角「─」<b>最小化窗口</b>，桌面小企鹅会实时冒泡向你汇报后台工具的执行进度哦！</p>
+          <p>快试试对我说：<i>"小企鹅，看看你现在的属性，饿了脏了的话顺便帮自己喂点好吃的洗个澡吧！"</i></p>
+        </div>
+      </div>
+    </div>
+
+    <div 
+      v-for="(msg, index) in messages" 
+      :key="index"
+      class="message-row"
+      :class="msg.role"
+    >
+      <div class="avatar fcc">{{ msg.role === 'user' ? '👤' : '🐧' }}</div>
+      <div class="msg-content">
+        <div class="tool-calls-container" v-if="msg.toolCalls && msg.toolCalls.length > 0">
+          <div 
+            v-for="(tc, tcIdx) in msg.toolCalls" 
+            :key="tcIdx"
+            class="tool-call-card"
+            :class="tc.status"
+          >
+            <div class="tc-header">
+              <span class="tc-icon">{{ getToolIcon(tc.name) }}</span>
+              <span class="tc-name">{{ getToolLabel(tc.name) }}</span>
+              <span class="tc-status-badge">
+                {{ tc.status === 'running' ? '⚡ 正在执行工具...' : tc.status === 'error' ? '❌ 执行出错' : '✅ 执行完成' }}
+              </span>
+            </div>
+            <div class="tc-body" v-if="tc.args && Object.keys(tc.args).length > 0">
+              <div class="tc-arg" v-for="(val, key) in tc.args" :key="key">
+                <span class="arg-key">{{ key }}:</span>
+                <span class="arg-val">{{ val }}</span>
+              </div>
+            </div>
+            <div class="tc-result" v-if="tc.result">
+              <div class="res-title">工具返回数据:</div>
+              <pre class="res-code">{{ formatResult(tc.result) }}</pre>
+            </div>
+          </div>
+        </div>
+
+        <div 
+          class="msg-bubble markdown-body" 
+          v-if="msg.content || (msg.role === 'assistant' && isGenerating && index === messages.length - 1 && (!msg.toolCalls || msg.toolCalls.length === 0))"
+          v-html="renderMarkdown(msg.content || (isGenerating ? ' *企鹅正在拼命思考与处理中...*' : ''))"
+        ></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-footer notSelect">
+    <div class="input-box-wrapper">
+      <textarea
+        v-model="inputQuery"
+        class="chat-textarea"
+        :placeholder="mode === 'agent' && !agentDir ? '请先在上方选择 Agent 工作目录...' : '给 Q宠企鹅 发送指令，按 Enter 快捷发送，Shift + Enter 换行...'"
+        @keydown="handleKeyDown"
+        :disabled="isGenerating || (mode === 'agent' && !agentDir)"
+        rows="2"
+      ></textarea>
+      <div class="action-buttons">
+        <button 
+          v-if="isGenerating" 
+          class="btn abort-btn focusPress"
+          @click="abortGeneration"
+          title="停止当前任务"
+        >
+          ⏹ 停止
+        </button>
+        <button 
+          v-else 
+          class="btn send-btn focusPress"
+          :class="{ disabled: !inputQuery.trim() }"
+          @click="sendMessage"
+        >
+          发送 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
