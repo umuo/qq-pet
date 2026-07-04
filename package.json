@@ -38,7 +38,9 @@
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "publish": null,
+    "publish": [
+      "github"
+    ],
     "appId": "com.qqpet.desktop",
     "productName": "QQ宠物",
     "directories": {
@@ -57,12 +59,14 @@
         {
           "target": "dmg",
           "arch": [
+            "x64",
             "arm64"
           ]
         },
         {
           "target": "zip",
           "arch": [
+            "x64",
             "arm64"
           ]
         }
