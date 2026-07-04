@@ -1,5 +1,7 @@
 # QQ 宠物 macOS 干净版
 
+> 本项目移植/搬运自原开源仓库：[xuemian168/qqpet_automation](https://github.com/xuemian168/qqpet_automation)
+
 这是一个为 macOS 打造的 QQ 宠物桌面应用。基于 Electron 构建，移除了不必要的遥测和设备指纹采集，并内置了基于 AI 的智能体 (Agent) 模式，可以让企鹅不仅是桌面挂件，还是你的个人智能助手！
 
 ## 核心特性
