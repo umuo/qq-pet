@@ -75,4 +75,10 @@ app.commandLine.appendSwitch("enable-transparent-visuals");
 
 app.whenReady().then(() => {
   createWindow();
+  
+  // 仅在主窗口创建完毕且不是工具模式时启动自动更新检查
+  if (!useTool) {
+    const { initUpdater } = require("./src/service/updater.js");
+    initUpdater();
+  }
 });
