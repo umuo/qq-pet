@@ -116,6 +116,12 @@
     >
       <div class="avatar fcc">{{ msg.role === 'user' ? '👤' : '🐧' }}</div>
       <div class="msg-content">
+        <div 
+          class="msg-bubble markdown-body" 
+          v-if="msg.content || (msg.role === 'assistant' && isGenerating && index === messages.length - 1 && (!msg.toolCalls || msg.toolCalls.length === 0))"
+          v-html="renderMarkdown(msg.content || (isGenerating ? ' *企鹅正在拼命思考与处理中...*' : ''))"
+        ></div>
+
         <div class="tool-calls-container" v-if="msg.toolCalls && msg.toolCalls.length > 0">
           <div 
             v-for="(tc, tcIdx) in msg.toolCalls" 
@@ -142,12 +148,6 @@
             </div>
           </div>
         </div>
-
-        <div 
-          class="msg-bubble markdown-body" 
-          v-if="msg.content || (msg.role === 'assistant' && isGenerating && index === messages.length - 1 && (!msg.toolCalls || msg.toolCalls.length === 0))"
-          v-html="renderMarkdown(msg.content || (isGenerating ? ' *企鹅正在拼命思考与处理中...*' : ''))"
-        ></div>
       </div>
     </div>
   </div>

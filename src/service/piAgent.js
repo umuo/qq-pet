@@ -274,7 +274,7 @@ class PiAgentService {
               }
             }
 
-            const execOptions = { timeout: 10000, maxBuffer: 1024 * 512 };
+            const execOptions = { timeout: 30000, maxBuffer: 1024 * 512 };
             if (agentDir) {
               execOptions.cwd = agentDir;
             }

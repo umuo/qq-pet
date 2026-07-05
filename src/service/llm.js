@@ -5,7 +5,7 @@ const http = _require("http");
 const DEFAULT_URL = "https://api.deepseek.com/v1/chat/completions";
 const DEFAULT_MODEL = "deepseek-chat";
 const MAX_QUEUE = 3;
-const TIMEOUT_MS = 10000;
+const TIMEOUT_MS = 60000;
 
 function parseEndpoint(urlStr) {
   let u = urlStr && typeof urlStr === "string" ? urlStr.trim() : "";
