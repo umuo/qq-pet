@@ -41,13 +41,13 @@ class mainClass {
           icon: icon,
           // skipTaskbar: true,//任务栏图标隐藏
           // alwaysOnTop: true,//置顶
-          //   webPreferences: {
-          //     plugins: true,
-          //     nodeIntegration: true, //设置能在页面使用nodejs的API
-          //     contextIsolation: true, // 上下文隔离
-          //     //backgroundThrottling: false,   //设置应用在后台正常运行
-          //     // preload: path.join(__dirname, './preload.js') //暴露给方法
-          //   },
+          webPreferences: {
+            plugins: true,
+            nodeIntegration: true, //设置能在页面使用nodejs的API
+            contextIsolation: true, // 上下文隔离
+            //backgroundThrottling: false,   //设置应用在后台正常运行
+            // preload: path.join(__dirname, './preload.js') //暴露给方法
+          },
         },
         //所有在主程序的生命周期都快于vue中以及html的生命周期
         created(backVm) {
@@ -80,7 +80,7 @@ class mainClass {
                     });
                   }
                   getSwfFiles(actionPath);
-                } catch(e) {}
+                } catch(e) { console.error("viewSwf error getting defaultFiles:", e); }
                 
                 //监听内部mounted生命周期 并执行初始化方法
                 vm.webContents.send("viewSwf_bus-html", {
