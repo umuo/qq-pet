@@ -1,4 +1,10 @@
 // 主程序控制台
+window.RufflePlayer = window.RufflePlayer || {};
+window.RufflePlayer.config = {
+    preferredRenderer: "canvas",
+    autoplay: "on",
+    unmuteOverlay: "hidden",
+};
 var setSay = (msg) => {
     window.electronAPI.viewSwf_setSay(msg)
 }
