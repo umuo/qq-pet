@@ -246,6 +246,76 @@ class PiAgentService {
         }
       },
       {
+        name: "perform_workout",
+        label: "带企鹅做健身操",
+        description: "让企鹅执行一套包含多个动作的健身连招组合（跑动、洗澡等），能够提升健康值和消耗饥饿度。",
+        parameters: Type.Object({}),
+        execute: async () => {
+          try {
+            const info = typeof getPetInfo === "function" ? getPetInfo() : {};
+            const curInfo = info.info || {};
+            curInfo.hunger = Math.max(0, (curInfo.hunger || 5000) - 1000);
+            curInfo.health = Math.min(10, (curInfo.health || 5) + 2);
+            if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
+            
+            if (typeof playPetAnimation === "function") {
+              playPetAnimation("play"); // 随机运动一下
+              setTimeout(() => playPetAnimation("clean"), 3000); // 擦汗洗澡
+              setTimeout(() => playPetAnimation("eat"), 6000); // 补充能量
+            }
+            
+            return {
+              content: [{ type: "text", text: "已开始带领企鹅做健身连招！健康值提升，饥饿度下降。" }],
+              details: curInfo
+            };
+          } catch (e) {
+            return { content: [{ type: "text", text: "健身失败: " + e.message }], details: {} };
+          }
+        }
+      },
+      {
+        name: "do_window_effect",
+        label: "触发企鹅物理特效",
+        description: "让企鹅所在的窗口产生物理特效，支持 shake (颤抖) 和 float (失重飘浮)。",
+        parameters: Type.Object({
+          effect: Type.String({ description: "特效名称: shake 或 float" })
+        }),
+        execute: async (_id, params) => {
+          try {
+            if (typeof doWindowEffect === "function") {
+              doWindowEffect(params.effect);
+            }
+            return {
+              content: [{ type: "text", text: `已触发窗口特效: ${params.effect}` }],
+              details: params
+            };
+          } catch (e) {
+            return { content: [{ type: "text", text: "特效执行失败: " + e.message }], details: {} };
+          }
+        }
+      },
+      {
+        name: "open_swf_viewer",
+        label: "打开动作展览馆 (SWF Viewer)",
+        description: "打开隐藏的动作预览大厅，可以查看所有的企鹅动画（包括上百个隐藏动作）。",
+        parameters: Type.Object({}),
+        execute: async () => {
+          try {
+            if (global.toolWindow && global.toolWindow.viewSwf) {
+              global.toolWindow.viewSwf.cleate();
+              return {
+                content: [{ type: "text", text: "动作展览馆 (SWF Viewer) 已经成功打开！" }],
+                details: {}
+              };
+            } else {
+              throw new Error("工具模块尚未初始化");
+            }
+          } catch (e) {
+            return { content: [{ type: "text", text: "打开展览馆失败: " + e.message }], details: {} };
+          }
+        }
+      },
+      {
         name: "run_shell_command",
         label: "执行终端命令行",
         description: "在用户系统终端中执行基础查询命令（如 ls, uname, ps 等）并获取输出。",
