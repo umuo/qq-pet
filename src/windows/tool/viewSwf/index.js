@@ -87,6 +87,9 @@ const App = {
             if (msg.type == 'load') {
                 //结束等待 进入对应页面  必要
                 seeApp()
+                if (msg.defaultFiles && msg.defaultFiles.length > 0) {
+                    this.upLoadFile({ target: { files: msg.defaultFiles } })
+                }
             }
         })
         // 监听 查找到的文件夹

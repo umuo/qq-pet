@@ -63,10 +63,24 @@ class mainClass {
             },
             "viewSwf_bus-Main": (event, val) => {
               if (val.event == "mounted") {
+                const actionPath = path.join(__dirname, "../../../assets/Action");
+                let defaultFiles = [];
+                try {
+                  const fs = require('fs');
+                  let files = fs.readdirSync(actionPath);
+                  files.forEach(f => {
+                    if (f.endsWith('.swf')) {
+                      let stat = fs.statSync(path.join(actionPath, f));
+                      defaultFiles.push({ path: path.join(actionPath, f), name: f, size: stat.size });
+                    }
+                  });
+                } catch(e) {}
+                
                 //监听内部mounted生命周期 并执行初始化方法
                 vm.webContents.send("viewSwf_bus-html", {
                   data: "load",
                   type: "load",
+                  defaultFiles: defaultFiles
                 });
               } else if (val.event == "close") {
                 // vm.close();
