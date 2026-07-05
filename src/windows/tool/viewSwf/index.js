@@ -261,7 +261,8 @@ const App = {
                 if (!arr[k].path || arr[k].path.indexOf('.swf') == -1) continue;
                 this.fileList.push({ id: ++i, path: arr[k].path, name: arr[k].name, size: arr[k].size })
                 if (i == 1) {
-                    this.router = arr[k].path.replace(('\\' + arr[k].name), '').split('\\')
+                    let sep = arr[k].path.indexOf('\\') !== -1 ? '\\' : '/';
+                    this.router = arr[k].path.replace((sep + arr[k].name), '').split(sep);
                 }
             }
             if (this.fileList.length > 0) {

@@ -67,13 +67,19 @@ class mainClass {
                 let defaultFiles = [];
                 try {
                   const fs = require('fs');
-                  let files = fs.readdirSync(actionPath);
-                  files.forEach(f => {
-                    if (f.endsWith('.swf')) {
-                      let stat = fs.statSync(path.join(actionPath, f));
-                      defaultFiles.push({ path: path.join(actionPath, f), name: f, size: stat.size });
-                    }
-                  });
+                  function getSwfFiles(dir) {
+                    let files = fs.readdirSync(dir);
+                    files.forEach(f => {
+                      let fullPath = path.join(dir, f);
+                      let stat = fs.statSync(fullPath);
+                      if (stat.isDirectory()) {
+                        getSwfFiles(fullPath);
+                      } else if (f.endsWith('.swf')) {
+                        defaultFiles.push({ path: fullPath, name: f, size: stat.size });
+                      }
+                    });
+                  }
+                  getSwfFiles(actionPath);
                 } catch(e) {}
                 
                 //监听内部mounted生命周期 并执行初始化方法
