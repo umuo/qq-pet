@@ -68,8 +68,8 @@
   <div class="viewSwf_mains  not_drag" v-show="isSee">
     <!-- {{files}} -->
     <span class="swfBorder hand" v-for="(item,index) in files" :key="item.id"
-      :class="[chooseFiles.includes(item) ? 'chooseOnce':'']" @click="chooseRouter(item)">
-      <embed :src="item.path" :style="getStyle()" class="swf hand" type="" wmode="transparent"
+      :class="[chooseFiles.includes(item) ? 'chooseOnce':'']" @click="chooseRouter(item)" @dblclick="reNameFn(item,index)">
+      <embed :src="'file://' + item.path" :style="getStyle()" class="swf hand" type="" wmode="transparent"
         allowscriptaccess="always">
       <div class="foot">
         <a-popover placement="topLeft">
@@ -123,7 +123,7 @@
       <!-- {{files}} -->
       <span class="swfBorder hand" v-for="(item,index) in chooseFilesPopup" @click="clearChooseRoutrePopup(item)"
         :key="item.id">
-        <embed :src="item.path" style="width: 90px;height: 90px;" class="swf hand" type="" wmode="transparent"
+        <embed :src="'file://' + item.path" style="width: 90px;height: 90px;" class="swf hand" type="" wmode="transparent"
           allowscriptaccess="always">
         <div class="foot not_drag">
           <div class="embedIds">{{item.id}}.</div>
@@ -197,7 +197,7 @@
       <svg class="icon closeButs closeButsEdit hand not_drag" aria-hidden="true" @click="editFile = {}">
         <use xlink:href="#icon-guanbi-copy"></use>
       </svg>
-      <embed :src="editFile.path" :class="[fullWindowState? 'fullWindowSeePet':'']" style="width: 300px;height: 300px;"
+      <embed :src="'file://' + editFile.path" :class="[fullWindowState? 'fullWindowSeePet':'']" style="width: 300px;height: 300px;"
         class="swf hand" type="" wmode="transparent" allowscriptaccess="always">
       <div class="blok">
         <div class="row ">
