@@ -57,7 +57,7 @@ function startSystemWatcher() {
         // 降低心情值
         const info = typeof getPetInfo === "function" ? getPetInfo() : {};
         if (info && info.info) {
-          info.info.mood = Math.max(0, (info.info.mood || 5000) - 200);
+          info.info.mood = Math.max(0, (Number(info.info.mood) || 0) - 200);
           if (typeof setPetInfo === "function") setPetInfo({ info: info.info });
         }
       }

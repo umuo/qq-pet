@@ -94,6 +94,20 @@ class PiAgentService {
     return { baseUrl, apiKey, modelName, rawUrl };
   }
 
+  getPetLimits(petInfo) {
+    const maxInfo = petInfo?.maxInfo || {};
+    const num = (value, fallback) => {
+      const n = Number(value);
+      return Number.isFinite(n) && n > 0 ? n : fallback;
+    };
+    return {
+      hunger: num(maxInfo.hunger, 3100),
+      clean: num(maxInfo.clean, 3100),
+      mood: num(maxInfo.mood, 1000),
+      health: num(maxInfo.health, 5)
+    };
+  }
+
   async createTools(Type, agentDir) {
     return [
       {
@@ -118,8 +132,9 @@ class PiAgentService {
           try {
             const info = typeof getPetInfo === "function" ? getPetInfo() : {};
             const curInfo = info.info || {};
-            curInfo.hunger = Math.min(10000, (curInfo.hunger || 5000) + 3000);
-            curInfo.mood = Math.min(10000, (curInfo.mood || 5000) + 1500);
+            const limits = this.getPetLimits(info);
+            curInfo.hunger = Math.min(limits.hunger, (Number(curInfo.hunger) || 0) + 3000);
+            curInfo.mood = Math.min(limits.mood, (Number(curInfo.mood) || 0) + 1500);
             if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
             if (typeof openSpeak === "function") {
               openSpeak({
@@ -128,7 +143,7 @@ class PiAgentService {
               });
             }
             return {
-              content: [{ type: "text", text: `喂食成功！当前饥饿度: ${curInfo.hunger}/10000, 心情值: ${curInfo.mood}/10000` }],
+              content: [{ type: "text", text: `喂食成功！当前饥饿度: ${curInfo.hunger}/${limits.hunger}, 心情值: ${curInfo.mood}/${limits.mood}` }],
               details: curInfo
             };
           } catch (e) {
@@ -145,8 +160,9 @@ class PiAgentService {
           try {
             const info = typeof getPetInfo === "function" ? getPetInfo() : {};
             const curInfo = info.info || {};
-            curInfo.clean = Math.min(10000, (curInfo.clean || 5000) + 4000);
-            curInfo.mood = Math.min(10000, (curInfo.mood || 5000) + 2000);
+            const limits = this.getPetLimits(info);
+            curInfo.clean = Math.min(limits.clean, (Number(curInfo.clean) || 0) + 4000);
+            curInfo.mood = Math.min(limits.mood, (Number(curInfo.mood) || 0) + 2000);
             if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
             if (typeof openSpeak === "function") {
               openSpeak({
@@ -155,7 +171,7 @@ class PiAgentService {
               });
             }
             return {
-              content: [{ type: "text", text: `洗澡成功！当前清洁度: ${curInfo.clean}/10000, 心情值: ${curInfo.mood}/10000` }],
+              content: [{ type: "text", text: `洗澡成功！当前清洁度: ${curInfo.clean}/${limits.clean}, 心情值: ${curInfo.mood}/${limits.mood}` }],
               details: curInfo
             };
           } catch (e) {
@@ -172,7 +188,8 @@ class PiAgentService {
           try {
             const info = typeof getPetInfo === "function" ? getPetInfo() : {};
             const curInfo = info.info || {};
-            curInfo.health = 10;
+            const limits = this.getPetLimits(info);
+            curInfo.health = limits.health;
             if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
             if (typeof openSpeak === "function") {
               openSpeak({
@@ -181,7 +198,7 @@ class PiAgentService {
               });
             }
             return {
-              content: [{ type: "text", text: "看病成功！健康值已恢复满值 (10/10)" }],
+              content: [{ type: "text", text: `看病成功！健康值已恢复满值 (${limits.health}/${limits.health})` }],
               details: curInfo
             };
           } catch (e) {
@@ -254,8 +271,9 @@ class PiAgentService {
           try {
             const info = typeof getPetInfo === "function" ? getPetInfo() : {};
             const curInfo = info.info || {};
-            curInfo.hunger = Math.max(0, (curInfo.hunger || 5000) - 1000);
-            curInfo.health = Math.min(10, (curInfo.health || 5) + 2);
+            const limits = this.getPetLimits(info);
+            curInfo.hunger = Math.max(0, (Number(curInfo.hunger) || 0) - 1000);
+            curInfo.health = Math.min(limits.health, (Number(curInfo.health) || 0) + 2);
             if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
             
             if (typeof playPetAnimation === "function") {
@@ -412,8 +430,9 @@ class PiAgentService {
     const petInfo = typeof getPetInfo === "function" ? getPetInfo() : {};
     const info = petInfo?.info || {};
     const maxInfo = petInfo?.maxInfo || {};
+    const limits = this.getPetLimits(petInfo);
     const systemPrompt = `你是主人「${info.host || "主人"}」的AI桌宠与伙伴，名叫「${info.name || "Q宠企鹅"}」。
-当前状态：饥饿度 ${info.hunger || 0}/10000，清洁度 ${info.clean || 0}/10000，心情值 ${info.mood || 0}/10000，等级 ${maxInfo.level || 1}。
+当前状态：饥饿度 ${info.hunger || 0}/${limits.hunger}，清洁度 ${info.clean || 0}/${limits.clean}，心情值 ${info.mood || 0}/${limits.mood}，健康 ${info.health || 0}/${limits.health}，等级 ${maxInfo.level || 1}。
 说话风格：贴心活泼，偶尔撒娇，排版美观，支持 Markdown。`;
 
     const fullMessages = [{ role: "system", content: systemPrompt }, ...messages];
@@ -521,9 +540,10 @@ class PiAgentService {
       const petInfo = typeof getPetInfo === "function" ? getPetInfo() : {};
       const info = petInfo?.info || {};
       const maxInfo = petInfo?.maxInfo || {};
+      const limits = this.getPetLimits(petInfo);
       const systemPrompt = `你是主人「${info.host || "主人"}」的全能AI桌宠与智能助手，名叫「${info.name || "Q宠企鹅"}」。
 你是一只聪明、贴心、可爱活泼的企鹅，同时具备高度智能的 Agent 工具调用能力。
-当前宠物状态：饥饿度 ${info.hunger || 0}/10000，清洁度 ${info.clean || 0}/10000，心情值 ${info.mood || 0}/10000，等级 ${maxInfo.level || 1}。
+当前宠物状态：饥饿度 ${info.hunger || 0}/${limits.hunger}，清洁度 ${info.clean || 0}/${limits.clean}，心情值 ${info.mood || 0}/${limits.mood}，健康 ${info.health || 0}/${limits.health}，等级 ${maxInfo.level || 1}。
 你可以调用系统赋予你的工具：
 - 当主人询问宠物状态、电脑系统状态时，调用对应工具获取实时数据并向主人汇报。
 - 当主人让你喂食、洗澡、看病或让企鹅说话时，主动调用控制工具为你自己（小企鹅）进行操作！

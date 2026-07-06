@@ -24,13 +24,28 @@ function parseEndpoint(urlStr) {
   return new URL(u);
 }
 
+function getPetLimits(petInfo) {
+  const maxInfo = petInfo?.maxInfo || {};
+  const num = (value, fallback) => {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : fallback;
+  };
+  return {
+    hunger: num(maxInfo.hunger, 3100),
+    clean: num(maxInfo.clean, 3100),
+    mood: num(maxInfo.mood, 1000),
+    health: num(maxInfo.health, 5)
+  };
+}
+
 const SYSTEM_PROMPT = (petInfo) => {
   const info = petInfo?.info || {};
   const maxInfo = petInfo?.maxInfo || {};
+  const limits = getPetLimits(petInfo);
   return (
     `你是主人「${info.host || "主人"}」的桌宠，名叫「${info.name || "宠物"}」，是一只可爱的企鹅。` +
     `说话风格：活泼可爱，句子15字以内，用第一人称，偶尔提到主人名字。` +
-    `当前状态：心情${info.mood || 0}/1000，等级${maxInfo.level || 1}，健康${info.health || 5}/10。` +
+    `当前状态：饥饿${info.hunger || 0}/${limits.hunger}，清洁${info.clean || 0}/${limits.clean}，心情${info.mood || 0}/${limits.mood}，等级${maxInfo.level || 1}，健康${info.health || 0}/${limits.health}。` +
     `只回复JSON，格式：{"tolk":"宠物说的话（15字内）","submitText":"主人回应（5字内）"}`
   );
 };
