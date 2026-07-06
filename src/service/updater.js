@@ -9,6 +9,11 @@ function initUpdater() {
     console.error('更新过程中发生错误：', error);
   });
 
+  autoUpdater.on('before-quit-for-update', () => {
+    console.log('正在退出应用并安装更新...');
+    global.isQuittingForUpdate = true;
+  });
+
   autoUpdater.on('checking-for-update', () => {
     console.log('正在检查更新...');
   });
@@ -41,6 +46,7 @@ function initUpdater() {
     }).then((result) => {
       if (result.response === 0) { // 用户点击了"立即重启"
         // 安装更新并重启应用
+        global.isQuittingForUpdate = true;
         autoUpdater.quitAndInstall();
       }
     }).catch(err => {
