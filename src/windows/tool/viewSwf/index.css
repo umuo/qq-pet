@@ -108,10 +108,28 @@
   border: 1px solid #bbb;
   margin-bottom: 20px;
 }
+.swfPlaceholder {
+  flex-direction: column;
+  gap: 4px;
+  color: #8c8c8c;
+  font-size: 12px;
+  background: linear-gradient(180deg, #fafafa, #f0f2f5);
+}
+.swfPlaceholder .previewIcon {
+  padding: 2px 6px;
+  border: 1px solid #d9d9d9;
+  border-radius: 3px;
+  color: #595959;
+  background: #fff;
+  font-size: 11px;
+  line-height: 16px;
+}
 .swfBorder {
   user-select: none;
   /* padding-bottom: 20px; */
   position: relative;
+  display: inline-block;
+  vertical-align: top;
   margin: 5px;
   width: 100px;
   height: 100px;

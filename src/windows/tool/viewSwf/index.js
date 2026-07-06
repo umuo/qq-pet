@@ -61,7 +61,14 @@ const App = {
 
             editFile: {},
 
-            fullWindowState: false
+            fullWindowState: false,
+
+            previewIds: {},
+            previewOrder: [],
+            previewTimers: [],
+            previewToken: 0,
+            autoPreviewLimit: 40,
+            maxActivePreviews: 40
         };
     },
     computed: {
@@ -283,16 +290,61 @@ const App = {
             }
             this.spinningUpFile = false
         },
-        changePage() {
+        changePage(page) {
+            if (page) this.current = page
+            this.pageSize = Number(this.pageSize)
+            this.resetPreview()
             if (this.fileList.length == 0) {
                 this.files = [];
                 this.isSee = false
                 return
             }
             let len = this.fileList.length / this.pageSize
-            this.paging = (Math.trunc(len) + (this.fileList.length % this.pageSize == 0 ? 0 : 1)) * 10
+            this.paging = Math.trunc(len) + (this.fileList.length % this.pageSize == 0 ? 0 : 1)
             this.files = this.fileList.slice((this.current - 1) * this.pageSize, this.current * this.pageSize)
             this.isCheckAll()
+            this.$nextTick(() => {
+                this.schedulePagePreviews()
+            })
+        },
+        clearPreviewTimers() {
+            for (let k in this.previewTimers) {
+                clearTimeout(this.previewTimers[k])
+            }
+            this.previewTimers = []
+        },
+        resetPreview() {
+            this.previewToken++
+            this.clearPreviewTimers()
+            this.previewIds = {}
+            this.previewOrder = []
+        },
+        schedulePagePreviews() {
+            const token = ++this.previewToken
+            this.clearPreviewTimers()
+            const list = this.files.slice(0, Math.min(this.files.length, this.autoPreviewLimit))
+            for (let k in list) {
+                const timer = setTimeout(() => {
+                    if (token !== this.previewToken) return
+                    this.startPreview(list[k])
+                }, Number(k) * 120)
+                this.previewTimers.push(timer)
+            }
+        },
+        isPreviewing(item) {
+            return !!(item && this.previewIds[item.id])
+        },
+        startPreview(item) {
+            if (!item || this.previewIds[item.id]) return
+            const nextIds = { ...this.previewIds, [item.id]: true }
+            const nextOrder = this.previewOrder.filter(id => id !== item.id)
+            nextOrder.push(item.id)
+            while (nextOrder.length > this.maxActivePreviews) {
+                const removeId = nextOrder.shift()
+                delete nextIds[removeId]
+            }
+            this.previewIds = nextIds
+            this.previewOrder = nextOrder
         },
         toOncePage() {
             this.current = 1;
@@ -361,9 +413,10 @@ const App = {
             }
             this.changePagePopop()
         },
-        changePagePopop() {
+        changePagePopop(page) {
+            if (page) this.currentPopop = page
             let len = this.saveChooseFiles.length / this.pageSizePopop
-            this.pagingPopop = (Math.trunc(len) + (this.saveChooseFiles.length % this.pageSizePopop == 0 ? 0 : 1)) * 10
+            this.pagingPopop = Math.trunc(len) + (this.saveChooseFiles.length % this.pageSizePopop == 0 ? 0 : 1)
             this.chooseFilesPopup = this.saveChooseFiles.slice((this.currentPopop - 1) * this.pageSizePopop, this.currentPopop * this.pageSizePopop)
         },
         clearChooseRoutrePopup(router) {
@@ -472,4 +525,3 @@ const app = Vue.createApp(App);
 console.log('antd',antd)
 app.use(antd)
 app.mount('#app');
-

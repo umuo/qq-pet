@@ -68,9 +68,13 @@
   <div class="viewSwf_mains  not_drag" v-show="isSee">
     <!-- {{files}} -->
     <span class="swfBorder hand" v-for="(item,index) in files" :key="item.id"
-      :class="[chooseFiles.includes(item) ? 'chooseOnce':'']" @click="chooseRouter(item)" @dblclick="reNameFn(item,index)">
-      <embed :src="'file://' + item.path" :style="getStyle()" class="swf hand" type="application/x-shockwave-flash" wmode="transparent"
+      :class="[chooseFiles.includes(item) ? 'chooseOnce':'']" @click="chooseRouter(item)" @dblclick="reNameFn(item,index)" @mouseenter="startPreview(item)">
+      <embed v-if="isPreviewing(item)" :src="'file://' + item.path" :style="getStyle()" class="swf hand" type="application/x-shockwave-flash" wmode="transparent"
         allowscriptaccess="always">
+      <div v-else :style="getStyle()" class="swf swfPlaceholder fcc" @click.stop="startPreview(item)">
+        <span class="previewIcon">SWF</span>
+        <span>预览</span>
+      </div>
       <div class="foot">
         <a-popover placement="topLeft">
           <template #content>
@@ -104,7 +108,7 @@
         </template>
       </a-dropdown>
     </div>
-    <a-pagination class="not_drag" showSizeChanger size="small" @change="changePage" v-model:pageSize="pageSize"
+    <a-pagination class="not_drag" size="small" @change="changePage" :page-size="1"
       v-model:current="current" :total="paging" show-quick-jumper simple>
     </a-pagination>
   </div>
@@ -122,9 +126,13 @@
     <div class="viewSwf_mains inviewSwf_mains not_drag">
       <!-- {{files}} -->
       <span class="swfBorder hand" v-for="(item,index) in chooseFilesPopup" @click="clearChooseRoutrePopup(item)"
-        :key="item.id">
-        <embed :src="'file://' + item.path" style="width: 90px;height: 90px;" class="swf hand" type="application/x-shockwave-flash" wmode="transparent"
+        :key="item.id" @mouseenter="startPreview(item)">
+        <embed v-if="isPreviewing(item)" :src="'file://' + item.path" style="width: 90px;height: 90px;" class="swf hand" type="application/x-shockwave-flash" wmode="transparent"
           allowscriptaccess="always">
+        <div v-else style="width: 90px;height: 90px;" class="swf swfPlaceholder fcc" @click.stop="startPreview(item)">
+          <span class="previewIcon">SWF</span>
+          <span>预览</span>
+        </div>
         <div class="foot not_drag">
           <div class="embedIds">{{item.id}}.</div>
           <div class="names hoverScrol" :title="item.path">{{item.name}}</div>
@@ -132,8 +140,8 @@
       </span>
     </div>
     <div class="pageFoot pageFootpopup" v-if="chooseFiles.length > 0">
-      <a-pagination class="nt_odrag" showSizeChanger size="small" @change="changePagePopop"
-        v-model:pageSize="pageSizePopop" v-model:current="currentPopop" :total="pagingPopop" show-quick-jumper>
+      <a-pagination class="nt_odrag" size="small" @change="changePagePopop"
+        :page-size="1" v-model:current="currentPopop" :total="pagingPopop" show-quick-jumper>
       </a-pagination>
     </div>
     <div class="tool toolPopup">
