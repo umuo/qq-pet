@@ -60,7 +60,11 @@ class addWindow {
     const oldEntry = this.wins[option.name];
     if (oldEntry?.win && !oldEntry.win.isDestroyed()) {
       if (option.closeType === "hide") {
-        oldEntry.win.show();
+        if (oldEntry.option?.default?.focusable === false || !oldEntry.win.isFocusable()) {
+          oldEntry.win.showInactive();
+        } else {
+          oldEntry.win.show();
+        }
         if (typeof option.onshow === "function") option.onshow(oldEntry.win);
       }
       return Promise.resolve(oldEntry.win);
@@ -96,6 +100,10 @@ class addWindow {
       ...sourceDefault,
       webPreferences,
     };
+
+    if (winOption.focusable === false) {
+      winOption.show = false;
+    }
 
     if (option.webPreferences) {
       winOption.webPreferences = {
@@ -211,6 +219,12 @@ class addWindow {
       } catch (e) {}
     }
 
+    if (win.isFocusable() === false || option.default?.focusable === false) {
+      win.showInactive();
+    } else if (option.default?.show === false) {
+      win.show();
+    }
+
     if (typeof option.onload === "function") option.onload(win);
   }
 
@@ -235,8 +249,12 @@ class addWindow {
       entry.didFinishLoad = () => {
         if (entry.urlLoadingWin?.close) entry.urlLoadingWin.close();
         entry.urlLoadingWin = null;
-        win.show();
-        win.focus();
+        if (option.default?.focusable === false || !win.isFocusable()) {
+          win.showInactive();
+        } else {
+          win.show();
+          win.focus();
+        }
         if (typeof option.onload === "function") option.onload(win);
       };
       win.webContents.on("did-finish-load", entry.didFinishLoad);
