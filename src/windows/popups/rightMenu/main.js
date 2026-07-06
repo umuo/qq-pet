@@ -1,1 +1,281 @@
-(()=>{var __webpack_modules__={881:module=>{const _require=eval("require"),{app}=_require("electron"),infoCard=_require("../infoCard/main.js"),control=_require("../control/main.js"),setup=_require("../setup/main.js"),smallGame=_require("../smallGame/main.js"),store=_require("../store/main.js"),aiChat=_require("../aiChat/main.js");class mainClass{constructor(e){this.window=null,this.show=!1,this.name="rightMenu"}positionType=null;cleate(e){let{nowPosition:t,msg:o,positionType:a}=e;this.positionType=a,this.width=340,this.height=300;let s=[Math.trunc(t[0]-this.width/2),Math.trunc(t[1]-this.height)];"followMain"==this.positionType&&(s[0]+=this.width/2/2,s[1]+=80);let n=this;windowsMain.open({name:this.name,loadFile:"popups/"+this.name,jsFiles:["./util/move.js"],default:{width:this.width,height:this.height,x:s[0],y:s[1],alwaysOnTop:!0},created(e){let{vm:t,preloads:o,getinfo:a,wsMethods:s}=e;t.setIgnoreMouseEvents(!0,{forward:!0});let i={};const l=(e,o)=>{if(e?.label&&o?.length>0){if(i["w"+o.join("-")]==e.value)return;i["w"+o.join("-")]=e.value,t.webContents.send("rightMenu_m_bus_h",{data:e,type:"changeMenu",where:o})}},r=e=>{let t=null;for(let o in e.activeOption)e.activeOption[o]&&"ill"!=o&&(t=e.activeOption[o]);t=t?{label:"停止状态",value:"stopState"}:e?.maxInfo?.stopGrowth?{label:"开启成长",value:"openGrowth"}:{label:"停止成长",value:"stopGrowth"},l(t,[7])},u=e=>{e.doNotDisturb?l({label:"关闭免打扰",value:"closeMute",new:!0},[6,1]):l({label:"开启免打扰",value:"openMute"},[6,1])};let h=!1,p=["4-0"];o({rightMenu_h_say_m:(e,t)=>{console.log(t," --- rightMenu_h_say_m say ")},rightMenu_h_bus_m:(e,o)=>{"mounted"==o.event?(r(getPetInfo()),u(getSys()),t.on("blur",(e=>{h?setTimeout((()=>{n.show&&t.focus()}),200):n.doClose()})),t.webContents.send("rightMenu_m_bus_h",{type:"load",positionType:n.positionType}),t.focus()):"close"==o.event&&n.doClose()},rightMenu_h_eventMouse_m:(e,o)=>{o.canDoType?(h=!0,t.setIgnoreMouseEvents(!1,{forward:!0})):(h=!1,t.setIgnoreMouseEvents(!0,{forward:!0}))},rightMenu_h_setItem_m:(e,o)=>{try{o.data=JSON.parse(o.data)}catch(e){}if("openAiChat"==o.data.value)!aiChat.show&&aiChat.cleate();else if("openSwfViewer"==o.data.value)global.toolWindow&&global.toolWindow.viewSwf&&global.toolWindow.viewSwf.cleate();else if("food"==o.data.value||"clean"==o.data.value||"cure"==o.data.value)control.show&&control.useInState({type:"active",opt:{value:o.data.value}});else if("stopGrowth"==o.data.value)setPetInfo({maxInfo:{stopGrowth:!0}}),changeTraysIcon({name:"pause"});else if("openGrowth"==o.data.value)setPetInfo({maxInfo:{stopGrowth:!1}}),petControl.determineHealth({communication:["state","startGrowth"]});else if("stopState"==o.data.value){let e=getPetInfoOne("","activeOption");e[e?.work?"work":e?.study?"study":e?.trip?"trip":""].stopNow=!0,setPetInfo({activeOption:e}),petControl.GrowUp.GrowUpMain({unGrow:!0})}else"quit"==o.data.value?app.quit():"petInfo"==o.data.value?infoCard.show?infoCard.doClose():infoCard.cleate():"openMute"==o.data.value?setSys({name:"doNotDisturb",value:!0}):"closeMute"==o.data.value?setSys({name:"doNotDisturb",value:!1}):"openStore"==o.data.value?!store.show&&store.cleate():"openSetup"==o.data.value?!setup.show&&setup.cleate():"smallGame"==o.data.value&&!smallGame.show&&smallGame.cleate();"openDevTools"==o.data.value&&(windowsMain.wins["main"]&&windowsMain.wins["main"].win.webContents.openDevTools({mode:"detach"}),windowsMain.wins["aiChat"]&&windowsMain.wins["aiChat"].win&&windowsMain.wins["aiChat"].win.webContents.openDevTools({mode:"detach"}));o.data.value&&(p.includes(o.data.id)?t.focus():n.doClose())}}),a([{event:"pet",name:n.name,fn:e=>{r(e)}},{event:"system",name:n.name,fn:e=>{u(e)}}])},onload(){console.log("onload ",this.name),n.show=!0},onshow(e){console.log("onshow ",this.name),n.window=e,n.show=!0},onhide(){console.log("onhide ",this.name),n.show=!1},onclose(){console.log("onclose ",this.name),n.window=null,n.show=!1}}).then((e=>{this.window=e,this.init()})).catch((e=>{console.log(e)}))}init(){this.show=!0}doClose(){this.show&&(this.window.close(),this.show=!1)}}let main=new mainClass;module.exports=main}},__webpack_module_cache__={};function __webpack_require__(e){var t=__webpack_module_cache__[e];if(void 0!==t)return t.exports;var o=__webpack_module_cache__[e]={exports:{}};return __webpack_modules__[e](o,o.exports,__webpack_require__),o.exports}var __webpack_exports__=__webpack_require__(881);module.exports=__webpack_exports__})();
+const _require = eval("require");
+const { app, screen } = _require("electron");
+const infoCard = _require("../infoCard/main.js");
+const control = _require("../control/main.js");
+const setup = _require("../setup/main.js");
+const smallGame = _require("../smallGame/main.js");
+const store = _require("../store/main.js");
+const aiChat = _require("../aiChat/main.js");
+
+const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+
+class mainClass {
+  constructor() {
+    this.window = null;
+    this.show = false;
+    this.name = "rightMenu";
+  }
+
+  positionType = null;
+  menuSide = "right";
+
+  cleate(options = {}) {
+    const { nowPosition = [0, 0], positionType } = options;
+    this.positionType = positionType;
+    this.width = 340;
+    this.height = 300;
+
+    const position = this.getWindowPosition(nowPosition, positionType);
+    const self = this;
+
+    windowsMain
+      .open({
+        name: this.name,
+        loadFile: "popups/" + this.name,
+        jsFiles: ["./util/move.js"],
+        default: {
+          width: this.width,
+          height: this.height,
+          x: position[0],
+          y: position[1],
+          alwaysOnTop: true,
+        },
+        created(backVm) {
+          const { vm, preloads, getinfo } = backVm;
+          vm.setIgnoreMouseEvents(true, { forward: true });
+
+          const changedMenu = {};
+          const updateMenuItem = (item, where) => {
+            if (!item?.label || !where?.length) return;
+            const key = "w" + where.join("-");
+            if (changedMenu[key] === item.value) return;
+            changedMenu[key] = item.value;
+            vm.webContents.send("rightMenu_m_bus_h", {
+              data: item,
+              type: "changeMenu",
+              where,
+            });
+          };
+
+          const updateGrowthMenu = (petInfo) => {
+            let active = null;
+            for (const key in petInfo.activeOption) {
+              if (petInfo.activeOption[key] && key !== "ill") active = petInfo.activeOption[key];
+            }
+
+            const item = active
+              ? { label: "停止状态", value: "stopState" }
+              : petInfo?.maxInfo?.stopGrowth
+                ? { label: "开启成长", value: "openGrowth" }
+                : { label: "停止成长", value: "stopGrowth" };
+
+            updateMenuItem(item, [7]);
+          };
+
+          const updateMuteMenu = (sysInfo) => {
+            updateMenuItem(
+              sysInfo.doNotDisturb
+                ? { label: "关闭免打扰", value: "closeMute", new: true }
+                : { label: "开启免打扰", value: "openMute" },
+              [6, 1],
+            );
+          };
+
+          let canUseMenu = false;
+          const keepFocusItems = ["4-0"];
+
+          preloads({
+            rightMenu_h_say_m: (event, say) => {
+              console.log(say, " --- rightMenu_h_say_m say ");
+            },
+            rightMenu_h_bus_m: (event, val) => {
+              if (val.event === "mounted") {
+                updateGrowthMenu(getPetInfo());
+                updateMuteMenu(getSys());
+                vm.on("blur", () => {
+                  if (canUseMenu) {
+                    setTimeout(() => {
+                      if (self.show) vm.focus();
+                    }, 200);
+                  } else {
+                    self.doClose();
+                  }
+                });
+                vm.webContents.send("rightMenu_m_bus_h", {
+                  type: "load",
+                  positionType: self.positionType,
+                  menuSide: self.menuSide,
+                });
+                vm.focus();
+                return;
+              }
+
+              if (val.event === "close") self.doClose();
+            },
+            rightMenu_h_eventMouse_m: (event, val) => {
+              canUseMenu = !!val.canDoType;
+              vm.setIgnoreMouseEvents(!canUseMenu, { forward: true });
+            },
+            rightMenu_h_setItem_m: (event, val) => {
+              self.handleMenuItem(val, keepFocusItems, vm);
+            },
+          });
+
+          getinfo([
+            {
+              event: "pet",
+              name: self.name,
+              fn: (petInfo) => updateGrowthMenu(petInfo),
+            },
+            {
+              event: "system",
+              name: self.name,
+              fn: (sysInfo) => updateMuteMenu(sysInfo),
+            },
+          ]);
+        },
+        onload() {
+          console.log("onload ", this.name);
+          self.show = true;
+        },
+        onshow(win) {
+          console.log("onshow ", this.name);
+          self.window = win;
+          self.show = true;
+        },
+        onhide() {
+          console.log("onhide ", this.name);
+          self.show = false;
+        },
+        onclose() {
+          console.log("onclose ", this.name);
+          self.window = null;
+          self.show = false;
+        },
+      })
+      .then((win) => {
+        this.window = win;
+        this.init();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  getWindowPosition(nowPosition, positionType) {
+    if (positionType !== "followMain") {
+      return [
+        Math.trunc(nowPosition[0] - this.width / 2),
+        Math.trunc(nowPosition[1] - this.height),
+      ];
+    }
+
+    const mainWin = global.windowsMain?.wins?.main?.win;
+    const petBounds =
+      mainWin && !mainWin.isDestroyed?.() && mainWin.getBounds
+        ? mainWin.getBounds()
+        : {
+            x: nowPosition[0] - 90,
+            y: nowPosition[1] - 90,
+            width: 180,
+            height: 180,
+          };
+
+    const fallbackScreenSize =
+      typeof getScreenSize === "function" ? getScreenSize() : [1440, 900];
+    const display = screen.getDisplayMatching(petBounds);
+    const workArea = display?.workArea || {
+      x: 0,
+      y: 0,
+      width: fallbackScreenSize[0] || 1440,
+      height: fallbackScreenSize[1] || 900,
+    };
+    const rightEdge = workArea.x + workArea.width;
+    const bottomEdge = workArea.y + workArea.height;
+    const gap = 4;
+
+    const leftMenuVisibleInset = 0;
+    const rightMenuVisibleInset = 36;
+    const rightX = petBounds.x + petBounds.width + gap - rightMenuVisibleInset;
+    const leftX = petBounds.x - this.width - gap + leftMenuVisibleInset;
+    const canOpenRight = rightX + this.width <= rightEdge;
+    const canOpenLeft = leftX >= workArea.x;
+
+    this.menuSide = canOpenRight || !canOpenLeft ? "right" : "left";
+    let x = this.menuSide === "right" ? rightX : leftX;
+    let y = petBounds.y + petBounds.height / 2 - this.height / 2;
+
+    x = clamp(Math.trunc(x), workArea.x, rightEdge - this.width);
+    y = clamp(Math.trunc(y), workArea.y, bottomEdge - this.height);
+
+    return [x, y];
+  }
+
+  handleMenuItem(val, keepFocusItems, vm) {
+    try {
+      val.data = JSON.parse(val.data);
+    } catch (e) {}
+
+    const item = val.data || {};
+
+    if (item.value === "openAiChat") {
+      if (!aiChat.show) aiChat.cleate();
+    } else if (item.value === "openSwfViewer") {
+      if (global.toolWindow?.viewSwf) global.toolWindow.viewSwf.cleate();
+    } else if (["food", "clean", "cure"].includes(item.value)) {
+      if (control.show) control.useInState({ type: "active", opt: { value: item.value } });
+    } else if (item.value === "stopGrowth") {
+      setPetInfo({ maxInfo: { stopGrowth: true } });
+      changeTraysIcon({ name: "pause" });
+    } else if (item.value === "openGrowth") {
+      setPetInfo({ maxInfo: { stopGrowth: false } });
+      petControl.determineHealth({ communication: ["state", "startGrowth"] });
+    } else if (item.value === "stopState") {
+      const activeOption = getPetInfoOne("", "activeOption");
+      activeOption[activeOption?.work ? "work" : activeOption?.study ? "study" : activeOption?.trip ? "trip" : ""].stopNow = true;
+      setPetInfo({ activeOption });
+      petControl.GrowUp.GrowUpMain({ unGrow: true });
+    } else if (item.value === "quit") {
+      app.quit();
+    } else if (item.value === "petInfo") {
+      infoCard.show ? infoCard.doClose() : infoCard.cleate();
+    } else if (item.value === "openMute") {
+      setSys({ name: "doNotDisturb", value: true });
+    } else if (item.value === "closeMute") {
+      setSys({ name: "doNotDisturb", value: false });
+    } else if (item.value === "openStore") {
+      if (!store.show) store.cleate();
+    } else if (item.value === "openSetup") {
+      if (!setup.show) setup.cleate();
+    } else if (item.value === "smallGame") {
+      if (!smallGame.show) smallGame.cleate();
+    }
+
+    if (item.value === "openDevTools") {
+      windowsMain.wins.main?.win?.webContents?.openDevTools({ mode: "detach" });
+      windowsMain.wins.aiChat?.win?.webContents?.openDevTools({ mode: "detach" });
+    }
+
+    if (item.value) {
+      if (keepFocusItems.includes(item.id)) {
+        vm.focus();
+      } else {
+        this.doClose();
+      }
+    }
+  }
+
+  init() {
+    this.show = true;
+  }
+
+  doClose() {
+    if (this.show && this.window && !this.window.isDestroyed()) {
+      this.window.close();
+    }
+    this.show = false;
+  }
+}
+
+const main = new mainClass();
+module.exports = main;

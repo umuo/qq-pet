@@ -1,1 +1,370 @@
-(()=>{var __webpack_modules__={208:function(module){const _require=eval("require"),{BrowserWindow,ipcMain}=_require("electron"),path=_require("path"),fs=_require("fs");var icon="";try{icon=path.join(__dirname,"../assets/penguin.ico")}catch(e){};const defaultOption={width:this.width,height:this.height,frame:!1,transparent:!0,resizable:!1,icon,skipTaskbar:!0,alwaysOnTop:!0,hasShadow:!1,backgroundColor:"#00000000",roundedCorners:!1,webPreferences:{plugins:!1,nodeIntegration:!0,contextIsolation:!0,worldSafeExecuteJavaScript:!0,webSecurity:!1}};class addWindow{constructor(e){return this.wins={},this.preloads={},this}winOpacity=1;open(e){let n={...defaultOption,...e.default};if(e.default=n,e?.webPreferences&&(e.default.webPreferences={...e.default.webPreferences,...e.webPreferences}),!e.name)return Promise.reject("参数错误");try{e.default.webPreferences.preload=path.join(__dirname,`./${e.loadFile||e.name}/preload.js`)}catch(e){}return this.wins[e.name]&&this.wins[e.name].win?("hide"==e.closeType&&(this.wins[e.name].win.show(),e.onshow&&"function"==typeof e.onshow&&e.onshow(this.wins[e.name].win)),Promise.resolve(this.wins[e.name].win)):(this.wins[e.name]={win:null,preload:null,option:null},e?.default?.width&&e?.default?.height&&!e?.default?.notChangeSize&&(e.default.width+=10,e.default.height+=10),this.wins[e.name].option=e,this.wins[e.name].win=new BrowserWindow(e.default),e.url?this.openUrl(this.wins[e.name]):this.doListener(this.wins[e.name],e.name))}canSeeWin=["setup"];alwaysSeeWin=["floatStyle"];doListener(e,n){let o=this;return new Promise(((n,i)=>{e.win.loadFile(path.join(__dirname,"./app.html")),e.win.setIgnoreMouseEvents(!0);let t=["./lib/icon/iconfont.js","./lib/vue/vue.global.js"];e.option?.jsFiles&&t.unshift(...e.option.jsFiles),e?.option?.jsFilesAfter&&t.push(...e.option.jsFilesAfter),t.push(`./${e.option.loadFile||e.option.name}/index.js`);let s=["./lib/ant-design/antd.css","./css/index.css","./css/util.css","./css/keyframes.css",`./${e.option.loadFile||e.option.name}/index.css`];e.option.cssFiles&&s.unshift(...e.option.cssFiles),e.win.webContents.on("did-finish-load",(()=>{try{let n=fs.readFileSync(path.join(__dirname,`./${e.option.loadFile||e.option.name}/index.html`)).toString();$test&&(o.winOpacity=.2);try{let e=getSys("opacity");(e<0||!e)&&(e=.1);let n=(10*e|0)/10;n&&(o.winOpacity=n)}catch(e){}-1!=this.opt.names.indexOf(e.option.name)?e.win.setOpacity(1):e.win.setOpacity(o.winOpacity),e.win.webContents.executeJavaScript(`\n                    const seeApp = () => {\n                        const app = document.getElementById('app')\n                        app.style.display = 'flex'\n                        app.style.opacity = 1;\n                    }\n                    const changeOpacity = (opacity)=>{\n                        const app = document.getElementById('app')\n                        app.style.opacity = opacity || '1'\n                    }\n                    let appDom = document.getElementById('app');\n                    appDom.innerHTML = \`${n}\`;\n                    seeApp()\n                    `)}catch(e){}for(let n in s){let o=fs.readFileSync(path.join(__dirname,s[n])).toString();e.win.webContents.insertCSS(o)}for(let n in t){let o=fs.readFileSync(path.join(__dirname,t[n])).toString();e.win.webContents.executeJavaScript(o)}e.option.onload&&"function"==typeof e.option.onload&&e.option.onload(e.win)})),n(e.win),e.win.removeMenu(),e.option.default.openDevTools&&e.win.openDevTools({mode:"detach"}),e.win.setIgnoreMouseEvents(!1),e.option.created&&"function"==typeof e.option.created&&e.option.created({vm:e.win,preloads:n=>{e.option.preloads=n||{};for(let e in n)ipcMain.on(e,n[e])},getinfo:n=>{if(global?.listenInfo){e.option.getinfo=n||[];for(let e in n)listenInfo(n[e])}}}),e.win.on("close",(n=>{"hide"==e.option.closeType&&(e.option.onhide&&"function"==typeof e.option.onhide&&e.option.onhide(e.win),n.preventDefault(),e.win.hide())})),e.win.on("closed",(n=>{e.option.onclose&&"function"==typeof e.option.onclose&&e.option.onclose(e.win),this.removePreload(e.option),this.removeGetinfo(e.option),e.win=null}))}))}openUrl(e){return new Promise(((n,o)=>{let i=new BrowserWindow({width:80,height:80,frame:!1,transparent:!0,skipTaskbar:!0,alwaysOnTop:!0});i.setIgnoreMouseEvents(!0),i.loadFile(path.join(__dirname,"./app.html")),e.win.loadURL(e.option.url),e.win.webContents.on("did-finish-load",(()=>{i?.close&&i.close(),i=null,e.win.show(),e.win.focus(),e.option.onload&&"function"==typeof e.option.onload&&e.option.onload(e.win)})),n(e.win),e.win.removeMenu(),e.option.default.openDevTools&&e.win.openDevTools({mode:"detach"}),e.option.created&&"function"==typeof e.option.created&&e.option.created({vm:e.win,preloads:n=>{e.option.preloads=n||{};for(let e in n)ipcMain.on(e,n[e])},getinfo:n=>{if(global?.listenInfo){e.option.getinfo=n||[];for(let e in n)listenInfo(n[e])}}}),e.win.on("closed",(n=>{i?.close&&i.close(),i=null,this.removePreload(e.option),this.removeGetinfo(e.option),e.win=null,e.option.onclose&&"function"==typeof e.option.onclose&&e.option.onclose(e.win)}))}))}setPreload(e={}){for(let n in e)ipcMain.removeListener(n,e[n]);for(let n in e)ipcMain.on(n,e[n]);this.preloads={...this.preloads,...e}}removePreload(e){if(!e.name)return;let n=e.preloads||{};for(let e in n)ipcMain.removeListener(e,n[e])}removeGetinfo(e){if(!global?.unListenInfo)return;if(!e.name)return;let n=e.getinfo||[];for(let e in n)unListenInfo(n[e])}removeWsMethods(e){if(!global?.deleteWsBackMsg)return;if(!e.name)return;let n=e.wsMethods||[];for(let e in n)deleteWsBackMsg(n[e])}opt={names:["setup","rightMenu","smallGame","viewSwf","store","aiChat","infoCard","control","tip","windowTip"]};setOpacity(e){this.winOpacity=!e||e<=0?.1:e;for(let e in this.wins)-1!=this.opt.names.indexOf(e)?this.wins[e]?.win?.setOpacity&&this.wins[e]?.win.setOpacity(1):this.wins[e]?.win?.setOpacity&&this.wins[e]?.win.setOpacity(this.winOpacity)}}module.exports=addWindow}},__webpack_module_cache__={};function __webpack_require__(e){var n=__webpack_module_cache__[e];if(void 0!==n)return n.exports;var o=__webpack_module_cache__[e]={exports:{}};return __webpack_modules__[e].call(o.exports,o,o.exports,__webpack_require__),o.exports}var __webpack_exports__=__webpack_require__(208);module.exports=__webpack_exports__})();
+const _require = eval("require");
+const { BrowserWindow, ipcMain } = _require("electron");
+const path = _require("path");
+const fs = _require("fs");
+
+let icon = "";
+try {
+  icon = path.join(__dirname, "../assets/penguin.ico");
+} catch (e) {}
+
+const defaultOption = {
+  width: undefined,
+  height: undefined,
+  frame: false,
+  transparent: true,
+  resizable: false,
+  icon,
+  skipTaskbar: true,
+  alwaysOnTop: true,
+  hasShadow: false,
+  backgroundColor: "#00000000",
+  roundedCorners: false,
+  webPreferences: {
+    plugins: false,
+    nodeIntegration: true,
+    contextIsolation: true,
+    worldSafeExecuteJavaScript: true,
+    webSecurity: false,
+  },
+};
+
+class addWindow {
+  constructor() {
+    this.wins = {};
+    this.preloads = {};
+    return this;
+  }
+
+  winOpacity = 1;
+  canSeeWin = ["setup"];
+  alwaysSeeWin = ["floatStyle"];
+  opt = {
+    names: [
+      "setup",
+      "rightMenu",
+      "smallGame",
+      "viewSwf",
+      "store",
+      "aiChat",
+      "infoCard",
+      "control",
+      "tip",
+      "windowTip",
+    ],
+  };
+
+  open(option) {
+    if (!option?.name) return Promise.reject("参数错误");
+
+    const oldEntry = this.wins[option.name];
+    if (oldEntry?.win && !oldEntry.win.isDestroyed()) {
+      if (option.closeType === "hide") {
+        oldEntry.win.show();
+        if (typeof option.onshow === "function") option.onshow(oldEntry.win);
+      }
+      return Promise.resolve(oldEntry.win);
+    }
+
+    if (oldEntry?.option) this.cleanupOption(oldEntry.option);
+
+    const winOption = this.normalizeOption(option);
+    const entry = {
+      win: null,
+      preload: null,
+      option,
+      didFinishLoad: null,
+      urlLoadingWin: null,
+    };
+
+    this.wins[option.name] = entry;
+    option.default = winOption;
+    entry.win = new BrowserWindow(winOption);
+
+    return option.url ? this.openUrl(entry) : this.doListener(entry);
+  }
+
+  normalizeOption(option) {
+    const sourceDefault = option.default || {};
+    const webPreferences = {
+      ...defaultOption.webPreferences,
+      ...(sourceDefault.webPreferences || {}),
+    };
+
+    const winOption = {
+      ...defaultOption,
+      ...sourceDefault,
+      webPreferences,
+    };
+
+    if (option.webPreferences) {
+      winOption.webPreferences = {
+        ...winOption.webPreferences,
+        ...option.webPreferences,
+      };
+    }
+
+    try {
+      winOption.webPreferences.preload = path.join(
+        __dirname,
+        `./${option.loadFile || option.name}/preload.js`,
+      );
+    } catch (e) {}
+
+    if (winOption.width && winOption.height && !winOption.notChangeSize) {
+      winOption.width += 10;
+      winOption.height += 10;
+    }
+
+    return winOption;
+  }
+
+  doListener(entry) {
+    return new Promise((resolve) => {
+      const win = entry.win;
+      const option = entry.option;
+
+      win.loadFile(path.join(__dirname, "./app.html"));
+      win.setIgnoreMouseEvents(true);
+
+      const jsFiles = ["./lib/icon/iconfont.js", "./lib/vue/vue.global.js"];
+      if (option?.jsFiles) jsFiles.unshift(...option.jsFiles);
+      if (option?.jsFilesAfter) jsFiles.push(...option.jsFilesAfter);
+      jsFiles.push(`./${option.loadFile || option.name}/index.js`);
+
+      const cssFiles = [
+        "./lib/ant-design/antd.css",
+        "./css/index.css",
+        "./css/util.css",
+        "./css/keyframes.css",
+        `./${option.loadFile || option.name}/index.css`,
+      ];
+      if (option.cssFiles) cssFiles.unshift(...option.cssFiles);
+
+      entry.didFinishLoad = () => {
+        this.loadLocalWindow(entry, jsFiles, cssFiles);
+      };
+      win.webContents.on("did-finish-load", entry.didFinishLoad);
+
+      resolve(win);
+      win.removeMenu();
+      if (option.default.openDevTools) win.openDevTools({ mode: "detach" });
+      win.setIgnoreMouseEvents(false);
+
+      this.callCreated(entry);
+      this.bindCloseLifecycle(entry);
+    });
+  }
+
+  loadLocalWindow(entry, jsFiles, cssFiles) {
+    const win = entry.win;
+    const option = entry.option;
+    if (!win || win.isDestroyed()) return;
+
+    try {
+      const html = fs
+        .readFileSync(path.join(__dirname, `./${option.loadFile || option.name}/index.html`))
+        .toString();
+
+      if (global.$test) this.winOpacity = 0.2;
+
+      try {
+        let opacity = getSys("opacity");
+        if (opacity < 0 || !opacity) opacity = 0.1;
+        const normalized = ((10 * opacity) | 0) / 10;
+        if (normalized) this.winOpacity = normalized;
+      } catch (e) {}
+
+      if (this.opt.names.indexOf(option.name) !== -1) {
+        win.setOpacity(1);
+      } else {
+        win.setOpacity(this.winOpacity);
+      }
+
+      win.webContents.executeJavaScript(`
+        const seeApp = () => {
+          const app = document.getElementById('app')
+          app.style.display = 'flex'
+          app.style.opacity = 1;
+        }
+        const changeOpacity = (opacity)=>{
+          const app = document.getElementById('app')
+          app.style.opacity = opacity || '1'
+        }
+        let appDom = document.getElementById('app');
+        appDom.innerHTML = \`${html}\`;
+        seeApp()
+      `);
+    } catch (e) {}
+
+    for (const file of cssFiles) {
+      try {
+        const css = fs.readFileSync(path.join(__dirname, file)).toString();
+        win.webContents.insertCSS(css);
+      } catch (e) {}
+    }
+
+    for (const file of jsFiles) {
+      try {
+        const js = fs.readFileSync(path.join(__dirname, file)).toString();
+        win.webContents.executeJavaScript(js);
+      } catch (e) {}
+    }
+
+    if (typeof option.onload === "function") option.onload(win);
+  }
+
+  openUrl(entry) {
+    return new Promise((resolve) => {
+      const win = entry.win;
+      const option = entry.option;
+
+      entry.urlLoadingWin = new BrowserWindow({
+        width: 80,
+        height: 80,
+        frame: false,
+        transparent: true,
+        skipTaskbar: true,
+        alwaysOnTop: true,
+      });
+      entry.urlLoadingWin.setIgnoreMouseEvents(true);
+      entry.urlLoadingWin.loadFile(path.join(__dirname, "./app.html"));
+
+      win.loadURL(option.url);
+
+      entry.didFinishLoad = () => {
+        if (entry.urlLoadingWin?.close) entry.urlLoadingWin.close();
+        entry.urlLoadingWin = null;
+        win.show();
+        win.focus();
+        if (typeof option.onload === "function") option.onload(win);
+      };
+      win.webContents.on("did-finish-load", entry.didFinishLoad);
+
+      resolve(win);
+      win.removeMenu();
+      if (option.default.openDevTools) win.openDevTools({ mode: "detach" });
+
+      this.callCreated(entry);
+      this.bindCloseLifecycle(entry);
+    });
+  }
+
+  callCreated(entry) {
+    const option = entry.option;
+    if (typeof option.created !== "function") return;
+
+    option.created({
+      vm: entry.win,
+      preloads: (handlers) => this.registerPreloads(option, handlers),
+      getinfo: (items) => this.registerGetinfo(option, items),
+      wsMethods: (items) => this.registerWsMethods(option, items),
+    });
+  }
+
+  bindCloseLifecycle(entry) {
+    const win = entry.win;
+    const option = entry.option;
+
+    win.on("close", (event) => {
+      const isQuitting = typeof global.outProjectMain === "function" && global.outProjectMain();
+      if (option.closeType === "hide" && !isQuitting) {
+        if (typeof option.onhide === "function") option.onhide(win);
+        event.preventDefault();
+        win.hide();
+      }
+    });
+
+    win.on("closed", () => {
+      if (typeof option.onclose === "function") option.onclose(win);
+      this.cleanupEntry(entry);
+      entry.win = null;
+    });
+  }
+
+  registerPreloads(option, handlers = {}) {
+    this.removePreload(option);
+    option.preloads = handlers || {};
+    for (const channel in option.preloads) {
+      ipcMain.on(channel, option.preloads[channel]);
+    }
+  }
+
+  registerGetinfo(option, items = []) {
+    this.removeGetinfo(option);
+    option.getinfo = items || [];
+    if (!global?.listenInfo) return;
+    for (const item of option.getinfo) listenInfo(item);
+  }
+
+  registerWsMethods(option, items = []) {
+    this.removeWsMethods(option);
+    option.wsMethods = items || [];
+    if (!global?.addWsBackMsg) return;
+    for (const item of option.wsMethods) addWsBackMsg(item);
+  }
+
+  setPreload(handlers = {}) {
+    for (const channel in handlers) {
+      if (this.preloads[channel]) {
+        ipcMain.removeListener(channel, this.preloads[channel]);
+      }
+      ipcMain.on(channel, handlers[channel]);
+    }
+    this.preloads = { ...this.preloads, ...handlers };
+  }
+
+  cleanupEntry(entry) {
+    if (!entry) return;
+    try {
+      if (entry.win?.webContents && entry.didFinishLoad) {
+        entry.win.webContents.removeListener("did-finish-load", entry.didFinishLoad);
+      }
+    } catch (e) {}
+    try {
+      if (entry.urlLoadingWin?.close) entry.urlLoadingWin.close();
+    } catch (e) {}
+    entry.urlLoadingWin = null;
+    this.cleanupOption(entry.option);
+  }
+
+  cleanupOption(option) {
+    this.removePreload(option);
+    this.removeGetinfo(option);
+    this.removeWsMethods(option);
+  }
+
+  removePreload(option) {
+    if (!option?.name) return;
+    const handlers = option.preloads || {};
+    for (const channel in handlers) {
+      ipcMain.removeListener(channel, handlers[channel]);
+    }
+    option.preloads = {};
+  }
+
+  removeGetinfo(option) {
+    if (!global?.unListenInfo || !option?.name) return;
+    const items = option.getinfo || [];
+    for (const item of items) unListenInfo(item);
+    option.getinfo = [];
+  }
+
+  removeWsMethods(option) {
+    if (!global?.deleteWsBackMsg || !option?.name) return;
+    const items = option.wsMethods || [];
+    for (const item of items) deleteWsBackMsg(item);
+    option.wsMethods = [];
+  }
+
+  setOpacity(opacity) {
+    this.winOpacity = !opacity || opacity <= 0 ? 0.1 : opacity;
+    for (const name in this.wins) {
+      const win = this.wins[name]?.win;
+      if (!win?.setOpacity) continue;
+      win.setOpacity(this.opt.names.indexOf(name) !== -1 ? 1 : this.winOpacity);
+    }
+  }
+}
+
+module.exports = addWindow;
