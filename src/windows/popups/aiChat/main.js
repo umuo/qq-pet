@@ -38,9 +38,16 @@ class MainClass {
         hasShadow: true
       },
       created(e) {
-        let { vm: t, preloads: n } = e;
+        let { vm: t, preloads: n, getinfo } = e;
         t.setIgnoreMouseEvents(false);
         t.setOpacity(1);
+
+        const sendConfig = () => {
+          if (t && !t.isDestroyed()) {
+            const cfg = piAgentService.getLlmConfig();
+            t.webContents.send("aiChat_m_config_h", cfg);
+          }
+        };
 
         n({
           aiChat_h_send_m: (evt, data) => {
@@ -67,10 +74,7 @@ class MainClass {
             piAgentService.abort();
           },
           aiChat_h_get_config_m: () => {
-            if (t && !t.isDestroyed()) {
-              const cfg = piAgentService.getLlmConfig();
-              t.webContents.send("aiChat_m_config_h", cfg);
-            }
+            sendConfig();
           },
           aiChat_h_get_history_m: (evt, mode) => {
             try {
@@ -120,8 +124,7 @@ class MainClass {
             if (data?.event === "mounted") {
               if (t && !t.isDestroyed()) {
                 t.webContents.send("aiChat_m_bus_h", { type: "load" });
-                const cfg = piAgentService.getLlmConfig();
-                t.webContents.send("aiChat_m_config_h", cfg);
+                sendConfig();
                 t.webContents.send("aiChat_m_history_h", { mode: "chat", history: piAgentService.getHistory("chat") });
                 t.webContents.send("aiChat_m_history_h", { mode: "agent", history: piAgentService.getHistory("agent") });
               }
@@ -132,6 +135,24 @@ class MainClass {
             }
           }
         });
+
+        getinfo([
+          {
+            event: "system",
+            name: self.name,
+            fn: (sys) => {
+              const changedKey = sys?.isCHange?.label;
+              if (
+                changedKey === "llmUrl" ||
+                changedKey === "llmApiKey" ||
+                changedKey === "llmModel" ||
+                changedKey === "llmEnabled"
+              ) {
+                sendConfig();
+              }
+            }
+          }
+        ]);
       },
       onload(win) {
         console.log("onload", self.name);
@@ -143,6 +164,9 @@ class MainClass {
         self.window = win;
         self.show = true;
         if (win && win.setOpacity) win.setOpacity(1);
+        if (win && !win.isDestroyed()) {
+          win.webContents.send("aiChat_m_config_h", piAgentService.getLlmConfig());
+        }
       },
       onhide() {
         console.log("onhide", self.name);
