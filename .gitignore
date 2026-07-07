@@ -5,3 +5,10 @@ release
 *.local
 .DS_Store
 *.log
+
+# JetBrains IDEs
+.idea/
+.idea
+*.iml
+*.ipr
+*.iws
