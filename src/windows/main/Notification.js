@@ -1,9 +1,15 @@
-const _require = eval("require"),
-  { Notification } = _require("electron"),
-  windowSay = (_ = {}) => {
-    new Notification(_).show();
-  };
+const _require = eval("require");
+const {
+  Notification
+} = _require("electron");
+const windowSay = (_ = {}) => {
+  new Notification(_).show();
+};
 try {
-  module && (module.exports = { windowSay });
+  if (module) {
+    module.exports = {
+      windowSay
+    };
+  }
 } catch (_) {}
 global.windowSay = windowSay;

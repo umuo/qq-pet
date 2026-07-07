@@ -1,4 +1,4 @@
-(new (class {
+new class {
   constructor() {
     this.storage = window.localStorage;
   }
@@ -21,5 +21,5 @@
   clear() {
     this.storage.clear();
   }
-})(),
-  (module.exports = {}));
+}();
+module.exports = {};

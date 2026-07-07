@@ -1,123 +1,145 @@
 (() => {
-  var t = {},
-    e = (t) => {
-      window.electronAPI.html_ToMain(t);
-    };
+  var t = {};
+  var e = t => {
+    window.electronAPI.html_ToMain(t);
+  };
   window.RufflePlayer = window.RufflePlayer || {};
   const i = {
     data: () => ({
       nowPosition: "",
       position: "center",
       maxSize: [144, 144],
-      sizeStyle: { width: "144px", height: "144px" },
-      loads: !1,
+      sizeStyle: {
+        width: "144px",
+        height: "144px"
+      },
+      loads: false,
       petContent: null,
-      petInfo: { info: {}, maxInfo: {}, activeOption: {}, otherOptions: {} },
+      petInfo: {
+        info: {},
+        maxInfo: {},
+        activeOption: {},
+        otherOptions: {}
+      },
       petControl: null,
-      curState: !1,
+      curState: false,
       swfPet: null,
-      floatArr: [],
+      floatArr: []
     }),
     watch: {
       maxSize: {
         handler(t, e) {
-          ((this.sizeStyle = { width: t[0] + "px", height: t[1] + "px" }),
-            this.setMainPosition([0, 0]));
+          this.sizeStyle = {
+            width: t[0] + "px",
+            height: t[1] + "px"
+          };
+          this.setMainPosition([0, 0]);
         },
-        deep: !0,
-      },
+        deep: true
+      }
     },
     computed: {},
     created() {
-      window.addEventListener(
-        "message",
-        (t) => {
-          console.log("res father:>> ", t);
-        },
-        !1,
-      );
+      window.addEventListener("message", t => {
+        console.log("res father:>> ", t);
+      }, false);
     },
     mounted() {
-      ((this.loads = !0),
-        this.initPet(),
-        this.doMove(),
-        this.getNowPosition(),
-        window.electronAPI.main_ToHtml((t, e) => {
-          if ("load" == e.type) {
-            (e.bd && seeApp(),
-              (this.petInfo = e.petInfo),
-              (this.maxSize = e.maxSize));
-            let t = [
-              e.nowPosition[0] - +this.petInfo.info.lastX,
-              e.nowPosition[1] - +this.petInfo.info.lastY,
-            ];
-            (this.setMainPosition(t),
-              this.swfPet.init &&
-                this.swfPet.init({
-                  state: this.petInfo,
-                  baseRouter: e.bd ? "../assets/Action" : "../../assets/Action",
-                }));
+      this.loads = true;
+      this.initPet();
+      this.doMove();
+      this.getNowPosition();
+      window.electronAPI.main_ToHtml((t, e) => {
+        if (e.type == "load") {
+          if (e.bd) {
+            seeApp();
           }
-        }),
-        window.electronAPI.main_ToHtml_setSay((t, e) => {
+          this.petInfo = e.petInfo;
+          this.maxSize = e.maxSize;
+          let t = [e.nowPosition[0] - +this.petInfo.info.lastX, e.nowPosition[1] - +this.petInfo.info.lastY];
+          this.setMainPosition(t);
+          if (this.swfPet.init) {
+            this.swfPet.init({
+              state: this.petInfo,
+              baseRouter: e.bd ? "../assets/Action" : "../../assets/Action"
+            });
+          }
+        }
+      });
+      window.electronAPI.main_ToHtml_setSay((t, e) => {
+        try {
+          e = JSON.parse(e);
+        } catch {}
+        for (let t in e) {
+          console.log(e[t]);
+        }
+      });
+      window.electronAPI.main_ToHtml_setPet((t, e) => {
+        this.petInfo = e;
+        if (this.swfPet.setPetState) {
+          this.swfPet.setPetState(e);
+        }
+      });
+      window.electronAPI.main_ToHtml_active((t, e) => {
+        if (this.swfPet.changeSwf) {
+          this.swfPet.changeSwf(e.active, {
+            load: () => {
+              if (e.load) {
+                window.electronAPI.html_ToMain_backPetLoadFinish({
+                  type: e?.type || null,
+                  data: e.load,
+                  event: "load",
+                  otherOpt: e.otherOpt || null
+                });
+              }
+            },
+            finish: () => {
+              if (e.finish) {
+                window.electronAPI.html_ToMain_backPetLoadFinish({
+                  type: e?.type || null,
+                  data: e.finish,
+                  event: "finish",
+                  otherOpt: e.otherOpt || null
+                });
+              }
+            }
+          });
+        }
+        window.electronAPI.html_ToMain_getFocus();
+      });
+      window.electronAPI.main_m_nextActive((t, e) => {
+        let i = true;
+        if (e?.data) {
           try {
-            e = JSON.parse(e);
+            i = JSON.parse(e.data);
           } catch {}
-          for (let t in e) console.log(e[t]);
-        }),
-        window.electronAPI.main_ToHtml_setPet((t, e) => {
-          ((this.petInfo = e),
-            this.swfPet.setPetState && this.swfPet.setPetState(e));
-        }),
-        window.electronAPI.main_ToHtml_active((t, e) => {
-          (this.swfPet.changeSwf &&
-            this.swfPet.changeSwf(e.active, {
-              load: () => {
-                e.load &&
-                  window.electronAPI.html_ToMain_backPetLoadFinish({
-                    type: e?.type || null,
-                    data: e.load,
-                    event: "load",
-                    otherOpt: e.otherOpt || null,
-                  });
-              },
-              finish: () => {
-                e.finish &&
-                  window.electronAPI.html_ToMain_backPetLoadFinish({
-                    type: e?.type || null,
-                    data: e.finish,
-                    event: "finish",
-                    otherOpt: e.otherOpt || null,
-                  });
-              },
-            }),
-            window.electronAPI.html_ToMain_getFocus());
-        }),
-        window.electronAPI.main_m_nextActive((t, e) => {
-          let i = !0;
-          if (e?.data)
-            try {
-              i = JSON.parse(e.data);
-            } catch {}
-          this.swfPet.doNext && this.swfPet.doNext(i);
-        }),
-        window.electronAPI.main_m_setFloat((t, e) => {
-          "seeFloat" == e.type && this.seeFloat(e.data);
-        }),
-        e({ event: "mounted" }));
+        }
+        if (this.swfPet.doNext) {
+          this.swfPet.doNext(i);
+        }
+      });
+      window.electronAPI.main_m_setFloat((t, e) => {
+        if (e.type == "seeFloat") {
+          this.seeFloat(e.data);
+        }
+      });
+      e({
+        event: "mounted"
+      });
     },
     methods: {
       seeFloat(t) {
-        t?.num &&
-          (this.floatArr.push({
-            id: Math.round(4e3 * Math.random() + 100),
+        if (t?.num) {
+          this.floatArr.push({
+            id: Math.round(Math.random() * 4000 + 100),
             icon: "laugh",
             type: "addMood",
-            nums: (t.num + "").split(""),
-          }),
+            nums: (t.num + "").split("")
+          });
           setTimeout(() => {
             this.floatArr.shift();
-          }, t?.time || 200));
+          }, t?.time || 200);
+        }
       },
       clickPet(t) {
         console.log("e :>> ", t);
@@ -126,29 +148,31 @@
         this.swfPet = new swfPet({
           id: "pet",
           goNormal: this.goNormal,
-          backFn: (t) => {
-            (console.log("e", t),
-              window.electronAPI.main_h_setPetState({
-                type: "setState",
-                data: JSON.stringify(t),
-              }));
-          },
+          backFn: t => {
+            console.log("e", t);
+            window.electronAPI.main_h_setPetState({
+              type: "setState",
+              data: JSON.stringify(t)
+            });
+          }
         });
       },
       goNormal() {
-        return "left" == this.position
-          ? "hideleft"
-          : "right" == this.position
-            ? "hideright"
-            : "center" == this.position
-              ? "normal"
-              : void 0;
+        if (this.position == "left") {
+          return "hideleft";
+        } else if (this.position == "right") {
+          return "hideright";
+        } else if (this.position == "center") {
+          return "normal";
+        } else {
+          return undefined;
+        }
       },
       setMainPosition(t, e = {}) {
         window.electronAPI.html_ToMain_move({
           next: t,
           maxSize: [...this.maxSize],
-          notChangeSize: e.changeSize || this.notChangeSize || !1,
+          notChangeSize: e.changeSize || this.notChangeSize || false
         });
       },
       async doMove() {
@@ -157,53 +181,73 @@
           contextmenu: () => {
             this.isClosed;
           },
-          mousedown: (t) => {
-            1 == t.which
-              ? ((this.curState = !0),
-                window.electronAPI.html_ToMain_mouse({
-                  data: t,
-                  type: "which",
-                }))
-              : 2 == t.which
-                ? window.electronAPI.html_ToMain_mouse({ type: "roller" })
-                : 3 == t.which &&
-                  window.electronAPI.html_ToMain_mouse({
-                    data: { ...t, clientX: t.clientX, clientY: t.clientY },
-                    type: "rightClick",
-                  });
+          mousedown: t => {
+            if (t.which == 1) {
+              this.curState = true;
+              window.electronAPI.html_ToMain_mouse({
+                data: t,
+                type: "which"
+              });
+            } else if (t.which == 2) {
+              window.electronAPI.html_ToMain_mouse({
+                type: "roller"
+              });
+            } else if (t.which == 3) {
+              window.electronAPI.html_ToMain_mouse({
+                data: {
+                  ...t,
+                  clientX: t.clientX,
+                  clientY: t.clientY
+                },
+                type: "rightClick"
+              });
+            }
           },
           mousemove: (t, e) => {
-            (e.next && this.setMainPosition(e.next),
-              window.electronAPI.html_ToMain_mouse({ data: t, type: "move" }));
+            if (e.next) {
+              this.setMainPosition(e.next);
+            }
+            window.electronAPI.html_ToMain_mouse({
+              data: t,
+              type: "move"
+            });
           },
           mouseup: (t, e) => {
-            (e.isDown && this.swfPet.changeSwf(),
-              (this.curState = !1),
-              window.electronAPI.html_ToMain_mouse({ data: e, type: "which" }));
+            if (e.isDown) {
+              this.swfPet.changeSwf();
+            }
+            this.curState = false;
+            window.electronAPI.html_ToMain_mouse({
+              data: e,
+              type: "which"
+            });
           },
-          mouseout: (t, e) => {},
+          mouseout: (t, e) => {}
         }).init();
         let t = this.moveOut.getSize()[0];
         this.maxSize = [t, t];
       },
       getNowPosition() {
         window.electronAPI.main_ToHtml_setPotision((t, e, i) => {
-          ((this.nowPosition = e),
-            (this.position =
-              e[0] <= 3
-                ? "left"
-                : e[0] >= +i[0] - +this.maxSize[0] - 3
-                  ? "right"
-                  : "center"));
+          this.nowPosition = e;
+          this.position = e[0] <= 3 ? "left" : e[0] >= +i[0] - +this.maxSize[0] - 3 ? "right" : "center";
         });
       },
       closeWindow() {
-        e({ event: "close" });
-      },
-    },
+        e({
+          event: "close"
+        });
+      }
+    }
   };
   Vue.createApp(i).mount("#app");
   var o = window;
-  for (var n in t) o[n] = t[n];
-  t.__esModule && Object.defineProperty(o, "__esModule", { value: !0 });
+  for (var n in t) {
+    o[n] = t[n];
+  }
+  if (t.__esModule) {
+    Object.defineProperty(o, "__esModule", {
+      value: true
+    });
+  }
 })();

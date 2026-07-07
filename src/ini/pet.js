@@ -18,10 +18,10 @@
       lastY: "",
       yb: 300,
       lastLoginTime: "",
-      onlineDataTime: 0,
+      onlineDataTime: 0
     },
     maxInfo: {
-      stopGrowth: !1,
+      stopGrowth: false,
       level: "",
       upGrowth: "",
       nextGrowth: "",
@@ -29,7 +29,7 @@
       hunger: "",
       clean: "",
       health: 5,
-      mood: 1e3,
+      mood: 1000
     },
     activeValue: {
       work: {},
@@ -42,19 +42,25 @@
         manner: 0,
         pe: 0,
         labouring: 0,
-        wushu: 0,
-      },
+        wushu: 0
+      }
     },
-    activeOption: { work: null, study: null, trip: null, ill: null, die: null },
+    activeOption: {
+      work: null,
+      study: null,
+      trip: null,
+      ill: null,
+      die: null
+    },
     otherOptions: {
-      pinkDiamond: !1,
+      pinkDiamond: false,
       growth: 0,
       growthValue: 0,
       growthValue_next: 0,
       pinkDiamondLevel: 0,
       pinkDiamondBeginDate: 0,
       pinkDiamondExpirationDate: 0,
-      sweetHeart: !1,
+      sweetHeart: false
     },
     fishing: {
       fishes: [],
@@ -62,9 +68,9 @@
       allvipcnt: 0,
       canusecnt: 0,
       power: 0,
-      needTime: 0,
+      needTime: 0
     },
-    listenMain: {},
+    listenMain: {}
   };
   const t = {
     chinese: "中文",
@@ -75,253 +81,387 @@
     manner: "礼仪",
     pe: "体育",
     labouring: "劳技",
-    wushu: "武术",
+    wushu: "武术"
   };
-  ((global.isStudyUpLevel = (e) => {
+  global.isStudyUpLevel = e => {
     switch (e) {
       case 9:
       case 20:
       case 40:
       case 95:
-        return !0;
+        return true;
       default:
-        return !1;
+        return false;
     }
-  }),
-    (global.getStudyLevel = (e, n, i) => {
-      let a = "";
-      if (i) {
-        switch (!0) {
-          case n >= 9 && n < 20:
-            a = "小学";
-            break;
-          case n >= 20 && n < 40:
-            a = "中学";
-            break;
-          case n >= 40 && n < 95:
-            a = "大学";
-            break;
-          case n >= 95:
-            a = "研究生";
-        }
-        return a + t[e];
-      }
-      switch (!0) {
-        case n > 0 && n < 9:
+  };
+  global.getStudyLevel = (e, n, i) => {
+    let a = "";
+    if (i) {
+      switch (true) {
+        case n >= 9 && n < 20:
           a = "小学";
           break;
-        case n > 9 && n <= 20:
+        case n >= 20 && n < 40:
           a = "中学";
           break;
-        case n > 20 && n <= 40:
+        case n >= 40 && n < 95:
           a = "大学";
           break;
-        case n > 40 && n <= 95:
+        case n >= 95:
           a = "研究生";
-          break;
-        case n > 95:
-          a = "学无止境";
       }
       return a + t[e];
-    }));
-  const n = [
-      "growth",
-      "hunger",
-      "clean",
-      "health",
-      "mood",
-      "intel",
-      "charm",
-      "strong",
-      "onLineTime",
-    ],
-    i = {
-      growth: 0,
-      hunger: 0,
-      clean: 0,
-      health: 0,
-      mood: 0,
-      intel: 0,
-      charm: 0,
-      strong: 0,
-      onLineTime: 0,
-    },
-    a = ["listenMain", "system", "cache"];
-  ((global.setPetInfo = (t = {}) => {
-    let {
-        info: l,
-        maxInfo: s,
-        activeOption: r,
-        otherOptions: c,
-        activeValue: h,
-        fishing: f,
-      } = t,
-      u = null,
-      g = null,
-      m = null,
-      p = null,
-      d = null;
-    if (((changeFishing = null), l)) {
-      for (let t in e.info)
-        (0 == i[t] && (i[t] = 1),
-          (!l[t] && 0 !== l[t]) ||
-            l[t] == e.info[t] ||
-            (n.includes(t) && !l[t] && (l[t] = "0"),
-            g || (g = {}),
-            (g[t] = l[t]),
-            g[t] - e.info[t] > 0 && (g["add" + t] = g[t] - e.info[t]),
-            (e.info[t] = g[t])));
-      for (let t in i) (0 == i[t] && (e.info[t] = "0"), (i[t] = 0));
     }
-    if (s)
-      for (let t in e.maxInfo)
-        (!s[t] && 0 !== s[t] && !1 !== s[t]) ||
-          s[t] == e.maxInfo[t] ||
-          (u || (u = {}), (u[t] = s[t]), (e.maxInfo[t] = u[t]));
-    if (r)
-      for (let t in e.activeOption)
-        r[t] != e.activeOption[t] &&
-          (m || (m = {}), (m[t] = r[t]), (e.activeOption[t] = m[t]));
-    if (h)
-      for (let t in e.activeValue)
-        h[t] != e.activeValue[t] &&
-          (p || (p = {}), (p[t] = h[t]), (e.activeValue[t] = p[t]));
-    if (c)
-      for (let t in e.otherOptions)
-        null != c[t] &&
-          c[t] != e.otherOptions[t] &&
-          (d || (d = {}), (d[t] = c[t]), (e.otherOptions[t] = d[t]));
-    if (f)
-      for (let t in e.fishing)
-        null != f[t] &&
-          f[t] != e.fishing[t] &&
-          (changeFishing || (changeFishing = {}),
-          (changeFishing[t] = f[t]),
-          (e.fishing[t] = changeFishing[t]));
-    if (!(u || g || m || d || p || changeFishing)) return;
-    let b = { ...e };
-    for (let e in a) b?.[a[e]] && delete b?.[a[e]];
-    let v = { changeInfo: g, changeMax: u, changeValue: p, ...b };
-    if (($Store.setItem("pet", v), !o)) {
-      if (e.listenMain.pet)
-        for (let t in e.listenMain.pet) e.listenMain.pet[t](v);
+    switch (true) {
+      case n > 0 && n < 9:
+        a = "小学";
+        break;
+      case n > 9 && n <= 20:
+        a = "中学";
+        break;
+      case n > 20 && n <= 40:
+        a = "大学";
+        break;
+      case n > 40 && n <= 95:
+        a = "研究生";
+        break;
+      case n > 95:
+        a = "学无止境";
+    }
+    return a + t[e];
+  };
+  const n = ["growth", "hunger", "clean", "health", "mood", "intel", "charm", "strong", "onLineTime"];
+  const i = {
+    growth: 0,
+    hunger: 0,
+    clean: 0,
+    health: 0,
+    mood: 0,
+    intel: 0,
+    charm: 0,
+    strong: 0,
+    onLineTime: 0
+  };
+  const a = ["listenMain", "system", "cache"];
+  global.setPetInfo = (t = {}) => {
+    let {
+      info: l,
+      maxInfo: s,
+      activeOption: r,
+      otherOptions: c,
+      activeValue: h,
+      fishing: f
+    } = t;
+    let u = null;
+    let g = null;
+    let m = null;
+    let p = null;
+    let d = null;
+    changeFishing = null;
+    if (l) {
+      for (let t in e.info) {
+        if (i[t] == 0) {
+          i[t] = 1;
+        }
+        if ((!!l[t] || l[t] === 0) && l[t] != e.info[t]) {
+          if (n.includes(t) && !l[t]) {
+            l[t] = "0";
+          }
+          g ||= {};
+          g[t] = l[t];
+          if (g[t] - e.info[t] > 0) {
+            g["add" + t] = g[t] - e.info[t];
+          }
+          e.info[t] = g[t];
+        }
+      }
+      for (let t in i) {
+        if (i[t] == 0) {
+          e.info[t] = "0";
+        }
+        i[t] = 0;
+      }
+    }
+    if (s) {
+      for (let t in e.maxInfo) {
+        if ((!!s[t] || s[t] === 0 || s[t] === false) && s[t] != e.maxInfo[t]) {
+          u ||= {};
+          u[t] = s[t];
+          e.maxInfo[t] = u[t];
+        }
+      }
+    }
+    if (r) {
+      for (let t in e.activeOption) {
+        if (r[t] != e.activeOption[t]) {
+          m ||= {};
+          m[t] = r[t];
+          e.activeOption[t] = m[t];
+        }
+      }
+    }
+    if (h) {
+      for (let t in e.activeValue) {
+        if (h[t] != e.activeValue[t]) {
+          p ||= {};
+          p[t] = h[t];
+          e.activeValue[t] = p[t];
+        }
+      }
+    }
+    if (c) {
+      for (let t in e.otherOptions) {
+        if (c[t] != null && c[t] != e.otherOptions[t]) {
+          d ||= {};
+          d[t] = c[t];
+          e.otherOptions[t] = d[t];
+        }
+      }
+    }
+    if (f) {
+      for (let t in e.fishing) {
+        if (f[t] != null && f[t] != e.fishing[t]) {
+          changeFishing ||= {};
+          changeFishing[t] = f[t];
+          e.fishing[t] = changeFishing[t];
+        }
+      }
+    }
+    if (!u && !g && !m && !d && !p && !changeFishing) {
+      return;
+    }
+    let b = {
+      ...e
+    };
+    for (let e in a) {
+      if (b?.[a[e]]) {
+        delete b?.[a[e]];
+      }
+    }
+    let v = {
+      changeInfo: g,
+      changeMax: u,
+      changeValue: p,
+      ...b
+    };
+    $Store.setItem("pet", v);
+    if (!o) {
+      if (e.listenMain.pet) {
+        for (let t in e.listenMain.pet) {
+          e.listenMain.pet[t](v);
+        }
+      }
       return v;
     }
-  }),
-    (global.getPetInfo = (t) => {
-      let n = { ...e };
-      for (let e in a) n?.[a[e]] && delete n?.[a[e]];
-      return n;
-    }),
-    (global.getPetInfoOne = (t, n) => {
-      if (n) return t ? e?.[n]?.[t] || "" : e?.[n] || {};
-      let i = "";
-      for (let n in e) {
-        for (let a in e[n])
-          if (a == t) {
-            i = e[n][a];
-            break;
-          }
-        if ("" !== i) break;
+  };
+  global.getPetInfo = t => {
+    let n = {
+      ...e
+    };
+    for (let e in a) {
+      if (n?.[a[e]]) {
+        delete n?.[a[e]];
       }
-      return i;
-    }));
+    }
+    return n;
+  };
+  global.getPetInfoOne = (t, n) => {
+    if (n) {
+      if (t) {
+        return e?.[n]?.[t] || "";
+      } else {
+        return e?.[n] || {};
+      }
+    }
+    let i = "";
+    for (let n in e) {
+      for (let a in e[n]) {
+        if (a == t) {
+          i = e[n][a];
+          break;
+        }
+      }
+      if (i !== "") {
+        break;
+      }
+    }
+    return i;
+  };
   const l = ["hunger", "clean", "mood", "intel", "charm", "strong"];
-  ((global.addPetInfo = (t) => {
+  global.addPetInfo = t => {
     let n = {};
-    for (let i in t)
+    for (let i in t) {
       if (t[i] && l.includes(i) && +e.info[i] == +e.info[i] && +t[i] == +t[i]) {
         let a = +e.info[i] + +t[i];
-        a <= (e?.maxInfo[i] || 99999999999999) && (n[i] = a);
+        if (a <= (e?.maxInfo[i] || 99999999999999)) {
+          n[i] = a;
+        }
       }
-    setPetInfo({ info: n });
-  }),
-    (global.listenInfo = (t) => {
-      let { event: n, name: i, fn: a } = t;
-      (e.listenMain[n] || (e.listenMain[n] = {}), (e.listenMain[n][i] = a));
-    }),
-    (global.unListenInfo = (t) => {
-      let { event: n, name: i } = t;
-      e.listenMain[n][i] &&
-        ((e.listenMain[n][i] = null), delete e.listenMain[n][i]);
-    }),
-    (e.system = {
-      clip: !0,
-      doNotDisturb: !1,
-      startupSelf: !1,
-      shortcuts: {
-        screenshot: ["ALT", "Q"],
-        openStting: ["ALT", "D"],
-        god: ["ALT", "."],
-      },
-      opacity: 1,
-      getOption: !1,
-      floatStyle: !1,
-    }),
-    (global.setSys = (t = {}) => {
-      let { name: n, value: i, upName: a, init: l } = t;
-      if (
-        (("opacity" != n && null == l?.opacity) ||
-          windowsMain.setOpacity("opacity" == n ? i || 1 : l.opacity || 1),
-        l)
-      )
-        return void (e.system = l);
-      if (!n) return;
-      if (a) {
-        if (!e.system[a]) return;
-        e.system[a][n] = i;
-      } else e.system[n] = i;
-      if (o) return;
-      let s = !1;
-      if (e.listenMain.system) {
-        s = { ...e.system, isCHange: { label: n, value: i } };
-        for (let t in e.listenMain.system) e.listenMain.system[t](s);
+    }
+    setPetInfo({
+      info: n
+    });
+  };
+  global.listenInfo = t => {
+    let {
+      event: n,
+      name: i,
+      fn: a
+    } = t;
+    e.listenMain[n] ||= {};
+    e.listenMain[n][i] = a;
+  };
+  global.unListenInfo = t => {
+    let {
+      event: n,
+      name: i
+    } = t;
+    if (e.listenMain[n][i]) {
+      e.listenMain[n][i] = null;
+      delete e.listenMain[n][i];
+    }
+  };
+  e.system = {
+    clip: true,
+    doNotDisturb: false,
+    startupSelf: false,
+    shortcuts: {
+      screenshot: ["ALT", "Q"],
+      openStting: ["ALT", "D"],
+      god: ["ALT", "."]
+    },
+    opacity: 1,
+    getOption: false,
+    floatStyle: false
+  };
+  global.setSys = (t = {}) => {
+    let {
+      name: n,
+      value: i,
+      upName: a,
+      init: l
+    } = t;
+    if (n == "opacity" || l?.opacity != null) {
+      windowsMain.setOpacity(n == "opacity" ? i || 1 : l.opacity || 1);
+    }
+    if (l) {
+      e.system = l;
+      return;
+    }
+    if (!n) {
+      return;
+    }
+    if (a) {
+      if (!e.system[a]) {
+        return;
       }
-      return ($Store.setItem("sys", e.system), s);
-    }),
-    (global.getSys = (t) => (t ? e.system[t] || void 0 : e.system)));
-  let o = !1;
-  ((global.outProjectMain = () => o),
-    (global.setOutProjectMain = (e) => {
-      o = e;
-    }),
-    (e.cache = {
-      gift: { sign: [], online: [] },
-      store: { food: [], commodity: [], medicine: [], background: [] },
-    }),
-    (global.getCache = (t, n) => {
-      if (!t) return e.cache;
-      let i = e.cache;
-      return (n && (i = i[n]), i?.[t] || void 0);
-    }),
-    (global.setCache = (t = {}) => {
-      let { name: n, value: i, upName: a, init: l } = t;
-      if (l) return void (e.cache = l);
-      if (!n) return;
-      if (a) {
-        if (!e.cache[a]) return;
-        e.cache[a][n] = i;
-      } else e.cache[n] = i;
-      if (o) return;
-      let s = !1;
-      if (e.listenMain.cache) {
-        s = { ...e.cache, isCHange: { label: n, value: i } };
-        for (let t in e.listenMain.cache) e.listenMain.cache[t](s);
+      e.system[a][n] = i;
+    } else {
+      e.system[n] = i;
+    }
+    if (o) {
+      return;
+    }
+    let s = false;
+    if (e.listenMain.system) {
+      s = {
+        ...e.system,
+        isCHange: {
+          label: n,
+          value: i
+        }
+      };
+      for (let t in e.listenMain.system) {
+        e.listenMain.system[t](s);
       }
-      return ($Store.setItem("cache", e.cache), s);
-    }),
-    (global.HaveUpdate = !0),
-    (global.UpdateDowning = !1),
-    (global.UpdateChecking = !1),
-    (global.HaveUpdateListen = {}),
-    (global.ChangeHaveUpdate = (e) => {
-      ((HaveUpdate = e), (UpdateChecking = !1));
-      for (let t in HaveUpdateListen) HaveUpdateListen[t](e);
-    }),
-    (global.SetHaveUpdateListen = (e, t) => {
-      ((HaveUpdateListen[e] = t),
-        console.log("ooo", e),
-        HaveUpdateListen[e](HaveUpdate));
-    }),
-    (module.exports = {}));
+    }
+    $Store.setItem("sys", e.system);
+    return s;
+  };
+  global.getSys = t => t ? e.system[t] || undefined : e.system;
+  let o = false;
+  global.outProjectMain = () => o;
+  global.setOutProjectMain = e => {
+    o = e;
+  };
+  e.cache = {
+    gift: {
+      sign: [],
+      online: []
+    },
+    store: {
+      food: [],
+      commodity: [],
+      medicine: [],
+      background: []
+    }
+  };
+  global.getCache = (t, n) => {
+    if (!t) {
+      return e.cache;
+    }
+    let i = e.cache;
+    if (n) {
+      i = i[n];
+    }
+    return i?.[t] || undefined;
+  };
+  global.setCache = (t = {}) => {
+    let {
+      name: n,
+      value: i,
+      upName: a,
+      init: l
+    } = t;
+    if (l) {
+      e.cache = l;
+      return;
+    }
+    if (!n) {
+      return;
+    }
+    if (a) {
+      if (!e.cache[a]) {
+        return;
+      }
+      e.cache[a][n] = i;
+    } else {
+      e.cache[n] = i;
+    }
+    if (o) {
+      return;
+    }
+    let s = false;
+    if (e.listenMain.cache) {
+      s = {
+        ...e.cache,
+        isCHange: {
+          label: n,
+          value: i
+        }
+      };
+      for (let t in e.listenMain.cache) {
+        e.listenMain.cache[t](s);
+      }
+    }
+    $Store.setItem("cache", e.cache);
+    return s;
+  };
+  global.HaveUpdate = true;
+  global.UpdateDowning = false;
+  global.UpdateChecking = false;
+  global.HaveUpdateListen = {};
+  global.ChangeHaveUpdate = e => {
+    HaveUpdate = e;
+    UpdateChecking = false;
+    for (let t in HaveUpdateListen) {
+      HaveUpdateListen[t](e);
+    }
+  };
+  global.SetHaveUpdateListen = (e, t) => {
+    HaveUpdateListen[e] = t;
+    console.log("ooo", e);
+    HaveUpdateListen[e](HaveUpdate);
+  };
+  module.exports = {};
 })();

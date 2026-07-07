@@ -1,23 +1,34 @@
-const _require = eval("require"),
-  { app, Menu, MenuItem, Tray, nativeImage } = _require("electron"),
-  path = _require("path"),
-  icons = path.join(__dirname, "../../assets/tray-icon.png"),
-  loadTrayIcon = function (p) {
-    try {
-      let img = nativeImage.createFromPath(p);
-      if (img.isEmpty()) return nativeImage.createFromPath(icons);
-      return img.resize({ width: 18, height: 18 });
-    } catch (e) {
+const _require = eval("require");
+const {
+  app,
+  Menu,
+  MenuItem,
+  Tray,
+  nativeImage
+} = _require("electron");
+const path = _require("path");
+const icons = path.join(__dirname, "../../assets/tray-icon.png");
+const loadTrayIcon = function (p) {
+  try {
+    let img = nativeImage.createFromPath(p);
+    if (img.isEmpty()) {
       return nativeImage.createFromPath(icons);
     }
-  };
+    return img.resize({
+      width: 18,
+      height: 18
+    });
+  } catch (e) {
+    return nativeImage.createFromPath(icons);
+  }
+};
 class MenuCreate {
   menu = {};
   tray = {};
   constructor(e = {}) {
-    ((this.menu = new Menu()),
-      (this.tray = new Tray(loadTrayIcon(e?.icon || icons))),
-      this.tray.setToolTip(e?.title || "pet"));
+    this.menu = new Menu();
+    this.tray = new Tray(loadTrayIcon(e?.icon || icons));
+    this.tray.setToolTip(e?.title || "pet");
   }
   addMenus(e) {
     for (let t in e) {
@@ -26,14 +37,21 @@ class MenuCreate {
     }
   }
   addTrays(e) {
-    for (let t in e)
-      (e[t].on || (e[t].Fn && !e[t].trayList)) &&
+    for (let t in e) {
+      if (e[t].on || e[t].Fn && !e[t].trayList) {
         this.tray.on(e[t].on, (a, r) => {
           if (e[t].trayList && e[t].trayList.length > 0) {
             const a = Menu.buildFromTemplate([...e[t].trayList]);
             this.tray.popUpContextMenu(a);
-          } else e[t].Fn && e[t].Fn && e[t].Fn({ event: a, bounds: r });
+          } else if (e[t].Fn && e[t].Fn) {
+            e[t].Fn({
+              event: a,
+              bounds: r
+            });
+          }
         });
+      }
+    }
   }
   visibleMenu(e, t) {
     this.menu.getMenuItemById(e).visible = t;
@@ -41,83 +59,120 @@ class MenuCreate {
   activeTraysIconTime = null;
   oldActiveTraysIcon = {};
   activeTraysIcon(e = {}) {
-    let { name: t, time: a, change: r } = e,
-      s = getTranIcon(t);
-    if (this.oldActiveTraysIcon?.opt?.needHead && !s?.opt?.must && !r) return;
-    if (
-      ((this.oldActiveTraysIcon = s),
-      this.activeTraysIconTime && clearTimeout(this.activeTraysIconTime),
-      "string" == typeof s.opt)
-    ) {
+    let {
+      name: t,
+      time: a,
+      change: r
+    } = e;
+    let s = getTranIcon(t);
+    if (this.oldActiveTraysIcon?.opt?.needHead && !s?.opt?.must && !r) {
+      return;
+    }
+    this.oldActiveTraysIcon = s;
+    if (this.activeTraysIconTime) {
+      clearTimeout(this.activeTraysIconTime);
+    }
+    if (typeof s.opt == "string") {
       try {
-        this.tray.setImage(
-          loadTrayIcon(
-            path.join(
-              __dirname,
-              "../../assets/img_res/Tray/" + s.sex + "/" + s.opt,
-            ),
-          ),
-        );
+        this.tray.setImage(loadTrayIcon(path.join(__dirname, "../../assets/img_res/Tray/" + s.sex + "/" + s.opt)));
       } catch (e) {}
       return;
     }
-    let n = (e) => {
+    let n = e => {
       try {
-        this.tray.setImage(
-          loadTrayIcon(
-            path.join(
-              __dirname,
-              "../../assets/img_res/Tray/" +
-                s.sex +
-                "/" +
-                s.name +
-                "/" +
-                e +
-                ".ico",
-            ),
-          ),
-        );
+        this.tray.setImage(loadTrayIcon(path.join(__dirname, "../../assets/img_res/Tray/" + s.sex + "/" + s.name + "/" + e + ".ico")));
       } catch (e) {}
-      this.activeTraysIconTime = setTimeout(
-        () => {
-          let t = e + 1 > s.opt.end ? s.opt.start : e + 1;
-          n(t);
-        },
-        a || s?.time || 350,
-      );
+      this.activeTraysIconTime = setTimeout(() => {
+        let t = e + 1 > s.opt.end ? s.opt.start : e + 1;
+        n(t);
+      }, a || s?.time || 350);
     };
-    s?.opt?.start && s?.opt?.end && n(s.opt.start);
+    if (s?.opt?.start && s?.opt?.end) {
+      n(s.opt.start);
+    }
   }
   setTrayToolTip(e) {
     this.tray.setToolTip(e || "pet");
   }
   destroyTray() {
-    (this.activeTraysIconTime &&
-      (clearTimeout(this.activeTraysIconTime),
-      (this.activeTraysIconTime = null)),
-      this.tray.destroy && (this.tray.destroy(), (this.tray = {})));
+    if (this.activeTraysIconTime) {
+      clearTimeout(this.activeTraysIconTime);
+      this.activeTraysIconTime = null;
+    }
+    if (this.tray.destroy) {
+      this.tray.destroy();
+      this.tray = {};
+    }
   }
 }
 try {
-  module && (module.exports = { MenuCreate });
+  if (module) {
+    module.exports = {
+      MenuCreate
+    };
+  }
 } catch (e) {}
 let traysModel = {
-  normal: { start: 1, end: 4 },
+  normal: {
+    start: 1,
+    end: 4
+  },
   leave: "leave.ico",
-  dirty: { start: 1, end: 4 },
-  event: { start: 1, end: 2 },
-  feast: { start: 1, end: 3, needHead: !0 },
-  game: { start: 1, end: 4, needHead: !0 },
-  hungry: { start: 1, end: 4 },
-  ill: { start: 1, end: 2, must: !0 },
-  pause: { start: 1, end: 5, must: !0 },
-  study: { start: 1, end: 4, needHead: !0 },
-  trip: { start: 1, end: 3, needHead: !0 },
-  work: { start: 1, end: 3, needHead: !0 },
-  dead: { start: 1, end: 2, must: !0 },
+  dirty: {
+    start: 1,
+    end: 4
+  },
+  event: {
+    start: 1,
+    end: 2
+  },
+  feast: {
+    start: 1,
+    end: 3,
+    needHead: true
+  },
+  game: {
+    start: 1,
+    end: 4,
+    needHead: true
+  },
+  hungry: {
+    start: 1,
+    end: 4
+  },
+  ill: {
+    start: 1,
+    end: 2,
+    must: true
+  },
+  pause: {
+    start: 1,
+    end: 5,
+    must: true
+  },
+  study: {
+    start: 1,
+    end: 4,
+    needHead: true
+  },
+  trip: {
+    start: 1,
+    end: 3,
+    needHead: true
+  },
+  work: {
+    start: 1,
+    end: 3,
+    needHead: true
+  },
+  dead: {
+    start: 1,
+    end: 2,
+    must: true
+  }
 };
-const getTranIcon = (e) => ({
-  sex: "GG" == getPetInfo().info.sex ? "Boy" : "Girl",
+const getTranIcon = e => ({
+  sex: getPetInfo().info.sex == "GG" ? "Boy" : "Girl",
   name: e && traysModel[e] ? e : "normal",
-  opt: e && traysModel[e] ? traysModel[e] : traysModel.normal,
+  opt: e && traysModel[e] ? traysModel[e] : traysModel.normal
 });

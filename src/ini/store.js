@@ -1,11 +1,15 @@
-const _require = eval("require"),
-  Store = _require("electron-store");
+const _require = eval("require");
+const Store = _require("electron-store");
 class St {
   ElectronStore = null;
-  option = { name: "config", fileExtension: "json", clearInvalidConfig: !0 };
+  option = {
+    name: "config",
+    fileExtension: "json",
+    clearInvalidConfig: true
+  };
   constructor() {
-    ((this.option.name = "config-macos"),
-      (this.ElectronStore = new Store(this.option)));
+    this.option.name = "config-macos";
+    this.ElectronStore = new Store(this.option);
   }
   setItem(e, t) {
     this.ElectronStore.set(e, t);

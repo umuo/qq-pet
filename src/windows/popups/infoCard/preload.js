@@ -1,17 +1,18 @@
-const _require = eval("require"),
-  { contextBridge, ipcRenderer } = _require("electron");
+const _require = eval("require");
+const {
+  contextBridge,
+  ipcRenderer
+} = _require("electron");
 let main_html = {
-    infoCard_ToHtmlPetInfo: (e) =>
-      ipcRenderer.on("infoCard_bus-htmlPetInfo", e),
-  },
-  html_main = {
-    infoCard_ToMain_Change: (e) =>
-      ipcRenderer.send("infoCard_bus-Main_change", e),
-  };
+  infoCard_ToHtmlPetInfo: e => ipcRenderer.on("infoCard_bus-htmlPetInfo", e)
+};
+let html_main = {
+  infoCard_ToMain_Change: e => ipcRenderer.send("infoCard_bus-Main_change", e)
+};
 contextBridge.exposeInMainWorld("electronAPI", {
-  infoCard_setSay: (e) => ipcRenderer.send("infoCard_set-say", e),
-  infoCard_ToHtml: (e) => ipcRenderer.on("infoCard_bus-html", e),
-  infoCard_ToMain: (e) => ipcRenderer.send("infoCard_bus-Main", e),
+  infoCard_setSay: e => ipcRenderer.send("infoCard_set-say", e),
+  infoCard_ToHtml: e => ipcRenderer.on("infoCard_bus-html", e),
+  infoCard_ToMain: e => ipcRenderer.send("infoCard_bus-Main", e),
   ...main_html,
-  ...html_main,
+  ...html_main
 });

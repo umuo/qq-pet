@@ -1,22 +1,22 @@
-const _require = eval("require"),
-  { contextBridge, ipcRenderer } = _require("electron");
+const _require = eval("require");
+const {
+  contextBridge,
+  ipcRenderer
+} = _require("electron");
 let main_html = {
-    stateInfo_ToHtmlPetInfo: (e) =>
-      ipcRenderer.on("stateInfo_bus-htmlPetInfo", e),
-    stateInfo_ToHtmlFB: (e) => ipcRenderer.on("stateInfo_bus-htmlFB", e),
-  },
-  html_main = {
-    stateInfo_ToMainUpData: (e) => ipcRenderer.send("stateInfo_bus-upData", e),
-    stateInfo_ToMainClose: (e) => ipcRenderer.send("stateInfo_bus-close", e),
-    stateInfo_ToMainOpenActive: (e) =>
-      ipcRenderer.send("stateInfo_bus-openActive", e),
-    stateInfo_h_stopState: (e) =>
-      ipcRenderer.send("stateInfo_h_stopState_m", e),
-  };
+  stateInfo_ToHtmlPetInfo: e => ipcRenderer.on("stateInfo_bus-htmlPetInfo", e),
+  stateInfo_ToHtmlFB: e => ipcRenderer.on("stateInfo_bus-htmlFB", e)
+};
+let html_main = {
+  stateInfo_ToMainUpData: e => ipcRenderer.send("stateInfo_bus-upData", e),
+  stateInfo_ToMainClose: e => ipcRenderer.send("stateInfo_bus-close", e),
+  stateInfo_ToMainOpenActive: e => ipcRenderer.send("stateInfo_bus-openActive", e),
+  stateInfo_h_stopState: e => ipcRenderer.send("stateInfo_h_stopState_m", e)
+};
 contextBridge.exposeInMainWorld("electronAPI", {
-  stateInfo_setSay: (e) => ipcRenderer.send("stateInfo_set-say", e),
-  stateInfo_ToHtml: (e) => ipcRenderer.on("stateInfo_bus-html", e),
-  stateInfo_ToMain: (e) => ipcRenderer.send("stateInfo_bus-Main", e),
+  stateInfo_setSay: e => ipcRenderer.send("stateInfo_set-say", e),
+  stateInfo_ToHtml: e => ipcRenderer.on("stateInfo_bus-html", e),
+  stateInfo_ToMain: e => ipcRenderer.send("stateInfo_bus-Main", e),
   ...main_html,
-  ...html_main,
+  ...html_main
 });

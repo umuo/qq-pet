@@ -1,63 +1,94 @@
 (() => {
-  var e = {},
-    o = (e) => {
-      window.electronAPI.fishing_h_bus(e);
-    },
-    t = null;
+  var e = {};
+  var o = e => {
+    window.electronAPI.fishing_h_bus(e);
+  };
+  var t = null;
   const s = {
-    data: () => ({ url: "", doerrIs: !1, t: null }),
+    data: () => ({
+      url: "",
+      doerrIs: false,
+      t: null
+    }),
     computed: {},
     created() {},
     mounted() {
       let e = this;
-      (window.electronAPI.fishing_m_bus((s, r) => {
-        (console.log("msg", r),
-          "load" == r.type
-            ? ((e.url = r.data),
-              seeApp(),
+      window.electronAPI.fishing_m_bus((s, r) => {
+        console.log("msg", r);
+        if (r.type == "load") {
+          e.url = r.data;
+          seeApp();
+          setTimeout(() => {
+            let e = document.querySelector("iframe");
+            console.log("ifram", e);
+            e.addEventListener("load", e => {
+              (t = e.target.contentWindow.window).getPetInfoFromMain = function () {
+                console.log("getInfo");
+                o({
+                  event: "getInfo"
+                });
+              };
+              t.saveInfoData = e => {
+                console.log("datas", e);
+                o({
+                  event: "saveDatas",
+                  data: e
+                });
+              };
+              t.close_game = () => {
+                o({
+                  event: "close"
+                });
+              };
               setTimeout(() => {
-                let e = document.querySelector("iframe");
-                (console.log("ifram", e),
-                  e.addEventListener("load", (e) => {
-                    (((t = e.target.contentWindow.window).getPetInfoFromMain =
-                      function () {
-                        (console.log("getInfo"), o({ event: "getInfo" }));
-                      }),
-                      (t.saveInfoData = (e) => {
-                        (console.log("datas", e),
-                          o({ event: "saveDatas", data: e }));
-                      }),
-                      (t.close_game = () => {
-                        o({ event: "close" });
-                      }),
-                      setTimeout(() => {
-                        ((t.selfeLoad = !0), console.log("selfeLoad", t));
-                      }, 0));
-                  }));
-              }, 0))
-            : "setPetInfo" == r.type && t && t.setPetInfo(r.data));
-      }),
-        o({ event: "mounted" }));
+                t.selfeLoad = true;
+                console.log("selfeLoad", t);
+              }, 0);
+            });
+          }, 0);
+        } else if (r.type == "setPetInfo" && t) {
+          t.setPetInfo(r.data);
+        }
+      });
+      o({
+        event: "mounted"
+      });
     },
     methods: {
       closeWindow() {
-        o({ event: "close" });
+        o({
+          event: "close"
+        });
       },
       doError() {
-        this.doerrIs
-          ? (console.log("iframeWindow?.errorFishesDo", t, t?.errorFishesDo),
-            t?.errorFishesDo && t.errorFishesDo(),
-            (this.doerrIs = !1),
-            this.t && clearTimeout(this.t))
-          : ((this.doerrIs = !0),
-            (this.t = setTimeout(() => {
-              ((this.doerrIs = !1), (this.t = null));
-            }, 5e3)));
-      },
-    },
+        if (this.doerrIs) {
+          console.log("iframeWindow?.errorFishesDo", t, t?.errorFishesDo);
+          if (t?.errorFishesDo) {
+            t.errorFishesDo();
+          }
+          this.doerrIs = false;
+          if (this.t) {
+            clearTimeout(this.t);
+          }
+        } else {
+          this.doerrIs = true;
+          this.t = setTimeout(() => {
+            this.doerrIs = false;
+            this.t = null;
+          }, 5000);
+        }
+      }
+    }
   };
   Vue.createApp(s).mount("#app");
   var r = window;
-  for (var n in e) r[n] = e[n];
-  e.__esModule && Object.defineProperty(r, "__esModule", { value: !0 });
+  for (var n in e) {
+    r[n] = e[n];
+  }
+  if (e.__esModule) {
+    Object.defineProperty(r, "__esModule", {
+      value: true
+    });
+  }
 })();

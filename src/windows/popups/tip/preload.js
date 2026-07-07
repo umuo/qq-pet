@@ -1,11 +1,16 @@
-const _require = eval("require"),
-  { contextBridge, ipcRenderer } = _require("electron");
-let main_html = { tip_m_setData: (e) => ipcRenderer.on("tip_m_setData_h", e) },
-  html_main = {};
+const _require = eval("require");
+const {
+  contextBridge,
+  ipcRenderer
+} = _require("electron");
+let main_html = {
+  tip_m_setData: e => ipcRenderer.on("tip_m_setData_h", e)
+};
+let html_main = {};
 contextBridge.exposeInMainWorld("electronAPI", {
-  tip_h_say: (e) => ipcRenderer.send("tip_h_say_m", e),
-  tip_m_bus: (e) => ipcRenderer.on("tip_m_bus_h", e),
-  tip_h_bus: (e) => ipcRenderer.send("tip_h_bus_m", e),
+  tip_h_say: e => ipcRenderer.send("tip_h_say_m", e),
+  tip_m_bus: e => ipcRenderer.on("tip_m_bus_h", e),
+  tip_h_bus: e => ipcRenderer.send("tip_h_bus_m", e),
   ...main_html,
-  ...html_main,
+  ...html_main
 });

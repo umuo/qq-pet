@@ -1,119 +1,136 @@
-const _require = eval("require"),
-  path = _require("path");
+const _require = eval("require");
+const path = _require("path");
 class mainClass {
   constructor(e) {
-    ((this.window = null), (this.show = !1), (this.name = "store"));
+    this.window = null;
+    this.show = false;
+    this.name = "store";
   }
   cleate(e) {
-    ((this.width = 840), (this.height = 640));
+    this.width = 840;
+    this.height = 640;
     let o = this;
-    windowsMain
-      .open({
-        name: this.name,
-        loadFile: "popups/" + this.name,
-        default: { width: this.width, height: this.height },
-        created(e) {
-          let { vm: s, preloads: t, getinfo: _, wsMethods: n } = e;
-          const a = (e) => {
-            s.webContents.send("store_m_petInfo_h", { type: "info", data: e });
-          };
-          (t({
-            store_h_say_m: (e, o) => {
-              console.log(o, " --- store_h_say_m say");
-            },
-            store_h_bus_m: (e, t) => {
-              "mounted" == t.event
-                ? (s.webContents.send("store_m_bus", {
-                    data: getPetInfo(),
-                    type: "load",
-                  }),
-                  a(getPetInfo()))
-                : "close" == t.event
-                  ? o.doClose()
-                  : "shortcut" == t.event &&
-                    global.runCheatShortcut &&
-                    global.runCheatShortcut(t.key);
-            },
-            store_h_listGoods_m: (e, t) => {
-              try {
-                const type = t?.type;
-                if (!type || !petControl?.Goods) return;
-                const keys = petControl.Goods.getOurGoods(type);
-                const items = petControl.Goods.getGoodsInfo({
-                  goodNames: keys,
-                });
-                s.webContents.send("store_m_goods_h", {
-                  type,
-                  items: Array.isArray(items) ? items : [],
-                });
-              } catch (err) {
-                s.webContents.send("store_m_goods_h", {
-                  type: t?.type || "",
-                  items: [],
-                  error: String(err?.message || err),
+    windowsMain.open({
+      name: this.name,
+      loadFile: "popups/" + this.name,
+      default: {
+        width: this.width,
+        height: this.height
+      },
+      created(e) {
+        let {
+          vm: s,
+          preloads: t,
+          getinfo: _,
+          wsMethods: n
+        } = e;
+        const a = e => {
+          s.webContents.send("store_m_petInfo_h", {
+            type: "info",
+            data: e
+          });
+        };
+        t({
+          store_h_say_m: (e, o) => {
+            console.log(o, " --- store_h_say_m say");
+          },
+          store_h_bus_m: (e, t) => {
+            if (t.event == "mounted") {
+              s.webContents.send("store_m_bus", {
+                data: getPetInfo(),
+                type: "load"
+              });
+              a(getPetInfo());
+            } else if (t.event == "close") {
+              o.doClose();
+            } else if (t.event == "shortcut" && global.runCheatShortcut) {
+              global.runCheatShortcut(t.key);
+            }
+          },
+          store_h_listGoods_m: (e, t) => {
+            try {
+              const type = t?.type;
+              if (!type || !petControl?.Goods) {
+                return;
+              }
+              const keys = petControl.Goods.getOurGoods(type);
+              const items = petControl.Goods.getGoodsInfo({
+                goodNames: keys
+              });
+              s.webContents.send("store_m_goods_h", {
+                type,
+                items: Array.isArray(items) ? items : []
+              });
+            } catch (err) {
+              s.webContents.send("store_m_goods_h", {
+                type: t?.type || "",
+                items: [],
+                error: String(err?.message || err)
+              });
+            }
+          },
+          store_h_buy_m: (e, t) => {
+            try {
+              if (!petControl?.Goods?.buy) {
+                return s.webContents.send("store_m_buyResult_h", {
+                  ok: false,
+                  msg: "购买功能不可用"
                 });
               }
-            },
-            store_h_buy_m: (e, t) => {
-              try {
-                if (!petControl?.Goods?.buy) {
-                  return s.webContents.send("store_m_buyResult_h", {
-                    ok: !1,
-                    msg: "购买功能不可用",
-                  });
-                }
-                const goodKey = t?.goodKey;
-                const result = petControl.Goods.buy(goodKey);
-                s.webContents.send("store_m_buyResult_h", {
-                  ...result,
-                  goodKey,
-                  petInfo: getPetInfo(),
-                });
-              } catch (err) {
-                s.webContents.send("store_m_buyResult_h", {
-                  ok: !1,
-                  msg: "购买出错: " + String(err?.message || err),
-                });
-              }
-            },
-          }),
-            _([
-              {
-                event: "pet",
-                name: o.name,
-                fn: (e) => {
-                  a(e);
-                },
-              },
-            ]));
-        },
-        onload() {
-          (console.log("onload ", this.name), (o.show = !0));
-        },
-        onshow(e) {
-          (console.log("onshow ", this.name), (o.window = e), (o.show = !0));
-        },
-        onhide() {
-          (console.log("onhide ", this.name), (o.show = !1));
-        },
-        onclose() {
-          (console.log("onclose ", this.name),
-            (o.window = null),
-            (o.show = !1));
-        },
-      })
-      .then((e) => {
-        ((this.window = e), this.init());
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+              const goodKey = t?.goodKey;
+              const result = petControl.Goods.buy(goodKey);
+              s.webContents.send("store_m_buyResult_h", {
+                ...result,
+                goodKey,
+                petInfo: getPetInfo()
+              });
+            } catch (err) {
+              s.webContents.send("store_m_buyResult_h", {
+                ok: false,
+                msg: "购买出错: " + String(err?.message || err)
+              });
+            }
+          }
+        });
+        _([{
+          event: "pet",
+          name: o.name,
+          fn: e => {
+            a(e);
+          }
+        }]);
+      },
+      onload() {
+        console.log("onload ", this.name);
+        o.show = true;
+      },
+      onshow(e) {
+        console.log("onshow ", this.name);
+        o.window = e;
+        o.show = true;
+      },
+      onhide() {
+        console.log("onhide ", this.name);
+        o.show = false;
+      },
+      onclose() {
+        console.log("onclose ", this.name);
+        o.window = null;
+        o.show = false;
+      }
+    }).then(e => {
+      this.window = e;
+      this.init();
+    }).catch(e => {
+      console.log(e);
+    });
   }
   init() {
-    this.show = !0;
+    this.show = true;
   }
   doClose() {
-    (this.window.close(), (this.show = !1));
+    this.window.close();
+    this.show = false;
   }
 }
 let main = new mainClass();

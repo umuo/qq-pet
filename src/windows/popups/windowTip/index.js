@@ -1,26 +1,40 @@
 (() => {
-  var e = {},
-    o = (e) => {
-      window.electronAPI.windowTip_h_bus(e);
-    };
+  var e = {};
+  var o = e => {
+    window.electronAPI.windowTip_h_bus(e);
+  };
   const n = {
-    data: () => ({ toSee: null }),
+    data: () => ({
+      toSee: null
+    }),
     computed: {},
     created() {},
     mounted() {
-      (window.electronAPI.windowTip_m_bus((e, o) => {
-        "load" == o.type && seeApp();
-      }),
-        o({ event: "mounted" }));
+      window.electronAPI.windowTip_m_bus((e, o) => {
+        if (o.type == "load") {
+          seeApp();
+        }
+      });
+      o({
+        event: "mounted"
+      });
     },
     methods: {
       closeWindow() {
-        o({ event: "close" });
-      },
-    },
+        o({
+          event: "close"
+        });
+      }
+    }
   };
   Vue.createApp(n).mount("#app");
   var t = window;
-  for (var d in e) t[d] = e[d];
-  e.__esModule && Object.defineProperty(t, "__esModule", { value: !0 });
+  for (var d in e) {
+    t[d] = e[d];
+  }
+  if (e.__esModule) {
+    Object.defineProperty(t, "__esModule", {
+      value: true
+    });
+  }
 })();
