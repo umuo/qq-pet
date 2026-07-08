@@ -557,7 +557,12 @@
         if (!el) return;
         requestAnimationFrame(() => {
           const el2 = this.$refs.messageContainer;
-          if (el2) el2.scrollTop = el2.scrollHeight;
+          if (!el2) return;
+          // 跟随滚动必须瞬时（auto）：若用 smooth，scrollTop 在追赶动画中持续触发
+          // scroll 事件，会把 autoFollow 误判为「用户滚上去了」而停止跟随
+          el2.style.scrollBehavior = "auto";
+          el2.scrollTop = el2.scrollHeight;
+          requestAnimationFrame(() => { el2.style.scrollBehavior = ""; });
         });
       },
     }
