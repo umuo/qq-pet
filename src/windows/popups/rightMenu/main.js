@@ -1,5 +1,5 @@
 const _require = eval("require");
-const { app, screen } = _require("electron");
+const { app, screen, BrowserWindow } = _require("electron");
 const infoCard = _require("../infoCard/main.js");
 const control = _require("../control/main.js");
 const setup = _require("../setup/main.js");
@@ -8,6 +8,23 @@ const store = _require("../store/main.js");
 const aiChat = _require("../aiChat/main.js");
 
 const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+
+// 让 detach 出来的 DevTools 窗口也保持置顶，避免被 alwaysOnTop 的父窗口（宠物/main/aiChat）遮挡而“出不来”
+const _raisedDevTools = new Set();
+const raiseDevTools = () => {
+  for (const w of BrowserWindow.getAllWindows()) {
+    const wc = w.webContents;
+    if (wc && typeof wc.getType === "function" && wc.getType() === "devtools" && !_raisedDevTools.has(w.id)) {
+      w.setAlwaysOnTop(true);
+      _raisedDevTools.add(w.id);
+    }
+  }
+};
+const openDevToolsFor = (win) => {
+  if (!win || win.isDestroyed() || win.webContents.isDevToolsOpened()) return;
+  win.webContents.openDevTools({ mode: "detach" });
+  win.webContents.once("devtools-opened", raiseDevTools);
+};
 
 class mainClass {
   constructor() {
@@ -252,8 +269,8 @@ class mainClass {
     }
 
     if (item.value === "openDevTools") {
-      windowsMain.wins.main?.win?.webContents?.openDevTools({ mode: "detach" });
-      windowsMain.wins.aiChat?.win?.webContents?.openDevTools({ mode: "detach" });
+      openDevToolsFor(windowsMain.wins.main?.win);
+      openDevToolsFor(windowsMain.wins.aiChat?.win);
     }
 
     if (item.value) {
