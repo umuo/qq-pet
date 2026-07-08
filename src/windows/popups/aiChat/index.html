@@ -116,38 +116,79 @@
     >
       <div class="avatar fcc">{{ msg.role === 'user' ? '👤' : '🐧' }}</div>
       <div class="msg-content">
-        <div 
-          class="msg-bubble markdown-body" 
-          v-if="msg.content || (msg.role === 'assistant' && isGenerating && index === messages.length - 1 && (!msg.toolCalls || msg.toolCalls.length === 0))"
-          v-html="renderMarkdown(msg.content || (isGenerating ? ' *企鹅正在拼命思考与处理中...*' : ''))"
-        ></div>
-
-        <div class="tool-calls-container" v-if="msg.toolCalls && msg.toolCalls.length > 0">
-          <div 
-            v-for="(tc, tcIdx) in msg.toolCalls" 
-            :key="tcIdx"
-            class="tool-call-card"
-            :class="tc.status"
-          >
-            <div class="tc-header">
-              <span class="tc-icon">{{ getToolIcon(tc.name) }}</span>
-              <span class="tc-name">{{ getToolLabel(tc.name) }}</span>
-              <span class="tc-status-badge">
-                {{ tc.status === 'running' ? '⚡ 正在执行工具...' : tc.status === 'error' ? '❌ 执行出错' : '✅ 执行完成' }}
-              </span>
-            </div>
-            <div class="tc-body" v-if="tc.args && Object.keys(tc.args).length > 0">
-              <div class="tc-arg" v-for="(val, key) in tc.args" :key="key">
-                <span class="arg-key">{{ key }}:</span>
-                <span class="arg-val">{{ val }}</span>
+        <!-- 新版：按真实时间线交错渲染文本块与工具调用块 -->
+        <template v-if="msg.blocks && msg.blocks.length">
+          <template v-for="(blk, bi) in msg.blocks" :key="bi">
+            <div
+              class="msg-bubble markdown-body"
+              v-if="blk.type === 'text'"
+              v-html="renderMarkdown(blk.text || '')"
+            ></div>
+            <div class="tool-calls-container" v-else>
+              <div class="tool-call-card" :class="blk.status">
+                <div class="tc-header">
+                  <span class="tc-icon">{{ getToolIcon(blk.name) }}</span>
+                  <span class="tc-name">{{ getToolLabel(blk.name) }}</span>
+                  <span class="tc-status-badge">
+                    {{ blk.status === 'running' ? '⚡ 正在执行工具...' : blk.status === 'error' ? '❌ 执行出错' : '✅ 执行完成' }}
+                  </span>
+                </div>
+                <div class="tc-body" v-if="blk.args && Object.keys(blk.args).length > 0">
+                  <div class="tc-arg" v-for="(val, key) in blk.args" :key="key">
+                    <span class="arg-key">{{ key }}:</span>
+                    <span class="arg-val">{{ val }}</span>
+                  </div>
+                </div>
+                <div class="tc-result" v-if="blk.result">
+                  <div class="res-title">工具返回数据:</div>
+                  <pre class="res-code">{{ formatResult(blk.result) }}</pre>
+                </div>
               </div>
             </div>
-            <div class="tc-result" v-if="tc.result">
-              <div class="res-title">工具返回数据:</div>
-              <pre class="res-code">{{ formatResult(tc.result) }}</pre>
+          </template>
+          <!-- 生成中且末尾是一张正在运行的工具卡片，补一个思考占位 -->
+          <div
+            class="msg-bubble markdown-body"
+            v-if="isGenerating && index === messages.length - 1 && msg.blocks[msg.blocks.length - 1].type === 'tool' && msg.blocks[msg.blocks.length - 1].status === 'running'"
+            v-html="renderMarkdown(' *企鹅正在执行工具，并整理下一步…*')"
+          ></div>
+        </template>
+
+        <!-- 兼容旧历史（仅有 content / toolCalls，无 blocks） -->
+        <template v-else>
+          <div
+            class="msg-bubble markdown-body"
+            v-if="msg.content || (msg.role === 'assistant' && isGenerating && index === messages.length - 1 && (!msg.toolCalls || msg.toolCalls.length === 0))"
+            v-html="renderMarkdown(msg.content || (isGenerating ? ' *企鹅正在拼命思考与处理中...*' : ''))"
+          ></div>
+
+          <div class="tool-calls-container" v-if="msg.toolCalls && msg.toolCalls.length > 0">
+            <div
+              v-for="(tc, tcIdx) in msg.toolCalls"
+              :key="tcIdx"
+              class="tool-call-card"
+              :class="tc.status"
+            >
+              <div class="tc-header">
+                <span class="tc-icon">{{ getToolIcon(tc.name) }}</span>
+                <span class="tc-name">{{ getToolLabel(tc.name) }}</span>
+                <span class="tc-status-badge">
+                  {{ tc.status === 'running' ? '⚡ 正在执行工具...' : tc.status === 'error' ? '❌ 执行出错' : '✅ 执行完成' }}
+                </span>
+              </div>
+              <div class="tc-body" v-if="tc.args && Object.keys(tc.args).length > 0">
+                <div class="tc-arg" v-for="(val, key) in tc.args" :key="key">
+                  <span class="arg-key">{{ key }}:</span>
+                  <span class="arg-val">{{ val }}</span>
+                </div>
+              </div>
+              <div class="tc-result" v-if="tc.result">
+                <div class="res-title">工具返回数据:</div>
+                <pre class="res-code">{{ formatResult(tc.result) }}</pre>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>

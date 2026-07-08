@@ -200,7 +200,8 @@
         this.sessions[this.mode].push({
           role: "assistant",
           content: "",
-          toolCalls: []
+          toolCalls: [],
+          blocks: [] // 有序块：文本块与工具块按真实时间线交错，解决渲染顺序错乱
         });
 
         this.inputQuery = "";
@@ -235,7 +236,12 @@
           if (curList && curList.length > 0) {
             const lastMsg = curList[curList.length - 1];
             if (lastMsg && lastMsg.role === "assistant") {
-              lastMsg.content = (lastMsg.content || "") + `\n\n> [!WARNING]\n> ⚠️ **生成错误**: ${event.error || "未知异常"}`;
+              const errText = `\n\n> [!WARNING]\n> ⚠️ **生成错误**: ${event.error || "未知异常"}`;
+              lastMsg.content = (lastMsg.content || "") + errText;
+              if (!lastMsg.blocks) lastMsg.blocks = [];
+              const lastBlock = lastMsg.blocks[lastMsg.blocks.length - 1];
+              if (lastBlock && lastBlock.type === "text") lastBlock.text += errText;
+              else lastMsg.blocks.push({ type: "text", text: errText });
             }
           }
           this.scrollToBottom();
@@ -249,27 +255,49 @@
         if (!lastMsg || lastMsg.role !== "assistant") return;
 
         if (event.type === "text_delta") {
-          lastMsg.content = (lastMsg.content || "") + (event.delta || "");
+          const delta = event.delta || "";
+          if (!lastMsg.blocks) lastMsg.blocks = [];
+          const lastBlock = lastMsg.blocks[lastMsg.blocks.length - 1];
+          if (lastBlock && lastBlock.type === "text") {
+            lastBlock.text += delta;
+          } else {
+            lastMsg.blocks.push({ type: "text", text: delta });
+          }
+          // 同步 content 字段，供历史存档兼容
+          lastMsg.content = lastMsg.blocks
+            .filter((b) => b.type === "text")
+            .map((b) => b.text)
+            .join("");
           this.scrollToBottom();
         } else if (event.type === "tool_start") {
+          if (!lastMsg.blocks) lastMsg.blocks = [];
           if (!lastMsg.toolCalls) lastMsg.toolCalls = [];
-          lastMsg.toolCalls.push({
+          const toolBlock = {
+            type: "tool",
             id: event.id || Math.random().toString(),
             name: event.name || "unknown_tool",
             args: event.args || {},
             status: "running",
             result: null
-          });
+          };
+          // blocks 与 toolCalls 持有同一对象引用，更新其一即可同步
+          lastMsg.blocks.push(toolBlock);
+          lastMsg.toolCalls.push(toolBlock);
           this.scrollToBottom();
         } else if (event.type === "tool_end") {
-          if (lastMsg.toolCalls) {
-            const tc = lastMsg.toolCalls.find(
+          if (!lastMsg.blocks) lastMsg.blocks = [];
+          if (!lastMsg.toolCalls) lastMsg.toolCalls = [];
+          let tc = lastMsg.blocks.find(
+            (b) => b.type === "tool" && (b.id === event.id || (b.name === event.name && b.status === "running"))
+          );
+          if (!tc) {
+            tc = lastMsg.toolCalls.find(
               (c) => c.id === event.id || (c.name === event.name && c.status === "running")
             );
-            if (tc) {
-              tc.status = event.isError ? "error" : "completed";
-              tc.result = event.result;
-            }
+          }
+          if (tc) {
+            tc.status = event.isError ? "error" : "completed";
+            tc.result = event.result;
           }
           this.scrollToBottom();
         }
