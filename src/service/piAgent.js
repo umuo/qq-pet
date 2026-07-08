@@ -395,7 +395,7 @@ class PiAgentService {
               /mkfs/i,              // 格式化
               /dd\s+if=/i,          // 磁盘写入
               /sudo\s+/i,           // 提权
-              />\s*\/dev\//i,       // 危险重定向
+              />\s*\/dev\/(?!null\b)/i,  // 危险重定向：向设备文件（非 /dev/null 黑洞）写入，如 > /dev/sda
               /:\(\){:\|:&};:/      // Fork炸弹
             ];
             
