@@ -709,6 +709,15 @@ class PiAgentService {
               function: { name: tc.name, arguments: JSON.stringify(tc.args || {}) }
             }));
           }
+          msg.stopReason = m.stopReason || "stop";
+          msg.usage = m.usage || {
+            input: 0,
+            output: 0,
+            cacheRead: 0,
+            cacheWrite: 0,
+            totalTokens: 0,
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 }
+          };
         } else {
           msg.content = typeof m.content === "string" 
             ? [{ type: "text", text: m.content }] 
