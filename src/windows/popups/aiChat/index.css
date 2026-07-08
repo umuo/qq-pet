@@ -195,6 +195,15 @@ body, html {
   box-shadow: 0 0 10px rgba(229, 62, 62, 0.5);
 }
 
+.fullscreen-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.fullscreen-btn.active {
+  color: #4fd1c5;
+}
+
 .header-tools {
   display: flex;
   align-items: center;

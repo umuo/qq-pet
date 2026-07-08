@@ -31,6 +31,7 @@
         <div class="tool-icon-btn not_drag focusPress" @click="clearCurrentHistory" title="清空当前模式会话记录">🗑️</div>
         <div class="tool-icon-btn not_drag focusPress" :class="{ active: showParamsModal }" @click="toggleParamsModal" title="设置生成参数 (Temperature, TopP, MaxTokens)">⚙️</div>
       </div>
+      <div class="win-btn fullscreen-btn not_drag focusPress" :class="{ active: isFullscreen }" @click="toggleFullscreen" :title="isFullscreen ? '退出全屏' : '进入全屏'">{{ isFullscreen ? '⛗' : '⛶' }}</div>
       <div class="win-btn minimize-btn not_drag focusPress" @click="minimizeWindow" title="最小化到后台 (桌宠将显示任务进度)">─</div>
       <div class="win-btn close-btn not_drag focusPress" @click="closeWindow" title="关闭对话框">✕</div>
     </div>

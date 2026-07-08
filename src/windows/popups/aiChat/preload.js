@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   aiChat_m_onConfig: (callback) => ipcRenderer.on("aiChat_m_config_h", callback),
   aiChat_h_select_dir: () => ipcRenderer.send("aiChat_h_select_dir_m"),
   aiChat_m_onSelectedDir: (callback) => ipcRenderer.on("aiChat_m_selected_dir_h", callback),
+  aiChat_m_onFullscreen: (callback) => ipcRenderer.on("aiChat_m_fullscreen_h", callback),
   copyText: (text) => {
     try {
       if (clipboard && clipboard.writeText) {

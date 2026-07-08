@@ -52,6 +52,7 @@
       isGenerating: false,
       showParamsModal: false,
       showHistory: false,
+      isFullscreen: false,
       genParams: {
         temperature: 0.7,
         topP: 1.0,
@@ -132,6 +133,11 @@
             }
             this.scrollToBottom();
           }
+        });
+
+        // 主进程同步全屏状态（用户用系统手势进入/退出全屏时也同步图标）
+        window.electronAPI.aiChat_m_onFullscreen((evt, data) => {
+          this.isFullscreen = !!(data && data.isFullscreen);
         });
 
         window.electronAPI.aiChat_h_bus({ event: "mounted" });
@@ -287,6 +293,11 @@
       minimizeWindow() {
         if (window.electronAPI) {
           window.electronAPI.aiChat_h_bus({ event: "minimize" });
+        }
+      },
+      toggleFullscreen() {
+        if (window.electronAPI) {
+          window.electronAPI.aiChat_h_bus({ event: "fullscreen" });
         }
       },
       abortGeneration() {

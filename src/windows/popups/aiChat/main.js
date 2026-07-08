@@ -42,6 +42,15 @@ class MainClass {
         t.setIgnoreMouseEvents(false);
         t.setOpacity(1);
 
+        // 同步全屏状态给渲染进程（含用户用系统手势进入/退出全屏的情况）
+        const notifyFullscreen = (flag) => {
+          if (t && !t.isDestroyed()) {
+            t.webContents.send("aiChat_m_fullscreen_h", { isFullscreen: flag });
+          }
+        };
+        t.on("enter-full-screen", () => notifyFullscreen(true));
+        t.on("leave-full-screen", () => notifyFullscreen(false));
+
         const sendConfig = () => {
           if (t && !t.isDestroyed()) {
             const cfg = piAgentService.getLlmConfig();
@@ -126,6 +135,10 @@ class MainClass {
               self.doClose();
             } else if (data?.event === "minimize") {
               if (t && !t.isDestroyed() && t.minimize) t.minimize();
+            } else if (data?.event === "fullscreen") {
+              if (t && !t.isDestroyed() && t.setFullScreen) {
+                t.setFullScreen(!t.isFullScreen());
+              }
             }
           }
         });
