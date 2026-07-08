@@ -415,7 +415,8 @@
             name: event.name || "unknown_tool",
             args: event.args || {},
             status: "running",
-            result: null
+            result: null,
+            expanded: false
           };
           // blocks 与 toolCalls 持有同一对象引用，更新其一即可同步
           lastMsg.blocks.push(toolBlock);
@@ -435,6 +436,8 @@
           if (tc) {
             tc.status = event.isError ? "error" : "completed";
             tc.result = event.result;
+            // 出错时自动展开，避免错误被折叠隐藏
+            if (event.isError) tc.expanded = true;
           }
           this.scrollToBottom();
         }
@@ -547,6 +550,22 @@
         } catch (e) {
           return String(res);
         }
+      },
+      toggleTool(item) {
+        if (item) item.expanded = !item.expanded;
+      },
+      toolSummary(item) {
+        if (!item || !item.args) return "";
+        const keys = Object.keys(item.args);
+        if (item.name === "run_shell_command" && item.args.command) {
+          const c = String(item.args.command);
+          return c.length > 64 ? c.slice(0, 64) + "…" : c;
+        }
+        if (keys.length === 1) {
+          const v = String(item.args[keys[0]]);
+          return v.length > 64 ? v.slice(0, 64) + "…" : v;
+        }
+        return `共 ${keys.length} 个参数`;
       },
       // force=true 时无论如何滚到底（用户主动操作 / 载入会话等）；
       // 否则仅在 autoFollow（用户停留在底部附近）时跟随，避免流式过程中

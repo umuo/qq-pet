@@ -127,66 +127,89 @@
               v-html="renderMarkdown(blk.text || '', isGenerating && index === messages.length - 1)"
             ></div>
             <div class="tool-calls-container" v-else>
-              <div class="tool-call-card" :class="blk.status">
-                <div class="tc-header">
+              <div class="tool-call-card" :class="[blk.status, { collapsed: !blk.expanded }]">
+                <div class="tc-header clickable" @click="toggleTool(blk)">
+                  <span class="tc-chevron" :class="{ open: blk.expanded }">▸</span>
                   <span class="tc-icon">{{ getToolIcon(blk.name) }}</span>
                   <span class="tc-name">{{ getToolLabel(blk.name) }}</span>
                   <span class="tc-status-badge">
-                    {{ blk.status === 'running' ? '⚡ 正在执行工具...' : blk.status === 'error' ? '❌ 执行出错' : '✅ 执行完成' }}
+                    <span class="tc-spinner" v-if="blk.status === 'running'"></span>
+                    {{ blk.status === 'running' ? '正在执行' : blk.status === 'error' ? '执行出错' : '执行完成' }}
                   </span>
                 </div>
-                <div class="tc-body" v-if="blk.args && Object.keys(blk.args).length > 0">
-                  <div class="tc-arg" v-for="(val, key) in blk.args" :key="key">
-                    <span class="arg-key">{{ key }}:</span>
-                    <span class="arg-val">{{ val }}</span>
+                <div class="tc-summary" v-if="!blk.expanded && blk.args && Object.keys(blk.args).length">{{ toolSummary(blk) }}</div>
+                <div class="tc-detail" v-show="blk.expanded">
+                  <div class="tc-body" v-if="blk.args && Object.keys(blk.args).length > 0">
+                    <div class="tc-arg" v-for="(val, key) in blk.args" :key="key">
+                      <span class="arg-key">{{ key }}:</span>
+                      <span class="arg-val">{{ val }}</span>
+                    </div>
                   </div>
-                </div>
-                <div class="tc-result" v-if="blk.result">
-                  <div class="res-title">工具返回数据:</div>
-                  <pre class="res-code">{{ formatResult(blk.result) }}</pre>
+                  <div class="tc-result" v-if="blk.result">
+                    <div class="res-title">工具返回数据:</div>
+                    <pre class="res-code">{{ formatResult(blk.result) }}</pre>
+                  </div>
                 </div>
               </div>
             </div>
           </template>
           <!-- 生成中且末尾是一张正在运行的工具卡片，补一个思考占位 -->
           <div
-            class="msg-bubble markdown-body"
+            class="thinking-indicator"
             v-if="isGenerating && index === messages.length - 1 && msg.blocks[msg.blocks.length - 1].type === 'tool' && msg.blocks[msg.blocks.length - 1].status === 'running'"
-            v-html="renderMarkdown(' *企鹅正在执行工具，并整理下一步…*')"
-          ></div>
+          >
+            <span class="ti-spinner"></span>
+            <span class="ti-text">企鹅正在调用工具并处理中</span>
+            <span class="ti-dots"><i></i><i></i><i></i></span>
+          </div>
         </template>
 
         <!-- 兼容旧历史（仅有 content / toolCalls，无 blocks） -->
         <template v-else>
           <div
             class="msg-bubble markdown-body"
+            :class="{ 'streaming-caret': isGenerating && index === messages.length - 1 && msg.content }"
             v-if="msg.content || (msg.role === 'assistant' && isGenerating && index === messages.length - 1 && (!msg.toolCalls || msg.toolCalls.length === 0))"
             v-html="renderMarkdown(msg.content || (isGenerating ? ' *企鹅正在拼命思考与处理中...*' : ''), isGenerating && index === messages.length - 1)"
           ></div>
+
+          <div
+            class="thinking-indicator"
+            v-if="msg.role === 'assistant' && isGenerating && index === messages.length - 1 && !msg.content && (!msg.toolCalls || msg.toolCalls.length === 0)"
+          >
+            <span class="ti-spinner"></span>
+            <span class="ti-text">企鹅正在思考中</span>
+            <span class="ti-dots"><i></i><i></i><i></i></span>
+          </div>
 
           <div class="tool-calls-container" v-if="msg.toolCalls && msg.toolCalls.length > 0">
             <div
               v-for="(tc, tcIdx) in msg.toolCalls"
               :key="tcIdx"
               class="tool-call-card"
-              :class="tc.status"
+              :class="[tc.status, { collapsed: !tc.expanded }]"
             >
-              <div class="tc-header">
+              <div class="tc-header clickable" @click="toggleTool(tc)">
+                <span class="tc-chevron" :class="{ open: tc.expanded }">▸</span>
                 <span class="tc-icon">{{ getToolIcon(tc.name) }}</span>
                 <span class="tc-name">{{ getToolLabel(tc.name) }}</span>
                 <span class="tc-status-badge">
-                  {{ tc.status === 'running' ? '⚡ 正在执行工具...' : tc.status === 'error' ? '❌ 执行出错' : '✅ 执行完成' }}
+                  <span class="tc-spinner" v-if="tc.status === 'running'"></span>
+                  {{ tc.status === 'running' ? '正在执行' : tc.status === 'error' ? '执行出错' : '执行完成' }}
                 </span>
               </div>
-              <div class="tc-body" v-if="tc.args && Object.keys(tc.args).length > 0">
-                <div class="tc-arg" v-for="(val, key) in tc.args" :key="key">
-                  <span class="arg-key">{{ key }}:</span>
-                  <span class="arg-val">{{ val }}</span>
+              <div class="tc-summary" v-if="!tc.expanded && tc.args && Object.keys(tc.args).length">{{ toolSummary(tc) }}</div>
+              <div class="tc-detail" v-show="tc.expanded">
+                <div class="tc-body" v-if="tc.args && Object.keys(tc.args).length > 0">
+                  <div class="tc-arg" v-for="(val, key) in tc.args" :key="key">
+                    <span class="arg-key">{{ key }}:</span>
+                    <span class="arg-val">{{ val }}</span>
+                  </div>
                 </div>
-              </div>
-              <div class="tc-result" v-if="tc.result">
-                <div class="res-title">工具返回数据:</div>
-                <pre class="res-code">{{ formatResult(tc.result) }}</pre>
+                <div class="tc-result" v-if="tc.result">
+                  <div class="res-title">工具返回数据:</div>
+                  <pre class="res-code">{{ formatResult(tc.result) }}</pre>
+                </div>
               </div>
             </div>
           </div>
