@@ -1,11 +1,13 @@
 const _require = eval("require");
 const piAgentService = _require("../../../service/piAgent.js");
+const { screen } = _require("electron");
 
 class MainClass {
   constructor() {
     this.window = null;
     this.show = false;
     this.name = "aiChat";
+    this._fsBounds = null;
   }
 
   cleate() {
@@ -41,15 +43,6 @@ class MainClass {
         let { vm: t, preloads: n, getinfo } = e;
         t.setIgnoreMouseEvents(false);
         t.setOpacity(1);
-
-        // 同步全屏状态给渲染进程（含用户用系统手势进入/退出全屏的情况）
-        const notifyFullscreen = (flag) => {
-          if (t && !t.isDestroyed()) {
-            t.webContents.send("aiChat_m_fullscreen_h", { isFullscreen: flag });
-          }
-        };
-        t.on("enter-full-screen", () => notifyFullscreen(true));
-        t.on("leave-full-screen", () => notifyFullscreen(false));
 
         const sendConfig = () => {
           if (t && !t.isDestroyed()) {
@@ -136,8 +129,29 @@ class MainClass {
             } else if (data?.event === "minimize") {
               if (t && !t.isDestroyed() && t.minimize) t.minimize();
             } else if (data?.event === "fullscreen") {
-              if (t && !t.isDestroyed() && t.setFullScreen) {
-                t.setFullScreen(!t.isFullScreen());
+              try {
+                if (!t || t.isDestroyed()) return;
+                if (self._fsBounds) {
+                  // 退出全屏：恢复到进入前的位置与尺寸
+                  t.setBounds(self._fsBounds);
+                  self._fsBounds = null;
+                  t.webContents.send("aiChat_m_fullscreen_h", { isFullscreen: false });
+                } else {
+                  // 进入全屏：最大化到当前所在屏幕的工作区（避免原生全屏 space 对无边框/置顶窗口的兼容问题）
+                  const prev = t.getBounds();
+                  const display = screen.getDisplayMatching(prev);
+                  const area = display.workArea;
+                  self._fsBounds = prev;
+                  t.setBounds({
+                    x: area.x,
+                    y: area.y,
+                    width: area.width,
+                    height: area.height
+                  });
+                  t.webContents.send("aiChat_m_fullscreen_h", { isFullscreen: true });
+                }
+              } catch (err) {
+                console.error("aiChat fullscreen error:", err);
               }
             }
           }
