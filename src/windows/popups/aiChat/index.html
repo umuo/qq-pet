@@ -124,7 +124,7 @@
             <div
               class="msg-bubble markdown-body"
               v-if="blk.type === 'text'"
-              v-html="renderMarkdown(blk.text || '')"
+              v-html="renderMarkdown(blk.text || '', isGenerating && index === messages.length - 1)"
             ></div>
             <div class="tool-calls-container" v-else>
               <div class="tool-call-card" :class="blk.status">
@@ -161,7 +161,7 @@
           <div
             class="msg-bubble markdown-body"
             v-if="msg.content || (msg.role === 'assistant' && isGenerating && index === messages.length - 1 && (!msg.toolCalls || msg.toolCalls.length === 0))"
-            v-html="renderMarkdown(msg.content || (isGenerating ? ' *企鹅正在拼命思考与处理中...*' : ''))"
+            v-html="renderMarkdown(msg.content || (isGenerating ? ' *企鹅正在拼命思考与处理中...*' : ''), isGenerating && index === messages.length - 1)"
           ></div>
 
           <div class="tool-calls-container" v-if="msg.toolCalls && msg.toolCalls.length > 0">

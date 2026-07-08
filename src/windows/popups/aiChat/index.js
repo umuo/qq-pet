@@ -53,6 +53,7 @@
       showParamsModal: false,
       showHistory: false,
       isFullscreen: false,
+      autoFollow: true,
       genParams: {
         temperature: 0.7,
         topP: 1.0,
@@ -93,7 +94,7 @@
         window.electronAPI.aiChat_m_onBus((evt, data) => {
           if (data?.type === "load") {
             if (typeof seeApp === "function") seeApp();
-            this.scrollToBottom();
+            this.scrollToBottom(true);
           }
         });
 
@@ -110,7 +111,7 @@
         window.electronAPI.aiChat_m_onSessions((evt, list) => {
           this.historyList = Array.isArray(list) ? list : [];
           this.initLiveFromHistory();
-          this.scrollToBottom();
+          this.scrollToBottom(true);
         });
 
         window.electronAPI.aiChat_m_onStream((evt, event) => {
@@ -131,7 +132,7 @@
               this.sessions.agent = [];
               this.activeId.agent = null;
             }
-            this.scrollToBottom();
+            this.scrollToBottom(true);
           }
         });
 
@@ -143,6 +144,16 @@
         window.electronAPI.aiChat_h_bus({ event: "mounted" });
         window.electronAPI.aiChat_h_get_config();
         window.electronAPI.aiChat_h_get_sessions();
+      }
+
+      // 跟踪用户是否停留在底部附近：仅在贴底时自动跟随流式滚动，
+      // 用户上翻查看历史时停止硬拉，避免滚动抖动
+      const el = this.$refs.messageContainer;
+      if (el) {
+        el.addEventListener("scroll", () => {
+          const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
+          this.autoFollow = distance < 48;
+        });
       }
     },
     methods: {
@@ -169,7 +180,7 @@
         if (this.mode === newMode || this.isGenerating) return;
         // 仅切换显示，保留各模式的内存会话，不再从磁盘重载覆盖
         this.mode = newMode;
-        setTimeout(() => this.scrollToBottom(), 100);
+        this.scrollToBottom(true);
       },
       selectAgentDir() {
         if (this.isGenerating) return;
@@ -240,7 +251,7 @@
         this.sessions[this.mode] = [];
         this.activeId[this.mode] = null;
         this.showHistory = false;
-        this.scrollToBottom();
+        this.scrollToBottom(true);
       },
       // 载入历史中的某条会话
       loadSession(sess) {
@@ -250,7 +261,7 @@
         this.mode = sess.mode;
         if (sess.mode === "agent") this.agentDir = sess.dir || this.agentDir;
         this.showHistory = false;
-        this.scrollToBottom();
+        this.scrollToBottom(true);
       },
       deleteSession(sess) {
         this.historyList = this.historyList.filter((s) => s.id !== sess.id);
@@ -270,7 +281,7 @@
           this.sessions[this.mode] = [];
           this.activeId[this.mode] = null;
           this.persistSessions();
-          this.scrollToBottom();
+          this.scrollToBottom(true);
         }
       },
       toggleParamsModal() {
@@ -332,7 +343,7 @@
 
         this.inputQuery = "";
         this.isGenerating = true;
-        this.scrollToBottom();
+        this.scrollToBottom(true);
         this.saveCurrentHistory();
 
         if (window.electronAPI) {
@@ -428,8 +439,28 @@
           this.scrollToBottom();
         }
       },
-      renderMarkdown(text) {
+      // 流式渲染时对未闭合的围栏做容错，避免「普通文本 ↔ 代码块」的布局突变抖动
+      _balanceFences(text) {
+        const lines = String(text).split("\n");
+        const fences = [];
+        for (const line of lines) {
+          const m = line.match(/^\s*(`{3,}|~{3,})/);
+          if (m) fences.push(m[1][0]);
+        }
+        if (fences.length % 2 === 1) {
+          const last = fences[fences.length - 1];
+          const marker = last === "~" ? "~~~" : "```";
+          return text + "\n" + marker;
+        }
+        return text;
+      },
+      renderMarkdown(text, streaming) {
         if (!text) return "";
+        let src = text;
+        if (streaming) {
+          // 补全未闭合的代码围栏，让 marked 始终输出 <pre>，不再来回切换渲染形态
+          src = this._balanceFences(src);
+        }
         try {
           if (window.marked && typeof window.marked.parse === "function") {
             const renderer = new window.marked.Renderer();
@@ -438,12 +469,21 @@
               let lang = typeof arg1 === "object" && arg1 !== null ? (arg1.lang || "") : (arg2 || "");
 
               let highlighted = codeText;
-              try {
-                if (window.electronAPI && window.electronAPI.highlightCode) {
-                  highlighted = window.electronAPI.highlightCode(codeText, lang);
+              if (streaming) {
+                // 流式阶段不做语法高亮：不完整代码反复高亮会闪烁跳动，
+                // 待本轮生成结束（streaming=false）后一次性高亮更稳定
+                highlighted = codeText
+                  .replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;");
+              } else {
+                try {
+                  if (window.electronAPI && window.electronAPI.highlightCode) {
+                    highlighted = window.electronAPI.highlightCode(codeText, lang);
+                  }
+                } catch (e) {
+                  console.error("Highlight error:", e);
                 }
-              } catch (e) {
-                console.error("Highlight error:", e);
               }
 
               const safeCode = encodeURIComponent(codeText || "");
@@ -458,10 +498,10 @@
                 <pre><code class="hljs ${lang ? 'language-' + lang : ''}">${highlighted}</code></pre>
               </div>`;
             };
-            return window.marked.parse(text, { renderer });
+            return window.marked.parse(src, { renderer });
           }
         } catch (e) {}
-        return text.replace(/\n/g, "<br/>");
+        return src.replace(/\n/g, "<br/>");
       },
       getToolIcon(name) {
         const map = {
@@ -508,14 +548,18 @@
           return String(res);
         }
       },
-      scrollToBottom() {
-        this.$nextTick(() => {
-          const el = this.$refs.messageContainer;
-          if (el) {
-            el.scrollTop = el.scrollHeight;
-          }
+      // force=true 时无论如何滚到底（用户主动操作 / 载入会话等）；
+      // 否则仅在 autoFollow（用户停留在底部附近）时跟随，避免流式过程中
+      // 反复硬拉滚动条造成抖动，也允许用户上翻查看历史。
+      scrollToBottom(force) {
+        if (!force && !this.autoFollow) return;
+        const el = this.$refs.messageContainer;
+        if (!el) return;
+        requestAnimationFrame(() => {
+          const el2 = this.$refs.messageContainer;
+          if (el2) el2.scrollTop = el2.scrollHeight;
         });
-      }
+      },
     }
   };
 
