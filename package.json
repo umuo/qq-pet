@@ -18,8 +18,9 @@
     "build:linux:targz": "electron-builder --linux tar.gz"
   },
   "dependencies": {
-    "@earendil-works/pi-agent-core": "^0.74.2",
-    "@earendil-works/pi-ai": "^0.74.2",
+    "@earendil-works/pi-agent-core": "^0.80.3",
+    "@earendil-works/pi-ai": "^0.80.3",
+    "@earendil-works/pi-coding-agent": "^0.80.3",
     "axios": "^1.3.4",
     "crypto-js": "^4.1.1",
     "electron-store": "^8.1.0",
@@ -35,8 +36,8 @@
   "author": "xuemian168",
   "repository": "https://github.com/umuo/qq-pet",
   "devDependencies": {
-    "electron": "^28.0.0",
-    "electron-builder": "^24.9.1"
+    "electron": "^37.0.0",
+    "electron-builder": "^26.0.0"
   },
   "build": {
     "publish": [

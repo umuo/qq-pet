@@ -508,25 +508,47 @@
       },
       getToolIcon(name) {
         const map = {
+          // 宠物工具
           get_pet_status: "📊",
           feed_pet: "🍔",
           clean_pet: "🛁",
           cure_pet: "💊",
           pet_speak: "💬",
           get_system_stats: "🖥️",
-          run_shell_command: "⌨️"
+          perform_workout: "🏃",
+          do_window_effect: "✨",
+          open_swf_viewer: "🎬",
+          // pi 内置 coding 工具
+          bash: "💻",
+          read: "📖",
+          edit: "✏️",
+          write: "📝",
+          grep: "🔎",
+          find: "🔍",
+          ls: "📂"
         };
         return map[name] || "🔧";
       },
       getToolLabel(name) {
         const map = {
+          // 宠物工具
           get_pet_status: "读取企鹅属性状态",
           feed_pet: "投食喂养企鹅",
           clean_pet: "给企鹅洗香香",
           cure_pet: "给企鹅吃药看病",
           pet_speak: "控制企鹅冒泡说话",
           get_system_stats: "监控电脑系统负载",
-          run_shell_command: "执行终端命令行"
+          perform_workout: "带企鹅做健身操",
+          do_window_effect: "触发企鹅物理特效",
+          open_swf_viewer: "打开动作展览馆",
+          // pi 内置 coding 工具
+          bash: "执行终端命令",
+          read: "读取文件内容",
+          edit: "编辑修改文件",
+          write: "写入创建文件",
+          grep: "内容正则搜索",
+          find: "文件名搜索",
+          ls: "列出目录文件"
         };
         return map[name] || name;
       },
@@ -556,13 +578,22 @@
       },
       toolSummary(item) {
         if (!item || !item.args) return "";
-        const keys = Object.keys(item.args);
-        if (item.name === "run_shell_command" && item.args.command) {
-          const c = String(item.args.command);
+        const a = item.args;
+        if ((item.name === "bash" || item.name === "run_shell_command") && a.command) {
+          const c = String(a.command);
           return c.length > 64 ? c.slice(0, 64) + "…" : c;
         }
+        if (a.path) {
+          const p = String(a.path);
+          return p.length > 64 ? p.slice(0, 64) + "…" : p;
+        }
+        if (a.pattern) {
+          const p = String(a.pattern);
+          return ("…" + p.slice(-60)).length > 64 ? ("…" + p.slice(-60)) : (item.name + ": " + p);
+        }
+        const keys = Object.keys(a);
         if (keys.length === 1) {
-          const v = String(item.args[keys[0]]);
+          const v = String(a[keys[0]]);
           return v.length > 64 ? v.slice(0, 64) + "…" : v;
         }
         return `共 ${keys.length} 个参数`;

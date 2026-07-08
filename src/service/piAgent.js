@@ -6,6 +6,113 @@ const fs = _require("fs");
 const path = _require("path");
 const { exec } = _require("child_process");
 
+// ---- Node 18 兼容补丁 ----
+// pi-coding-agent 的嵌套依赖 lru-cache 在加载时会调用
+// `diagnostics_channel.tracingChannel(...)`（Node 19.9+ 才内置的 API）。
+// Electron 28 主进程运行时为 Node 18.18，无此 API，会抛
+// "(0, j.tracingChannel) is not a function" 导致 Agent 模式崩溃。
+// 这里补一个 no-op 实现，让 ESM import('node:diagnostics_channel') 也能拿到它。
+(function installTracingChannelShim() {
+  const makeChannel = () => ({
+    subscribe() {}, unsubscribe() {},
+    bind(fn) { return fn; },
+    run(_ctx, fn, _thisArg, ...args) { return fn ? fn(...args) : undefined; },
+    trigger() {}, hasSubscribers: false,
+  });
+  const makeTracingChannel = () => ({
+    start: makeChannel(), end: makeChannel(),
+    asyncStart: makeChannel(), asyncEnd: makeChannel(),
+    error: makeChannel(),
+  });
+  try {
+    const dc = _require("node:diagnostics_channel");
+    if (typeof dc.tracingChannel !== "function") {
+      Object.defineProperty(dc, "tracingChannel", {
+        value: makeTracingChannel, configurable: true, writable: true, enumerable: true,
+      });
+    }
+  } catch (e) { /* ignore */ }
+  try {
+    const Module = _require("node:module");
+    const origLoad = Module._load;
+    Module._load = function (request, parent, isMain) {
+      const m = origLoad.apply(this, arguments);
+      if ((request === "node:diagnostics_channel" || request === "diagnostics_channel") && m && typeof m.tracingChannel !== "function") {
+        try { Object.defineProperty(m, "tracingChannel", { value: makeTracingChannel, configurable: true, writable: true, enumerable: true }); } catch (e) {}
+      }
+      return m;
+    };
+  } catch (e) { /* ignore */ }
+})();
+
+// ---- Node 18 兼容：补齐 pi-coding-agent 依赖树用到的 Node 20/22 全局与静态方法 ----
+// Electron 28 主进程运行时为 Node 18.18，而 pi 0.80.3 依赖树假设 Node 20+。
+// 下面逐项仅在「当前运行时确实缺失」时打补丁，新版 Node 上自动略过。
+(function installNode18CompatGlobals() {
+  const g = globalThis;
+  try {
+    if (typeof g.Blob === "undefined") {
+      g.Blob = _require("node:buffer").Blob;
+    }
+    if (typeof g.File === "undefined") {
+      const { Blob } = _require("node:buffer");
+      class File extends (g.Blob || Blob) {
+        constructor(bits, name, options = {}) {
+          super(bits, options);
+          this.name = String(name);
+          this.lastModified = options.lastModified ?? Date.now();
+        }
+        get [Symbol.toStringTag]() { return "File"; }
+      }
+      g.File = File;
+    }
+    if (typeof g.navigator === "undefined") {
+      g.navigator = { userAgent: "node", platform: "node", language: "en-US" };
+    }
+    if (typeof g.crypto === "undefined") {
+      try { g.crypto = _require("node:crypto").webcrypto; } catch (e) {}
+    }
+    if (typeof Object.groupBy !== "function") {
+      Object.defineProperty(Object, "groupBy", {
+        value(items, keyFn) {
+          const map = new Map();
+          for (const item of items) {
+            const key = keyFn(item);
+            if (!map.has(key)) map.set(key, []);
+            map.get(key).push(item);
+          }
+          return map;
+        },
+        writable: true, configurable: true,
+      });
+    }
+    const arrProto = Array.prototype;
+    if (typeof arrProto.toSorted !== "function") {
+      Object.defineProperty(arrProto, "toSorted", {
+        value(compareFn) { return this.slice().sort(compareFn); },
+        writable: true, configurable: true,
+      });
+    }
+    if (typeof arrProto.toReversed !== "function") {
+      Object.defineProperty(arrProto, "toReversed", {
+        value() { return this.slice().reverse(); },
+        writable: true, configurable: true,
+      });
+    }
+    if (typeof arrProto.with !== "function") {
+      Object.defineProperty(arrProto, "with", {
+        value(index, value) {
+          const copy = this.slice();
+          const i = index >= 0 ? index : this.length + index;
+          copy[i] = value;
+          return copy;
+        },
+        writable: true, configurable: true,
+      });
+    }
+  } catch (e) { /* ignore */ }
+})();
+
 class PiAgentService {
   constructor() {
     this.activeController = null;
@@ -379,57 +486,6 @@ class PiAgentService {
           }
         }
       },
-      {
-        name: "run_shell_command",
-        label: "执行终端命令行",
-        description: "在用户系统终端中执行基础查询命令（如 ls, uname, ps 等）并获取输出。",
-        parameters: Type.Object({
-          command: Type.String({ description: "要执行的命令" })
-        }),
-        execute: async (_id, params) => {
-          return new Promise((resolve) => {
-            const cmd = (params.command || "").trim();
-            // 简单沙箱：拦截高危命令
-            const dangerousPatterns = [
-              /rm\s+-r/i,           // 递归删除
-              /mkfs/i,              // 格式化
-              /dd\s+if=/i,          // 磁盘写入
-              /sudo\s+/i,           // 提权
-              />\s*\/dev\/(?!null\b)/i,  // 危险重定向：向设备文件（非 /dev/null 黑洞）写入，如 > /dev/sda
-              /:\(\){:\|:&};:/      // Fork炸弹
-            ];
-            
-            for (let pattern of dangerousPatterns) {
-              if (pattern.test(cmd)) {
-                return resolve({
-                  content: [{ type: "text", text: `⚠️ 安全拦截：拒绝执行高危命令 (${cmd})。请尝试使用安全的方式操作。` }],
-                  details: { error: "Blocked dangerous command" }
-                });
-              }
-            }
-
-            const execOptions = { timeout: 30000, maxBuffer: 1024 * 512 };
-            if (agentDir) {
-              execOptions.cwd = agentDir;
-            }
-
-            exec(cmd, execOptions, (err, stdout, stderr) => {
-              if (err) {
-                resolve({
-                  content: [{ type: "text", text: `执行命令失败:\n${err.message}\n${stderr || ""}` }],
-                  details: { error: err.message }
-                });
-              } else {
-                const out = (stdout || "").trim() || (stderr || "").trim() || "(无执行输出)";
-                resolve({
-                  content: [{ type: "text", text: `命令执行成功:\n${out}` }],
-                  details: { stdout: out }
-                });
-              }
-            });
-          });
-        }
-      }
     ];
   }
 
@@ -580,8 +636,33 @@ class PiAgentService {
 
       const piCore = await import("@earendil-works/pi-agent-core");
       const piAi = await import("@earendil-works/pi-ai");
+      const codingAgent = await import("@earendil-works/pi-coding-agent");
       const { Agent } = piCore;
       const { Type } = piAi;
+
+      // 预置项目信任，使 pi 内置 edit/write 工具可对工作目录进行写操作
+      const trustDir = agentDir || process.cwd();
+      try {
+        const trust = new codingAgent.ProjectTrustStore(trustDir);
+        trust.set(trustDir, true);
+      } catch (e) {
+        console.warn("piAgent pre-trust failed:", e.message);
+      }
+
+      // 合并 pi 内置 coding 工具：
+      // createCodingTools(cwd)  -> read / bash / edit / write
+      // createReadOnlyTools(cwd) -> read / grep / find / ls
+      // 两者都含 read，按 name 去重，最终得到 7 个工具
+      const codingAll = [
+        ...(await codingAgent.createCodingTools(trustDir)),
+        ...(await codingAgent.createReadOnlyTools(trustDir))
+      ];
+      const codingSeen = new Set();
+      const codingTools = codingAll.filter((t) => {
+        if (codingSeen.has(t.name)) return false;
+        codingSeen.add(t.name);
+        return true;
+      });
 
       const petInfo = typeof getPetInfo === "function" ? getPetInfo() : {};
       const info = petInfo?.info || {};
@@ -595,7 +676,8 @@ class PiAgentService {
 - 当主人让你喂食、洗澡、看病或让企鹅说话时，主动调用控制工具为你自己（小企鹅）进行操作！
 - 在与主人的对话中，保持俏皮、热情的语气，偶尔卖萌，使用第一人称「我」或「本企鹅」。在解决复杂任务时，要条理清晰、专业细致。`;
 
-      const tools = await this.createTools(Type, agentDir);
+      const petTools = await this.createTools(Type, agentDir);
+      const tools = [...codingTools, ...petTools];
       const modelConfig = {
         id: modelName || "deepseek-chat",
         name: modelName || "deepseek-chat",
