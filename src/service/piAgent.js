@@ -57,6 +57,52 @@ class PiAgentService {
     return this.saveHistory(mode, []);
   }
 
+  getSessionsFilePath() {
+    try {
+      const { app } = _require("electron");
+      const dir = app ? app.getPath("userData") : process.cwd();
+      return path.join(dir, "ai_chat_sessions.json");
+    } catch (e) {
+      return path.join(process.cwd(), "ai_chat_sessions.json");
+    }
+  }
+
+  // 多会话历史：会话以数组存储，每条含 id / mode / dir / title / messages / updatedAt
+  getSessions() {
+    try {
+      const fp = this.getSessionsFilePath();
+      if (fs.existsSync(fp)) {
+        const data = JSON.parse(fs.readFileSync(fp, "utf-8"));
+        return Array.isArray(data) ? data : [];
+      }
+    } catch (e) {
+      console.error("getSessions error:", e);
+    }
+    return [];
+  }
+
+  saveSessions(list) {
+    try {
+      const fp = this.getSessionsFilePath();
+      const data = Array.isArray(list) ? list : [];
+      fs.writeFileSync(fp, JSON.stringify(data, null, 2), "utf-8");
+      return true;
+    } catch (e) {
+      console.error("saveSessions error:", e);
+      return false;
+    }
+  }
+
+  deleteSession(id) {
+    try {
+      const list = this.getSessions().filter((s) => s.id !== id);
+      return this.saveSessions(list);
+    } catch (e) {
+      console.error("deleteSession error:", e);
+      return false;
+    }
+  }
+
   notifyBackgroundProgress(msg) {
     try {
       const aiChatWin = global.windowsMain?.wins?.["aiChat"]?.win;

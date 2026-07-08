@@ -76,34 +76,29 @@ class MainClass {
           aiChat_h_get_config_m: () => {
             sendConfig();
           },
-          aiChat_h_get_history_m: (evt, mode) => {
+          aiChat_h_get_sessions_m: (evt) => {
             try {
-              const m = typeof mode === "string" ? mode : (mode?.mode || "chat");
-              const hist = piAgentService.getHistory(m);
+              const list = piAgentService.getSessions();
               if (t && !t.isDestroyed()) {
-                t.webContents.send("aiChat_m_history_h", { mode: m, history: hist });
+                t.webContents.send("aiChat_m_sessions_h", list);
               }
             } catch (err) {
-              console.error("get history error:", err);
+              console.error("get sessions error:", err);
             }
           },
-          aiChat_h_save_history_m: (evt, data) => {
+          aiChat_h_save_sessions_m: (evt, list) => {
             try {
-              const req = typeof data === "string" ? JSON.parse(data) : data;
-              piAgentService.saveHistory(req.mode || "chat", req.messages || []);
+              const req = typeof list === "string" ? JSON.parse(list) : list;
+              piAgentService.saveSessions(Array.isArray(req) ? req : []);
             } catch (err) {
-              console.error("save history error:", err);
+              console.error("save sessions error:", err);
             }
           },
-          aiChat_h_clear_history_m: (evt, mode) => {
+          aiChat_h_delete_session_m: (evt, id) => {
             try {
-              const m = typeof mode === "string" ? mode : (mode?.mode || "chat");
-              piAgentService.clearHistory(m);
-              if (t && !t.isDestroyed()) {
-                t.webContents.send("aiChat_m_history_h", { mode: m, history: [] });
-              }
+              piAgentService.deleteSession(id);
             } catch (err) {
-              console.error("clear history error:", err);
+              console.error("delete session error:", err);
             }
           },
           aiChat_h_select_dir_m: async (evt) => {
@@ -125,8 +120,7 @@ class MainClass {
               if (t && !t.isDestroyed()) {
                 t.webContents.send("aiChat_m_bus_h", { type: "load" });
                 sendConfig();
-                t.webContents.send("aiChat_m_history_h", { mode: "chat", history: piAgentService.getHistory("chat") });
-                t.webContents.send("aiChat_m_history_h", { mode: "agent", history: piAgentService.getHistory("agent") });
+                t.webContents.send("aiChat_m_sessions_h", piAgentService.getSessions());
               }
             } else if (data?.event === "close") {
               self.doClose();

@@ -27,6 +27,7 @@
         </div>
       </div>
       <div class="header-tools">
+        <div class="tool-icon-btn not_drag focusPress" :class="{ active: showHistory }" @click="toggleHistory" title="历史会话（区分闲聊 / Agent）">🕘</div>
         <div class="tool-icon-btn not_drag focusPress" @click="clearCurrentHistory" title="清空当前模式会话记录">🗑️</div>
         <div class="tool-icon-btn not_drag focusPress" :class="{ active: showParamsModal }" @click="toggleParamsModal" title="设置生成参数 (Temperature, TopP, MaxTokens)">⚙️</div>
       </div>
@@ -189,6 +190,54 @@
             </div>
           </div>
         </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史会话抽屉：区分闲聊模式与 Agent 模式，切换模式不再清空旧会话 -->
+  <div class="history-drawer" v-show="showHistory">
+    <div class="history-head notSelect">
+      <span class="history-title">🕘 历史会话</span>
+      <button class="btn sm-btn focusPress" @click="newSession">＋ 新建</button>
+      <div class="history-close focusPress" @click="showHistory = false" title="关闭">✕</div>
+    </div>
+    <div class="history-list">
+      <div v-if="groupedSessions.chat.length === 0 && groupedSessions.agent.length === 0" class="history-empty">
+        暂无历史会话，发条消息开始吧～
+      </div>
+
+      <div class="history-group" v-if="groupedSessions.chat.length">
+        <div class="history-group-title">💬 闲聊模式</div>
+        <div
+          v-for="sess in groupedSessions.chat"
+          :key="sess.id"
+          class="history-item"
+          :class="{ active: activeId.chat === sess.id }"
+          @click="loadSession(sess)"
+        >
+          <div class="hi-main">
+            <div class="hi-title">{{ sess.title || '新会话' }}</div>
+            <div class="hi-time">{{ formatTime(sess.updatedAt) }}</div>
+          </div>
+          <div class="hi-del focusPress" @click.stop="deleteSession(sess)" title="删除该会话">🗑️</div>
+        </div>
+      </div>
+
+      <div class="history-group" v-if="groupedSessions.agent.length">
+        <div class="history-group-title">⚡ Agent 模式</div>
+        <div
+          v-for="sess in groupedSessions.agent"
+          :key="sess.id"
+          class="history-item"
+          :class="{ active: activeId.agent === sess.id }"
+          @click="loadSession(sess)"
+        >
+          <div class="hi-main">
+            <div class="hi-title">{{ sess.title || '新会话' }}</div>
+            <div class="hi-time">{{ formatTime(sess.updatedAt) }}<span v-if="sess.dir" class="hi-dir" :title="sess.dir">📂 {{ sess.dir }}</span></div>
+          </div>
+          <div class="hi-del focusPress" @click.stop="deleteSession(sess)" title="删除该会话">🗑️</div>
+        </div>
       </div>
     </div>
   </div>

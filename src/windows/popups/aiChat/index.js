@@ -36,13 +36,22 @@
     data: () => ({
       mode: "agent",
       agentDir: "",
+      // 当前各模式的实时会话消息数组（引用历史列表中的同一条目，编辑即同步）
       sessions: {
         chat: [],
         agent: []
       },
+      // 当前各模式正在编辑的会话 id（null 表示尚未落库，将在首次发送时新建）
+      activeId: {
+        chat: null,
+        agent: null
+      },
+      // 全部已保存会话（含闲聊与 Agent，按 mode 区分）
+      historyList: [],
       inputQuery: "",
       isGenerating: false,
       showParamsModal: false,
+      showHistory: false,
       genParams: {
         temperature: 0.7,
         topP: 1.0,
@@ -56,6 +65,17 @@
     computed: {
       messages() {
         return this.sessions[this.mode] || [];
+      },
+      // 按模式分组的会话（用于历史面板展示）
+      groupedSessions() {
+        const groups = { chat: [], agent: [] };
+        for (const s of this.historyList) {
+          if (groups[s.mode]) groups[s.mode].push(s);
+        }
+        for (const k of ["chat", "agent"]) {
+          groups[k].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+        }
+        return groups;
       }
     },
     mounted() {
@@ -85,12 +105,11 @@
           }
         });
 
-        window.electronAPI.aiChat_m_onHistory((evt, data) => {
-          if (data && data.mode && Array.isArray(data.history)) {
-            const uiMode = data.mode.startsWith("agent|") ? "agent" : data.mode;
-            this.sessions[uiMode] = data.history;
-            this.scrollToBottom();
-          }
+        // 历史会话列表初始化
+        window.electronAPI.aiChat_m_onSessions((evt, list) => {
+          this.historyList = Array.isArray(list) ? list : [];
+          this.initLiveFromHistory();
+          this.scrollToBottom();
         });
 
         window.electronAPI.aiChat_m_onStream((evt, event) => {
@@ -100,28 +119,50 @@
         window.electronAPI.aiChat_m_onSelectedDir((evt, dirPath) => {
           if (dirPath) {
             this.agentDir = dirPath;
-            // 清空当前界面记录
-            this.sessions.agent = [];
-            // 请求新目录的历史记录
-            window.electronAPI.aiChat_h_get_history(`agent|${this.agentDir}`);
+            // 切换工作目录时，载入该目录下最近的 Agent 会话（不丢失其它目录的历史）
+            const match = this.historyList
+              .filter((s) => s.mode === "agent" && s.dir === dirPath)
+              .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
+            if (match) {
+              this.sessions.agent = match.messages;
+              this.activeId.agent = match.id;
+            } else {
+              this.sessions.agent = [];
+              this.activeId.agent = null;
+            }
+            this.scrollToBottom();
           }
         });
 
         window.electronAPI.aiChat_h_bus({ event: "mounted" });
         window.electronAPI.aiChat_h_get_config();
-        window.electronAPI.aiChat_h_get_history("chat");
-        // 初始化时不自动获取 agent 历史，因为需要先选目录
+        window.electronAPI.aiChat_h_get_sessions();
       }
     },
     methods: {
+      // 从已保存历史中恢复各模式的「当前会话」，切换模式时不再清空
+      initLiveFromHistory() {
+        const chatMatch = this.historyList
+          .filter((s) => s.mode === "chat")
+          .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
+        if (chatMatch) {
+          this.sessions.chat = chatMatch.messages;
+          this.activeId.chat = chatMatch.id;
+        }
+        if (this.agentDir) {
+          const agentMatch = this.historyList
+            .filter((s) => s.mode === "agent" && s.dir === this.agentDir)
+            .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
+          if (agentMatch) {
+            this.sessions.agent = agentMatch.messages;
+            this.activeId.agent = agentMatch.id;
+          }
+        }
+      },
       switchMode(newMode) {
         if (this.mode === newMode || this.isGenerating) return;
+        // 仅切换显示，保留各模式的内存会话，不再从磁盘重载覆盖
         this.mode = newMode;
-        if (newMode === "chat") {
-          window.electronAPI.aiChat_h_get_history("chat");
-        } else if (newMode === "agent" && this.agentDir) {
-          window.electronAPI.aiChat_h_get_history(`agent|${this.agentDir}`);
-        }
         setTimeout(() => this.scrollToBottom(), 100);
       },
       selectAgentDir() {
@@ -130,26 +171,100 @@
           window.electronAPI.aiChat_h_select_dir();
         }
       },
+      toggleHistory() {
+        this.showHistory = !this.showHistory;
+      },
+      deriveTitle(messages) {
+        const firstUser = messages.find((m) => m.role === "user");
+        const raw = firstUser ? (typeof firstUser.content === "string" ? firstUser.content : "") : "";
+        const text = (raw || "新会话").replace(/\s+/g, " ").trim();
+        return text.length > 18 ? text.slice(0, 18) + "…" : (text || "新会话");
+      },
+      // 把当前实时会话落库到历史列表并持久化
       saveCurrentHistory() {
-        if (window.electronAPI && window.electronAPI.aiChat_h_save_history) {
-          try {
-            const plainMessages = JSON.parse(JSON.stringify(this.sessions[this.mode] || []));
-            window.electronAPI.aiChat_h_save_history({
-              mode: this.mode,
-              messages: plainMessages
+        const mode = this.mode;
+        const msgs = this.sessions[mode] || [];
+        if (!this.activeId[mode]) {
+          if (msgs.length === 0) return; // 空会话无需保存
+          const id = "s_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
+          this.historyList.push({
+            id,
+            mode,
+            dir: mode === "agent" ? this.agentDir : "",
+            title: this.deriveTitle(msgs),
+            messages: msgs,
+            updatedAt: Date.now()
+          });
+          this.activeId[mode] = id;
+        } else {
+          const sess = this.historyList.find((s) => s.id === this.activeId[mode]);
+          if (sess) {
+            sess.messages = msgs;
+            sess.updatedAt = Date.now();
+            if (!sess.title) sess.title = this.deriveTitle(msgs);
+          } else {
+            // activeId 悬空，重建条目
+            const id = this.activeId[mode];
+            this.historyList.push({
+              id,
+              mode,
+              dir: mode === "agent" ? this.agentDir : "",
+              title: this.deriveTitle(msgs),
+              messages: msgs,
+              updatedAt: Date.now()
             });
-          } catch (e) {
-            console.warn('saveCurrentHistory serialize error:', e);
           }
         }
+        this.persistSessions();
+      },
+      persistSessions() {
+        if (window.electronAPI && window.electronAPI.aiChat_h_save_sessions) {
+          try {
+            window.electronAPI.aiChat_h_save_sessions(
+              JSON.parse(JSON.stringify(this.historyList))
+            );
+          } catch (e) {
+            console.warn("persistSessions serialize error:", e);
+          }
+        }
+      },
+      // 新建当前模式的空白会话（旧会话仍保留在历史中）
+      newSession() {
+        if (this.isGenerating) return;
+        this.sessions[this.mode] = [];
+        this.activeId[this.mode] = null;
+        this.showHistory = false;
+        this.scrollToBottom();
+      },
+      // 载入历史中的某条会话
+      loadSession(sess) {
+        if (this.isGenerating) return;
+        this.sessions[sess.mode] = sess.messages;
+        this.activeId[sess.mode] = sess.id;
+        this.mode = sess.mode;
+        if (sess.mode === "agent") this.agentDir = sess.dir || this.agentDir;
+        this.showHistory = false;
+        this.scrollToBottom();
+      },
+      deleteSession(sess) {
+        this.historyList = this.historyList.filter((s) => s.id !== sess.id);
+        if (this.activeId[sess.mode] === sess.id) {
+          this.sessions[sess.mode] = [];
+          this.activeId[sess.mode] = null;
+        }
+        this.persistSessions();
       },
       clearCurrentHistory() {
         if (this.isGenerating) return;
         if (confirm("确定要清空当前【" + (this.mode === 'chat' ? '闲聊模式' : 'Agent模式') + "】的所有对话记录吗？")) {
-          this.sessions[this.mode] = [];
-          if (window.electronAPI && window.electronAPI.aiChat_h_clear_history) {
-            window.electronAPI.aiChat_h_clear_history(this.mode);
+          // 从历史中移除当前会话并清空实时消息
+          if (this.activeId[this.mode]) {
+            this.historyList = this.historyList.filter((s) => s.id !== this.activeId[this.mode]);
           }
+          this.sessions[this.mode] = [];
+          this.activeId[this.mode] = null;
+          this.persistSessions();
+          this.scrollToBottom();
         }
       },
       toggleParamsModal() {
@@ -310,7 +425,7 @@
             renderer.code = (arg1, arg2) => {
               let codeText = typeof arg1 === "object" && arg1 !== null ? arg1.text : arg1;
               let lang = typeof arg1 === "object" && arg1 !== null ? (arg1.lang || "") : (arg2 || "");
-              
+
               let highlighted = codeText;
               try {
                 if (window.electronAPI && window.electronAPI.highlightCode) {
@@ -319,7 +434,7 @@
               } catch (e) {
                 console.error("Highlight error:", e);
               }
-              
+
               const safeCode = encodeURIComponent(codeText || "");
               const displayLang = lang ? lang.toUpperCase() : "CODE";
               return `<div class="code-block-wrapper not_drag">
@@ -360,6 +475,15 @@
           run_shell_command: "执行终端命令行"
         };
         return map[name] || name;
+      },
+      getModeBadge(mode) {
+        return mode === "agent" ? "⚡ Agent" : "💬 闲聊";
+      },
+      formatTime(ts) {
+        if (!ts) return "";
+        const d = new Date(ts);
+        const pad = (n) => (n < 10 ? "0" + n : "" + n);
+        return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
       },
       formatResult(res) {
         if (!res) return "(无数据)";
