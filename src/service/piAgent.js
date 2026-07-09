@@ -154,6 +154,23 @@ class PiAgentService {
     return dir;
   }
 
+  // 路线 A：读取用户配置的 npm extension 包名列表（userData/ai_extensions.json）
+  // 用户 npm install 后把包名写入此文件，piAgent 启动时 require 并注入 extensionFactories
+  getExtraExtensions() {
+    try {
+      const { app } = _require("electron");
+      const dir = app ? app.getPath("userData") : process.cwd();
+      const fp = path.join(dir, "ai_extensions.json");
+      if (fs.existsSync(fp)) {
+        const list = JSON.parse(fs.readFileSync(fp, "utf-8"));
+        if (Array.isArray(list)) return list.filter(s => typeof s === "string" && s.trim());
+      }
+    } catch (e) {
+      console.warn("piAgent read ai_extensions.json failed:", e.message);
+    }
+    return [];
+  }
+
   getHistory(mode) {
     try {
       const fp = this.getHistoryFilePath();
@@ -555,14 +572,63 @@ class PiAgentService {
         console.warn("piAgent skills path resolve failed:", e.message);
       }
 
+      // 路线 A：从配置文件加载 npm extension 包（ai_extensions.json 存包名列表）
+      // 用户 npm install 后把包名写入 userData/ai_extensions.json，重启即加载
+      const extraFactories = [];
+      const extraExtNames = this.getExtraExtensions();
+      for (const name of extraExtNames) {
+        try {
+          const mod = _require(name);
+          const factory = typeof mod === "function" ? mod : (mod && mod.default);
+          if (typeof factory === "function") {
+            extraFactories.push(factory);
+          } else {
+            console.warn("[piAgent] extension 未导出 factory:", name);
+          }
+        } catch (e) {
+          console.warn("[piAgent] 加载 extension 失败:", name, e.message);
+        }
+      }
+
+      // 路线 B：扫描 ~/.pi/agent/extensions/，让 pi install 装的 extension 自动发现加载
+      // resolveExtensionSources 对本地路径只解析不安装、无 trust 门禁
+      const additionalExtensionPaths = [];
+      // 路线 B：pi install 装的 extension（~/.pi/agent/extensions/）
+      try {
+        const piExtDir = path.join(codingAgent.getAgentDir(), "extensions");
+        if (fs.existsSync(piExtDir)) additionalExtensionPaths.push(piExtDir);
+      } catch (e) {
+        console.warn("[piAgent] pi extensions dir resolve failed:", e.message);
+      }
+      // 内置 extension（npm 依赖，.ts 源码走 pi 的 jiti loader）
+      try {
+        const rpivTodoPkg = _require.resolve("@juicesharp/rpiv-todo/package.json");
+        additionalExtensionPaths.push(path.dirname(rpivTodoPkg));
+      } catch (e) {
+        console.warn("[piAgent] resolve @juicesharp/rpiv-todo failed:", e.message);
+      }
+
       const resourceLoader = new DefaultResourceLoader({
         cwd: trustDir,
         agentDir: agentDirForTrust,
         systemPromptOverride: () => systemPrompt,
-        extensionFactories: [petToolsExtension, temperatureExtension.default],
-        additionalSkillPaths: skillPaths
+        extensionFactories: [petToolsExtension, temperatureExtension.default, ...extraFactories],
+        additionalSkillPaths: skillPaths,
+        additionalExtensionPaths
       });
       await resourceLoader.reload();
+
+      // 动态收集所有 extension 注册的工具名（宠物工具 + 第三方 extension 工具），
+      // 合并到 tools allowlist，确保第三方工具能被 AI 调用
+      const extToolNames = [];
+      try {
+        const extResult = resourceLoader.getExtensions();
+        for (const ext of (extResult.extensions || [])) {
+          for (const tname of ext.tools.keys()) extToolNames.push(tname);
+        }
+      } catch (e) {
+        console.warn("[piAgent] collect extension tool names failed:", e.message);
+      }
 
       const { session } = await createAgentSession({
         resourceLoader,
@@ -573,8 +639,7 @@ class PiAgentService {
         agentDir: agentDirForTrust,
         tools: [
           "read", "bash", "edit", "write", "grep", "find", "ls",
-          "get_pet_status", "feed_pet", "clean_pet", "cure_pet", "pet_speak",
-          "get_system_stats", "perform_workout", "do_window_effect", "open_swf_viewer"
+          ...extToolNames
         ],
         sessionManager: SessionManager.inMemory()
       });
