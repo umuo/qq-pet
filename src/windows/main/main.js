@@ -559,17 +559,14 @@ class mainClass {
               global.UpDateProgram = e => {
                 console.log("UpDateProgram");
                 checkUpdate(t => {
-                  console.log("begin up");
+                  console.log("begin up", t.type);
                   let i = "";
                   if (t.type == "up") {
-                    i = `\n                                    最新版本：${t.info?.version};\n                                    ${t.info?.releaseNotes}\n                                    ;点击下载 ~\n                                    `;
-                    o(i, "立即下载", () => {
-                      if (t.fn) {
-                        t.fn();
-                      }
-                    });
+                    // autoDownload=true 时下载已自动开始，只提示用户
+                    i = `发现新版本 ${t.info?.version}，正在后台下载...`;
+                    o(i, "知道了~", () => {});
                   } else if (t.type == "sc") {
-                    i = `\n                                    下载进度： ${t.sc.percent}%；\n                                    当前网速： ${t.sc.speed}\n                                    `;
+                    i = `下载进度：${t.sc.percent}%（${t.sc.transferred}/${t.sc.total}）\n网速：${t.sc.speed}`;
                     o(i, "取消下载", () => {
                       if (t.fn) {
                         t.fn();
@@ -586,7 +583,7 @@ class mainClass {
                       }, 0);
                     });
                   } else if (t.type == "down") {
-                    o("最新版本已下载完成", "立即安装~", () => {
+                    o("最新版本已下载完成，点击安装并重启~", "立即安装~", () => {
                       if (t.fn) {
                         t.fn();
                       }

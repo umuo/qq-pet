@@ -35,7 +35,12 @@ function initUpdater() {
 
   autoUpdater.on('update-downloaded', (info) => {
     console.log('新版本下载完成：', info);
-    
+
+    // 如果是手动检查触发的下载，由 UpdateController 处理 UI，此处跳过弹窗
+    if (global.isManualUpdateCheck) {
+      return;
+    }
+
     // 弹窗提示用户是否立即安装并重启
     dialog.showMessageBox({
       type: 'info',
