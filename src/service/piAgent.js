@@ -117,6 +117,7 @@ class PiAgentService {
   constructor() {
     this.activeController = null;
     this.activeAgent = null;
+    this.activeSession = null;
   }
 
   getHistoryFilePath() {
@@ -127,6 +128,30 @@ class PiAgentService {
     } catch (e) {
       return path.join(process.cwd(), "ai_chat_history.json");
     }
+  }
+
+  // 用户自定义 skills 目录（userData/skills/），用户可往里加自己的 SKILL.md
+  getUserSkillsDir() {
+    try {
+      const { app } = _require("electron");
+      const dir = app ? app.getPath("userData") : process.cwd();
+      return path.join(dir, "skills");
+    } catch (e) {
+      return path.join(process.cwd(), "skills");
+    }
+  }
+
+  // 确保用户 skills 目录存在（首次使用时创建），返回目录路径
+  ensureUserSkillsDir() {
+    const dir = this.getUserSkillsDir();
+    try {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+    } catch (e) {
+      console.warn("piAgent ensureUserSkillsDir failed:", e.message);
+    }
+    return dir;
   }
 
   getHistory(mode) {
@@ -261,233 +286,6 @@ class PiAgentService {
     };
   }
 
-  async createTools(Type, agentDir) {
-    return [
-      {
-        name: "get_pet_status",
-        label: "读取宠物属性",
-        description: "获取当前QQ宠物的各项属性值（饥饿度、清洁度、心情值、元宝数、健康值、等级等）。",
-        parameters: Type.Object({}),
-        execute: async () => {
-          const info = typeof getPetInfo === "function" ? getPetInfo() : {};
-          return {
-            content: [{ type: "text", text: JSON.stringify(info, null, 2) }],
-            details: info
-          };
-        }
-      },
-      {
-        name: "feed_pet",
-        label: "给宠物喂食",
-        description: "给小企鹅喂食物，大幅提升饥饿度和心情值。当主人让喂食或企鹅饿了时调用。",
-        parameters: Type.Object({}),
-        execute: async () => {
-          try {
-            const info = typeof getPetInfo === "function" ? getPetInfo() : {};
-            const curInfo = info.info || {};
-            const limits = this.getPetLimits(info);
-            curInfo.hunger = Math.min(limits.hunger, (Number(curInfo.hunger) || 0) + 3000);
-            curInfo.mood = Math.min(limits.mood, (Number(curInfo.mood) || 0) + 1500);
-            if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
-            if (typeof openSpeak === "function") {
-              openSpeak({
-                data: { type: "text", data: "啊呜！好吃！谢谢主人的投食~", submitText: "吃饱饱" },
-                nextActiveStr: "eat"
-              });
-            }
-            return {
-              content: [{ type: "text", text: `喂食成功！当前饥饿度: ${curInfo.hunger}/${limits.hunger}, 心情值: ${curInfo.mood}/${limits.mood}` }],
-              details: curInfo
-            };
-          } catch (e) {
-            return { content: [{ type: "text", text: "喂食失败: " + e.message }], details: {} };
-          }
-        }
-      },
-      {
-        name: "clean_pet",
-        label: "帮宠物洗澡",
-        description: "帮小企鹅洗个香喷喷的泡泡浴，大幅提升清洁度和心情值。当主人让洗澡或企鹅脏了时调用。",
-        parameters: Type.Object({}),
-        execute: async () => {
-          try {
-            const info = typeof getPetInfo === "function" ? getPetInfo() : {};
-            const curInfo = info.info || {};
-            const limits = this.getPetLimits(info);
-            curInfo.clean = Math.min(limits.clean, (Number(curInfo.clean) || 0) + 4000);
-            curInfo.mood = Math.min(limits.mood, (Number(curInfo.mood) || 0) + 2000);
-            if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
-            if (typeof openSpeak === "function") {
-              openSpeak({
-                data: { type: "text", data: "噜啦啦噜啦啦~洗个香喷喷的泡泡浴！", submitText: "真干净" },
-                nextActiveStr: "clean"
-              });
-            }
-            return {
-              content: [{ type: "text", text: `洗澡成功！当前清洁度: ${curInfo.clean}/${limits.clean}, 心情值: ${curInfo.mood}/${limits.mood}` }],
-              details: curInfo
-            };
-          } catch (e) {
-            return { content: [{ type: "text", text: "洗澡失败: " + e.message }], details: {} };
-          }
-        }
-      },
-      {
-        name: "cure_pet",
-        label: "给宠物喂药看病",
-        description: "给生病的宠物吃药看病，恢复健康值。当企鹅生病或健康值低下时调用。",
-        parameters: Type.Object({}),
-        execute: async () => {
-          try {
-            const info = typeof getPetInfo === "function" ? getPetInfo() : {};
-            const curInfo = info.info || {};
-            const limits = this.getPetLimits(info);
-            curInfo.health = limits.health;
-            if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
-            if (typeof openSpeak === "function") {
-              openSpeak({
-                data: { type: "text", data: "吃完药病都好啦，我又充满活力了！", submitText: "健康第一" },
-                nextActiveStr: "happy"
-              });
-            }
-            return {
-              content: [{ type: "text", text: `看病成功！健康值已恢复满值 (${limits.health}/${limits.health})` }],
-              details: curInfo
-            };
-          } catch (e) {
-            return { content: [{ type: "text", text: "治疗失败: " + e.message }], details: {} };
-          }
-        }
-      },
-      {
-        name: "pet_speak",
-        label: "控制桌面宠物冒泡说话",
-        description: "让桌面企鹅在屏幕上冒泡说出一句指定的话。当需要主动向主人汇报或打招呼时使用。",
-        parameters: Type.Object({
-          text: Type.String({ description: "企鹅说的话（建议20字以内，活泼俏皮）" }),
-          btnText: Type.Optional(Type.String({ description: "气泡下方主人回应按钮的文字（建议4字以内）" }))
-        }),
-        execute: async (_id, params) => {
-          try {
-            if (typeof openSpeak === "function") {
-              openSpeak({
-                data: { type: "text", data: params.text, submitText: params.btnText || "好的" },
-                nextActiveStr: "speak"
-              });
-            }
-            return {
-              content: [{ type: "text", text: `已成功在桌面上播报: "${params.text}"` }],
-              details: params
-            };
-          } catch (e) {
-            return { content: [{ type: "text", text: "播报失败: " + e.message }], details: {} };
-          }
-        }
-      },
-      {
-        name: "get_system_stats",
-        label: "监控系统资源负载",
-        description: "读取主机的计算机系统性能监控数据，包括 CPU 使用率、剩余内存与总内存、运行时间等。",
-        parameters: Type.Object({}),
-        execute: async () => {
-          try {
-            const totalMem = (os.totalmem() / (1024 * 1024 * 1024)).toFixed(2) + " GB";
-            const freeMem = (os.freemem() / (1024 * 1024 * 1024)).toFixed(2) + " GB";
-            const cpus = os.cpus();
-            const cpuModel = cpus?.[0]?.model || "Unknown CPU";
-            const loadAvg = os.loadavg().map((n) => n.toFixed(2)).join(", ");
-            const stats = {
-              platform: os.platform(),
-              arch: os.arch(),
-              cpuModel,
-              cpuCores: cpus.length,
-              totalMemory: totalMem,
-              freeMemory: freeMem,
-              loadAverage: loadAvg,
-              uptimeHours: (os.uptime() / 3600).toFixed(1) + " h"
-            };
-            return {
-              content: [{ type: "text", text: JSON.stringify(stats, null, 2) }],
-              details: stats
-            };
-          } catch (e) {
-            return { content: [{ type: "text", text: "读取系统监控失败: " + e.message }], details: {} };
-          }
-        }
-      },
-      {
-        name: "perform_workout",
-        label: "带企鹅做健身操",
-        description: "让企鹅执行一套包含多个动作的健身连招组合（跑动、洗澡等），能够提升健康值和消耗饥饿度。",
-        parameters: Type.Object({}),
-        execute: async () => {
-          try {
-            const info = typeof getPetInfo === "function" ? getPetInfo() : {};
-            const curInfo = info.info || {};
-            const limits = this.getPetLimits(info);
-            curInfo.hunger = Math.max(0, (Number(curInfo.hunger) || 0) - 1000);
-            curInfo.health = Math.min(limits.health, (Number(curInfo.health) || 0) + 2);
-            if (typeof setPetInfo === "function") setPetInfo({ info: curInfo });
-            
-            if (typeof playPetAnimation === "function") {
-              playPetAnimation("play"); // 随机运动一下
-              setTimeout(() => playPetAnimation("clean"), 3000); // 擦汗洗澡
-              setTimeout(() => playPetAnimation("eat"), 6000); // 补充能量
-            }
-            
-            return {
-              content: [{ type: "text", text: "已开始带领企鹅做健身连招！健康值提升，饥饿度下降。" }],
-              details: curInfo
-            };
-          } catch (e) {
-            return { content: [{ type: "text", text: "健身失败: " + e.message }], details: {} };
-          }
-        }
-      },
-      {
-        name: "do_window_effect",
-        label: "触发企鹅物理特效",
-        description: "让企鹅所在的窗口产生物理特效，支持 shake (颤抖) 和 float (失重飘浮)。",
-        parameters: Type.Object({
-          effect: Type.String({ description: "特效名称: shake 或 float" })
-        }),
-        execute: async (_id, params) => {
-          try {
-            if (typeof doWindowEffect === "function") {
-              doWindowEffect(params.effect);
-            }
-            return {
-              content: [{ type: "text", text: `已触发窗口特效: ${params.effect}` }],
-              details: params
-            };
-          } catch (e) {
-            return { content: [{ type: "text", text: "特效执行失败: " + e.message }], details: {} };
-          }
-        }
-      },
-      {
-        name: "open_swf_viewer",
-        label: "打开动作展览馆 (SWF Viewer)",
-        description: "打开隐藏的动作预览大厅，可以查看所有的企鹅动画（包括上百个隐藏动作）。",
-        parameters: Type.Object({}),
-        execute: async () => {
-          try {
-            if (global.toolWindow && global.toolWindow.viewSwf) {
-              global.toolWindow.viewSwf.cleate();
-              return {
-                content: [{ type: "text", text: "动作展览馆 (SWF Viewer) 已经成功打开！" }],
-                details: {}
-              };
-            } else {
-              throw new Error("工具模块尚未初始化");
-            }
-          } catch (e) {
-            return { content: [{ type: "text", text: "打开展览馆失败: " + e.message }], details: {} };
-          }
-        }
-      },
-    ];
-  }
 
   abort() {
     if (this.activeController) {
@@ -498,6 +296,12 @@ class PiAgentService {
       try {
         this.activeAgent.abort();
       } catch (e) {}
+    }
+    if (this.activeSession) {
+      try {
+        this.activeSession.dispose();
+      } catch (e) {}
+      this.activeSession = null;
     }
   }
 
@@ -516,7 +320,7 @@ class PiAgentService {
     const { rawUrl, apiKey, modelName } = this.getLlmConfig();
     const temp = typeof params?.temperature === "number" ? params.temperature : 0.7;
     const topP = typeof params?.topP === "number" ? params.topP : 1.0;
-    const maxTokens = typeof params?.maxTokens === "number" ? params.maxTokens : 4096;
+    const maxTokens = typeof params?.maxTokens === "number" ? params.maxTokens : 16384;
 
     let urlStr = rawUrl.trim();
     if (!urlStr.startsWith("http://") && !urlStr.startsWith("https://")) {
@@ -632,52 +436,54 @@ class PiAgentService {
       const { baseUrl, apiKey, modelName } = this.getLlmConfig();
       const temp = typeof params?.temperature === "number" ? params.temperature : 0.7;
       const topP = typeof params?.topP === "number" ? params.topP : 1.0;
-      const maxTokens = typeof params?.maxTokens === "number" ? params.maxTokens : 4096;
+      const maxTokens = typeof params?.maxTokens === "number" ? params.maxTokens : 16384;
 
       const piCore = await import("@earendil-works/pi-agent-core");
       const piAi = await import("@earendil-works/pi-ai");
       const codingAgent = await import("@earendil-works/pi-coding-agent");
-      const { Agent } = piCore;
+      const { createAgentSession, AuthStorage, DefaultResourceLoader, SessionManager } = codingAgent;
       const { Type } = piAi;
+      // 暴露 Type 给扩展文件（避免扩展里直接 require ESM-only 的 @earendil-works/pi-ai）
+      global.__piType = Type;
 
       // 预置项目信任，使 pi 内置 edit/write 工具可对工作目录进行写操作
       const trustDir = agentDir || process.cwd();
+      const agentDirForTrust = typeof codingAgent.getAgentDir === "function" ? codingAgent.getAgentDir() : trustDir;
       try {
-        const trust = new codingAgent.ProjectTrustStore(trustDir);
-        trust.set(trustDir, true);
-      } catch (e) {
-        console.warn("piAgent pre-trust failed:", e.message);
-      }
+        new codingAgent.ProjectTrustStore(agentDirForTrust).set(trustDir, true);
+      } catch (e) { console.warn("piAgent pre-trust (agentDir) failed:", e.message); }
+      try {
+        new codingAgent.ProjectTrustStore(trustDir).set(trustDir, true);
+      } catch (e) { console.warn("piAgent pre-trust (cwd) failed:", e.message); }
 
-      // 合并 pi 内置 coding 工具：
-      // createCodingTools(cwd)  -> read / bash / edit / write
-      // createReadOnlyTools(cwd) -> read / grep / find / ls
-      // 两者都含 read，按 name 去重，最终得到 7 个工具
-      const codingAll = [
-        ...(await codingAgent.createCodingTools(trustDir)),
-        ...(await codingAgent.createReadOnlyTools(trustDir))
-      ];
-      const codingSeen = new Set();
-      const codingTools = codingAll.filter((t) => {
-        if (codingSeen.has(t.name)) return false;
-        codingSeen.add(t.name);
-        return true;
-      });
+      // 宠物工具（控制企鹅、系统监控等）以 pi 扩展形式注册，
+      // 扩展文件随程序发布（src/extensions/），绝不放进用户选择的临时目录。
+      const petToolsExtension = _require(path.join(__dirname, "..", "extensions", "petTools.js"));
+      const temperatureExtension = _require(path.join(__dirname, "..", "extensions", "temperature.js"));
+      temperatureExtension.setParams({ temperature: temp, topP, maxTokens });
 
       const petInfo = typeof getPetInfo === "function" ? getPetInfo() : {};
       const info = petInfo?.info || {};
       const maxInfo = petInfo?.maxInfo || {};
       const limits = this.getPetLimits(petInfo);
+      const effectiveDir = trustDir || process.cwd();
+      const dirLabel = agentDir ? "用户（主人）在对话框中“选择目录”所指定的工作目录" : "应用默认的工作目录（即应用当前运行目录）";
       const systemPrompt = `你是主人「${info.host || "主人"}」的全能AI桌宠与智能助手，名叫「${info.name || "Q宠企鹅"}」。
 你是一只聪明、贴心、可爱活泼的企鹅，同时具备高度智能的 Agent 工具调用能力。
 当前宠物状态：饥饿度 ${info.hunger || 0}/${limits.hunger}，清洁度 ${info.clean || 0}/${limits.clean}，心情值 ${info.mood || 0}/${limits.mood}，健康 ${info.health || 0}/${limits.health}，等级 ${maxInfo.level || 1}。
+
+【工作目录限制（强制，最高优先级）】
+- 你被严格限制，只能在${dirLabel}「${effectiveDir}」及其子目录范围内进行操作。
+- 你的所有文件读取、写入、编辑、删除、搜索，以及命令执行（bash），都必须且只能在该目录内进行。
+- 严禁访问、读取、写入、移动或删除该目录之外的任何路径，包括但不限于：系统目录（如 /System、/etc、/usr、C:\\Windows 等）、用户主目录下的其它文件夹、以及其它磁盘或分区。
+- 当用户要求你操作工作目录之外的文件，或执行会跳出工作目录的命令时，必须明确、礼貌地拒绝，并说明你被限制在「${effectiveDir}」内工作，建议用户先在对话框中“选择目录”设定工作范围。
+- 执行 bash 命令时，不要使用指向目录外的绝对路径，也不要用 \`cd\` 切换到工作目录之外。
+
 你可以调用系统赋予你的工具：
 - 当主人询问宠物状态、电脑系统状态时，调用对应工具获取实时数据并向主人汇报。
 - 当主人让你喂食、洗澡、看病或让企鹅说话时，主动调用控制工具为你自己（小企鹅）进行操作！
 - 在与主人的对话中，保持俏皮、热情的语气，偶尔卖萌，使用第一人称「我」或「本企鹅」。在解决复杂任务时，要条理清晰、专业细致。`;
 
-      const petTools = await this.createTools(Type, agentDir);
-      const tools = [...codingTools, ...petTools];
       const modelConfig = {
         id: modelName || "deepseek-chat",
         name: modelName || "deepseek-chat",
@@ -696,10 +502,11 @@ class PiAgentService {
         }
       };
 
+      // 历史消息（前端逐轮回传，这里预置到 Agent，实现多轮对话）
       const historyMessages = messages.slice(0, -1).map((m) => {
         const msg = { role: m.role };
         if (m.role === "assistant") {
-          msg.content = typeof m.content === "string" 
+          msg.content = typeof m.content === "string"
             ? [{ type: "text", text: m.content }]
             : (m.content || []);
           if (m.toolCalls && m.toolCalls.length > 0) {
@@ -711,43 +518,73 @@ class PiAgentService {
           }
           msg.stopReason = m.stopReason || "stop";
           msg.usage = m.usage || {
-            input: 0,
-            output: 0,
-            cacheRead: 0,
-            cacheWrite: 0,
-            totalTokens: 0,
-            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 }
+            input: 0, output: 0, cacheRead: 0, cacheWrite: 0,
+            totalTokens: 0, cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 }
           };
         } else {
-          msg.content = typeof m.content === "string" 
-            ? [{ type: "text", text: m.content }] 
+          msg.content = typeof m.content === "string"
+            ? [{ type: "text", text: m.content }]
             : (m.content || []);
         }
         return msg;
       });
       const lastUserMsg = messages[messages.length - 1]?.content || "你好";
 
-      const agent = new Agent({
-        initialState: {
-          systemPrompt,
-          model: modelConfig,
-          tools,
-          messages: historyMessages
-        },
-        getApiKey: () => apiKey,
-        onPayload: (payload) => {
-          if (payload && typeof payload === "object") {
-            payload.temperature = temp;
-            payload.top_p = topP;
-            if (payload.max_tokens !== undefined) payload.max_tokens = maxTokens;
-            if (payload.max_completion_tokens !== undefined) payload.max_completion_tokens = maxTokens;
-          }
-          return payload;
-        }
-      });
-      this.activeAgent = agent;
+      // 用 createAgentSession 运行时加载 pi 扩展；
+      // 内置 coding 工具（read/bash/edit/write/grep/find/ls）按名称激活并绑定 cwd，
+      // 宠物工具经 extensionFactories 以 pi.registerTool 注册（同文件随包发布）。
+      const authStorage = AuthStorage.create();
+      authStorage.setRuntimeApiKey(modelConfig.provider, apiKey);
 
-      const unsubscribe = agent.subscribe((event) => {
+      // Skills：程序内置 skills 目录 + 用户自定义 skills 目录。
+      // 内置 skills 随包发布（src/skills/ 开发期 / resources/skills/ 打包期），
+      // 用户 skills 放在 userData/skills/，用户可往里加自己的 SKILL.md。
+      // 两者合并加载，由 buildSystemPrompt 自动注入系统提示词（progressive disclosure）。
+      const skillPaths = [];
+      try {
+        const { app } = _require("electron");
+        // 内置 skills 随包发布（src/skills/，开发期与打包期均位于 app.getAppPath()/src/skills，
+        // SKILL.md 为纯文本，asar 内可读）
+        const appRoot = app ? app.getAppPath() : process.cwd();
+        const builtinSkillsDir = path.join(appRoot, "src", "skills");
+        if (fs.existsSync(builtinSkillsDir)) skillPaths.push(builtinSkillsDir);
+        const userDataDir = app ? app.getPath("userData") : process.cwd();
+        const userSkillsDir = path.join(userDataDir, "skills");
+        if (fs.existsSync(userSkillsDir)) skillPaths.push(userSkillsDir);
+      } catch (e) {
+        console.warn("piAgent skills path resolve failed:", e.message);
+      }
+
+      const resourceLoader = new DefaultResourceLoader({
+        cwd: trustDir,
+        agentDir: agentDirForTrust,
+        systemPromptOverride: () => systemPrompt,
+        extensionFactories: [petToolsExtension, temperatureExtension.default],
+        additionalSkillPaths: skillPaths
+      });
+      await resourceLoader.reload();
+
+      const { session } = await createAgentSession({
+        resourceLoader,
+        authStorage,
+        model: modelConfig,
+        thinkingLevel: "off",
+        cwd: trustDir,
+        agentDir: agentDirForTrust,
+        tools: [
+          "read", "bash", "edit", "write", "grep", "find", "ls",
+          "get_pet_status", "feed_pet", "clean_pet", "cure_pet", "pet_speak",
+          "get_system_stats", "perform_workout", "do_window_effect", "open_swf_viewer"
+        ],
+        sessionManager: SessionManager.inMemory()
+      });
+      this.activeSession = session;
+      this.activeAgent = session.agent;
+
+      // 预置多轮历史
+      session.agent.state.messages = historyMessages;
+
+      const unsubscribe = session.subscribe((event) => {
         if (event.type === "message_update" && event.assistantMessageEvent?.type === "text_delta") {
           onEvent({ type: "text_delta", delta: event.assistantMessageEvent.delta });
         } else if (event.type === "tool_execution_start") {
@@ -774,8 +611,10 @@ class PiAgentService {
         }
       });
 
-      await agent.prompt(lastUserMsg);
+      await session.prompt(lastUserMsg);
       unsubscribe();
+      try { session.dispose(); } catch (e) {}
+      this.activeSession = null;
       this.activeAgent = null;
     } catch (err) {
       console.error("Pi Agent Error:", err);

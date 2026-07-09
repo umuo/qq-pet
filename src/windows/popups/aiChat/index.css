@@ -732,6 +732,11 @@ body, html {
   border-left-color: #f56565;
 }
 
+.tool-call-card.cancelled {
+  border-left-color: #e0a96d;
+  background: rgba(224, 169, 109, 0.06);
+}
+
 @keyframes pulse-border {
   from { border-color: rgba(246, 173, 85, 0.3); }
   to { border-color: rgba(246, 173, 85, 0.9); }
@@ -774,6 +779,36 @@ body, html {
 .tool-call-card.error .tc-status-badge {
   color: #feb2b2;
   background: rgba(245, 101, 101, 0.15);
+}
+
+.tool-call-card.cancelled .tc-status-badge {
+  color: #ecc694;
+  background: rgba(224, 169, 109, 0.15);
+}
+
+/* 技能调用卡片（read SKILL.md）— 紫色主题，区别于普通工具 */
+.tool-call-card.skill {
+  border-left-color: #9f7aea;
+  background: rgba(159, 122, 234, 0.08);
+}
+.tool-call-card.skill.running {
+  border-left-color: #b794f4;
+  box-shadow: 0 0 15px rgba(159, 122, 234, 0.3);
+  animation: pulse-border-skill 1.5s infinite alternate;
+}
+.tool-call-card.skill.completed {
+  border-left-color: #9f7aea;
+}
+.tool-call-card.skill .tc-name {
+  color: #b794f4;
+}
+.tool-call-card.skill .tc-status-badge {
+  color: #d6bcfa;
+  background: rgba(159, 122, 234, 0.15);
+}
+@keyframes pulse-border-skill {
+  from { border-color: rgba(159, 122, 234, 0.3); }
+  to { border-color: rgba(159, 122, 234, 0.9); }
 }
 
 .tc-body {

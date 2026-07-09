@@ -80,10 +80,10 @@
         <span class="param-val">{{ genParams.maxTokens }}</span>
       </div>
       <select v-model.number="genParams.maxTokens" class="param-select">
-        <option :value="1024">1024 (简短文本)</option>
-        <option :value="2048">2048 (中等文本)</option>
-        <option :value="4096">4096 (标准推荐)</option>
+        <option :value="2048">2048 (简短文本)</option>
+        <option :value="4096">4096 (标准对话)</option>
         <option :value="8192">8192 (长文与代码)</option>
+        <option :value="16384">16384 (Agent 智能体推荐)</option>
       </select>
       <div class="param-hint">允许模型在单次回复中生成的最大 Token 数量。</div>
     </div>
@@ -127,14 +127,25 @@
               v-html="renderMarkdown(blk.text || '', isGenerating && index === messages.length - 1)"
             ></div>
             <div class="tool-calls-container" v-else>
-              <div class="tool-call-card" :class="[blk.status, { collapsed: !blk.expanded }]">
+              <div class="tool-call-card" :class="[blk.status, { collapsed: !blk.expanded, skill: blk.isSkill }]">
                 <div class="tc-header clickable" @click="toggleTool(blk)">
                   <span class="tc-chevron" :class="{ open: blk.expanded }">▸</span>
-                  <span class="tc-icon">{{ getToolIcon(blk.name) }}</span>
-                  <span class="tc-name">{{ getToolLabel(blk.name) }}</span>
+                  <template v-if="blk.isSkill">
+                    <span class="tc-icon">📖</span>
+                    <span class="tc-name">调用技能 · {{ blk.skillName }}</span>
+                  </template>
+                  <template v-else>
+                    <span class="tc-icon">{{ getToolIcon(blk.name) }}</span>
+                    <span class="tc-name">{{ getToolLabel(blk.name) }}</span>
+                  </template>
                   <span class="tc-status-badge">
                     <span class="tc-spinner" v-if="blk.status === 'running'"></span>
-                    {{ blk.status === 'running' ? '正在执行' : blk.status === 'error' ? '执行出错' : '执行完成' }}
+                    <template v-if="blk.isSkill">
+                      {{ blk.status === 'running' ? '加载中' : blk.status === 'error' ? '加载失败' : blk.status === 'cancelled' ? '已中断' : '已加载' }}
+                    </template>
+                    <template v-else>
+                      {{ blk.status === 'running' ? '正在执行' : blk.status === 'error' ? '执行出错' : blk.status === 'cancelled' ? '已中断' : '执行完成' }}
+                    </template>
                   </span>
                 </div>
                 <div class="tc-summary" v-if="!blk.expanded && blk.args && Object.keys(blk.args).length">{{ toolSummary(blk) }}</div>
@@ -153,13 +164,13 @@
               </div>
             </div>
           </template>
-          <!-- 生成中且末尾是一张正在运行的工具卡片，补一个思考占位 -->
+          <!-- 生成中始终显示等待动画，只有响应结束（done/error）才消失 -->
           <div
             class="thinking-indicator"
-            v-if="isGenerating && index === messages.length - 1 && msg.blocks[msg.blocks.length - 1].type === 'tool' && msg.blocks[msg.blocks.length - 1].status === 'running'"
+            v-if="isGenerating && index === messages.length - 1"
           >
             <span class="ti-spinner"></span>
-            <span class="ti-text">企鹅正在调用工具并处理中</span>
+            <span class="ti-text">{{ thinkingText(msg) }}</span>
             <span class="ti-dots"><i></i><i></i><i></i></span>
           </div>
         </template>
@@ -187,15 +198,26 @@
               v-for="(tc, tcIdx) in msg.toolCalls"
               :key="tcIdx"
               class="tool-call-card"
-              :class="[tc.status, { collapsed: !tc.expanded }]"
+              :class="[tc.status, { collapsed: !tc.expanded, skill: tc.isSkill }]"
             >
               <div class="tc-header clickable" @click="toggleTool(tc)">
                 <span class="tc-chevron" :class="{ open: tc.expanded }">▸</span>
-                <span class="tc-icon">{{ getToolIcon(tc.name) }}</span>
-                <span class="tc-name">{{ getToolLabel(tc.name) }}</span>
+                <template v-if="tc.isSkill">
+                  <span class="tc-icon">📖</span>
+                  <span class="tc-name">调用技能 · {{ tc.skillName }}</span>
+                </template>
+                <template v-else>
+                  <span class="tc-icon">{{ getToolIcon(tc.name) }}</span>
+                  <span class="tc-name">{{ getToolLabel(tc.name) }}</span>
+                </template>
                 <span class="tc-status-badge">
                   <span class="tc-spinner" v-if="tc.status === 'running'"></span>
-                  {{ tc.status === 'running' ? '正在执行' : tc.status === 'error' ? '执行出错' : '执行完成' }}
+                  <template v-if="tc.isSkill">
+                    {{ tc.status === 'running' ? '加载中' : tc.status === 'error' ? '加载失败' : tc.status === 'cancelled' ? '已中断' : '已加载' }}
+                  </template>
+                  <template v-else>
+                    {{ tc.status === 'running' ? '正在执行' : tc.status === 'error' ? '执行出错' : tc.status === 'cancelled' ? '已中断' : '执行完成' }}
+                  </template>
                 </span>
               </div>
               <div class="tc-summary" v-if="!tc.expanded && tc.args && Object.keys(tc.args).length">{{ toolSummary(tc) }}</div>

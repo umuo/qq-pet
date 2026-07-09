@@ -37,7 +37,8 @@ class MainClass {
         minHeight: 400,
         transparent: false,
         backgroundColor: "#12161f",
-        hasShadow: true
+        hasShadow: true,
+        alwaysOnTop: false
       },
       created(e) {
         let { vm: t, preloads: n, getinfo } = e;

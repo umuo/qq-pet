@@ -57,7 +57,7 @@
       genParams: {
         temperature: 0.7,
         topP: 1.0,
-        maxTokens: 4096
+        maxTokens: 16384
       },
       config: {
         baseUrl: "",
@@ -291,7 +291,7 @@
         this.genParams = {
           temperature: 0.7,
           topP: 1.0,
-          maxTokens: 4096
+          maxTokens: 16384
         };
       },
       closeWindow() {
@@ -313,6 +313,10 @@
       },
       abortGeneration() {
         this.isGenerating = false;
+        // 立即收尾运行中工具：防止后端中断后未回 done 事件时，面板卡在「正在执行」
+        const curList = this.sessions[this.mode] || [];
+        const lastMsg = curList.length > 0 ? curList[curList.length - 1] : null;
+        this.settleRunningTools(lastMsg);
         if (window.electronAPI) {
           window.electronAPI.aiChat_h_abort();
         }
@@ -362,33 +366,32 @@
       },
       handleStreamEvent(event) {
         if (!event) return;
+        const curList = this.sessions[this.mode] || [];
+        const lastMsg = curList.length > 0 ? curList[curList.length - 1] : null;
+
         if (event.type === "done") {
           this.isGenerating = false;
+          // 收尾：把本轮仍在 running 的工具块统一标记为已中断，避免面板永远转圈
+          this.settleRunningTools(lastMsg);
           this.scrollToBottom();
           this.saveCurrentHistory();
           return;
         } else if (event.type === "error") {
           this.isGenerating = false;
-          const curList = this.sessions[this.mode];
-          if (curList && curList.length > 0) {
-            const lastMsg = curList[curList.length - 1];
-            if (lastMsg && lastMsg.role === "assistant") {
-              const errText = `\n\n> [!WARNING]\n> ⚠️ **生成错误**: ${event.error || "未知异常"}`;
-              lastMsg.content = (lastMsg.content || "") + errText;
-              if (!lastMsg.blocks) lastMsg.blocks = [];
-              const lastBlock = lastMsg.blocks[lastMsg.blocks.length - 1];
-              if (lastBlock && lastBlock.type === "text") lastBlock.text += errText;
-              else lastMsg.blocks.push({ type: "text", text: errText });
-            }
+          this.settleRunningTools(lastMsg);
+          if (lastMsg && lastMsg.role === "assistant") {
+            const errText = `\n\n> [!WARNING]\n> ⚠️ **生成错误**: ${event.error || "未知异常"}`;
+            lastMsg.content = (lastMsg.content || "") + errText;
+            if (!lastMsg.blocks) lastMsg.blocks = [];
+            const lastBlock = lastMsg.blocks[lastMsg.blocks.length - 1];
+            if (lastBlock && lastBlock.type === "text") lastBlock.text += errText;
+            else lastMsg.blocks.push({ type: "text", text: errText });
           }
           this.scrollToBottom();
           this.saveCurrentHistory();
           return;
         }
 
-        const curList = this.sessions[this.mode];
-        if (!curList || curList.length === 0) return;
-        const lastMsg = curList[curList.length - 1];
         if (!lastMsg || lastMsg.role !== "assistant") return;
 
         if (event.type === "text_delta") {
@@ -409,6 +412,13 @@
         } else if (event.type === "tool_start") {
           if (!lastMsg.blocks) lastMsg.blocks = [];
           if (!lastMsg.toolCalls) lastMsg.toolCalls = [];
+          // 检测是否在调用 skill（AI 用 read 加载 SKILL.md = 技能的 progressive disclosure）
+          let isSkill = false, skillName = "";
+          if (event.name === "read") {
+            const argsStr = typeof event.args === "string" ? event.args : JSON.stringify(event.args || {});
+            const m = argsStr.match(/skills[\/\\]([^\/\\"\s]+)[\/\\]SKILL\.md/i);
+            if (m) { isSkill = true; skillName = m[1]; }
+          }
           const toolBlock = {
             type: "tool",
             id: event.id || Math.random().toString(),
@@ -416,7 +426,9 @@
             args: event.args || {},
             status: "running",
             result: null,
-            expanded: false
+            expanded: false,
+            isSkill: isSkill,
+            skillName: skillName
           };
           // blocks 与 toolCalls 持有同一对象引用，更新其一即可同步
           lastMsg.blocks.push(toolBlock);
@@ -425,13 +437,22 @@
         } else if (event.type === "tool_end") {
           if (!lastMsg.blocks) lastMsg.blocks = [];
           if (!lastMsg.toolCalls) lastMsg.toolCalls = [];
+          // 优先按 toolCallId 精确匹配；兜底再按「同名且仍在运行的最近一次」匹配，
+          // 逆序取最后一个，避免并行同名工具（如两次 read）在回传时串台、留下卡死的面板
           let tc = lastMsg.blocks.find(
-            (b) => b.type === "tool" && (b.id === event.id || (b.name === event.name && b.status === "running"))
+            (b) => b.type === "tool" && b.id === event.id
           );
           if (!tc) {
-            tc = lastMsg.toolCalls.find(
-              (c) => c.id === event.id || (c.name === event.name && c.status === "running")
-            );
+            for (let i = lastMsg.blocks.length - 1; i >= 0; i--) {
+              const b = lastMsg.blocks[i];
+              if (b.type === "tool" && b.name === event.name && b.status === "running") {
+                tc = b;
+                break;
+              }
+            }
+          }
+          if (!tc) {
+            tc = lastMsg.toolCalls.find((c) => c.id === event.id);
           }
           if (tc) {
             tc.status = event.isError ? "error" : "completed";
@@ -441,6 +462,42 @@
           }
           this.scrollToBottom();
         }
+      },
+      // 收尾：把指定消息里仍停留在 running 状态的工具块统一标记为已中断，
+      // 防止「LLM 已结束但部分工具面板还在转圈」的状态残留（典型场景：用户点停止中断、框架漏发 tool_end）
+      settleRunningTools(lastMsg) {
+        if (!lastMsg) return;
+        // blocks 与 toolCalls 持有同一对象引用，优先扫 blocks；旧历史无 blocks 时回退扫 toolCalls
+        const list = (lastMsg.blocks && lastMsg.blocks.length)
+          ? lastMsg.blocks
+          : (lastMsg.toolCalls || []);
+        for (const item of list) {
+          if (!item) continue;
+          if (item.type && item.type !== "tool") continue;
+          if (item.status === "running") {
+            item.status = "cancelled";
+            item.expanded = true;
+            if (!item.result) {
+              item.result = {
+                content: [{
+                  type: "text",
+                  text: "⏹ 该工具调用在任务结束时仍处于执行中，可能已被中断或状态未正常回传。"
+                }]
+              };
+            }
+          }
+        }
+      },
+      // 根据末尾块状态返回等待动画文案
+      thinkingText(msg) {
+        const blocks = msg && msg.blocks;
+        if (blocks && blocks.length > 0) {
+          const last = blocks[blocks.length - 1];
+          if (last && last.type === "tool" && last.status === "running") {
+            return "企鹅正在调用工具并处理中";
+          }
+        }
+        return "企鹅正在思考与回复中";
       },
       // 流式渲染时对未闭合的围栏做容错，避免「普通文本 ↔ 代码块」的布局突变抖动
       _balanceFences(text) {
