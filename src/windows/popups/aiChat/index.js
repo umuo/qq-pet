@@ -49,6 +49,18 @@
       // 全部已保存会话（含闲聊与 Agent，按 mode 区分）
       historyList: [],
       inputQuery: "",
+      installedSkills: [],
+      skillsLoaded: false,
+      customSlashCommands: [],
+      builtinSlashCommands: [
+        { name: "new", description: "新建一个空白会话", icon: "＋", kind: "action", action: "newSession" },
+        { name: "clear", description: "清空当前会话内容", icon: "⌫", kind: "action", action: "clear" },
+        { name: "history", description: "打开历史会话", icon: "◷", kind: "action", action: "history" },
+        { name: "settings", description: "调整模型生成参数", icon: "☷", kind: "action", action: "settings" },
+        { name: "theme", description: "切换界面主题", icon: "◐", kind: "action", action: "theme" }
+      ],
+      slashIndex: 0,
+      slashMenuDismissed: false,
       isGenerating: false,
       showParamsModal: false,
       showHistory: false,
@@ -77,6 +89,38 @@
       messages() {
         return this.sessions[this.mode] || [];
       },
+      slashCommandItems() {
+        const skills = this.mode === "agent"
+          ? this.installedSkills.map((skill) => ({
+              ...skill,
+              icon: "✦",
+              kind: "skill",
+              category: "Skill"
+            }))
+          : [];
+        const merged = [...this.builtinSlashCommands, ...this.customSlashCommands, ...skills];
+        const seen = new Set();
+        return merged.filter((command) => {
+          if (!command?.name || seen.has(command.name)) return false;
+          seen.add(command.name);
+          return true;
+        });
+      },
+      slashMatches() {
+        const match = String(this.inputQuery || "").match(/^\/([^\s]*)$/);
+        if (!match) return [];
+        const query = match[1].replace(/^skill:/, "").toLowerCase();
+        return this.slashCommandItems
+          .filter((command) => {
+            const name = String(command.name || "").toLowerCase();
+            const description = String(command.description || "").toLowerCase();
+            return !query || name.includes(query) || description.includes(query);
+          })
+          .slice(0, 8);
+      },
+      slashMenuVisible() {
+        return !this.isGenerating && !this.slashMenuDismissed && /^\/[^\s]*$/.test(String(this.inputQuery || ""));
+      },
       // 按模式分组的会话（用于历史面板展示）
       groupedSessions() {
         const groups = { chat: [], agent: [] };
@@ -90,6 +134,8 @@
       }
     },
     mounted() {
+      // 后续功能可在渲染进程中注册自己的斜杠命令，无需修改菜单组件。
+      window.qpetRegisterSlashCommand = (command) => this.registerSlashCommand(command);
       try {
         const savedTheme = localStorage.getItem("qpet-ai-theme");
         if (this.themes.some((item) => item.id === savedTheme)) this.theme = savedTheme;
@@ -138,6 +184,12 @@
           this.scrollToBottom(true);
         });
 
+        window.electronAPI.aiChat_m_onSkills((evt, list) => {
+          this.installedSkills = Array.isArray(list) ? list : [];
+          this.skillsLoaded = true;
+          this.slashIndex = 0;
+        });
+
         window.electronAPI.aiChat_m_onStream((evt, event) => {
           this.handleStreamEvent(event);
         });
@@ -156,6 +208,7 @@
               this.sessions.agent = [];
               this.activeId.agent = null;
             }
+            window.electronAPI.aiChat_h_get_skills(dirPath);
             this.scrollToBottom(true);
           }
         });
@@ -169,6 +222,7 @@
         window.electronAPI.aiChat_h_bus({ event: "theme", theme: this.theme });
         window.electronAPI.aiChat_h_get_config();
         window.electronAPI.aiChat_h_get_sessions();
+        window.electronAPI.aiChat_h_get_skills(this.agentDir);
       }
 
       // 跟踪用户是否停留在底部附近：仅在贴底时自动跟随流式滚动，
@@ -212,6 +266,76 @@
         if (window.electronAPI && window.electronAPI.aiChat_h_select_dir) {
           window.electronAPI.aiChat_h_select_dir();
         }
+      },
+      handleInput() {
+        this.slashIndex = 0;
+        this.slashMenuDismissed = false;
+      },
+      registerSlashCommand(command) {
+        if (!command || !/^[a-z0-9-]+$/i.test(command.name || "")) return false;
+        const normalized = {
+          name: String(command.name).toLowerCase(),
+          description: command.description || "",
+          icon: command.icon || "⌘",
+          kind: command.kind || "action",
+          action: command.action || "",
+          handler: command.handler
+        };
+        const index = this.customSlashCommands.findIndex((item) => item.name === normalized.name);
+        if (index >= 0) this.customSlashCommands.splice(index, 1, normalized);
+        else this.customSlashCommands.push(normalized);
+        return true;
+      },
+      selectSlashCommand(command) {
+        if (!command || !command.name) return;
+        if (command.kind === "skill") {
+          this.inputQuery = `/${command.name} `;
+          this.slashMenuDismissed = true;
+          this.slashIndex = 0;
+          this.$nextTick(() => this.$refs.chatInput?.focus());
+          return;
+        }
+        this.inputQuery = "";
+        this.slashMenuDismissed = true;
+        this.slashIndex = 0;
+        this.runSlashCommand(command);
+      },
+      runSlashCommand(command) {
+        if (!command) return false;
+        if (typeof command.handler === "function") {
+          try {
+            Promise.resolve(command.handler({ app: this, mode: this.mode, agentDir: this.agentDir }))
+              .catch((e) => console.error("slash command handler error:", e));
+          } catch (e) {
+            console.error("slash command handler error:", e);
+          }
+          return true;
+        }
+        const actions = {
+          newSession: () => this.newSession(),
+          clear: () => this.clearCurrentHistory(),
+          history: () => this.toggleHistory(),
+          settings: () => this.toggleParamsModal(),
+          theme: () => {
+            this.showThemePanel = true;
+            this.showHistory = false;
+            this.showParamsModal = false;
+          }
+        };
+        const action = actions[command.action];
+        if (!action) return false;
+        action();
+        return true;
+      },
+      normalizeSkillCommand(text) {
+        const value = String(text || "").trim();
+        if (value.startsWith("/skill:")) return value;
+        const match = value.match(/^\/([a-z0-9-]+)(?:\s+([\s\S]*))?$/i);
+        if (!match) return value;
+        const skill = this.installedSkills.find((item) => item.name === match[1]);
+        if (!skill) return value;
+        const args = (match[2] || "").trim();
+        return `/skill:${skill.name}${args ? " " + args : ""}`;
       },
       toggleHistory() {
         this.showHistory = !this.showHistory;
@@ -365,6 +489,32 @@
         }
       },
       handleKeyDown(e) {
+        if (this.slashMenuVisible) {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            this.slashMenuDismissed = true;
+            return;
+          }
+          if (this.slashMatches.length && e.key === "ArrowDown") {
+            e.preventDefault();
+            this.slashIndex = (this.slashIndex + 1) % this.slashMatches.length;
+            return;
+          }
+          if (this.slashMatches.length && e.key === "ArrowUp") {
+            e.preventDefault();
+            this.slashIndex = (this.slashIndex - 1 + this.slashMatches.length) % this.slashMatches.length;
+            return;
+          }
+          if (this.slashMatches.length && (e.key === "Enter" || e.key === "Tab")) {
+            e.preventDefault();
+            this.selectSlashCommand(this.slashMatches[this.slashIndex]);
+            return;
+          }
+          if (!this.slashMatches.length && (e.key === "Enter" || e.key === "Tab")) {
+            e.preventDefault();
+            return;
+          }
+        }
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
           this.sendMessage();
@@ -373,6 +523,15 @@
       sendMessage() {
         const query = (this.inputQuery || "").trim();
         if (!query || this.isGenerating) return;
+
+        const directCommand = this.slashCommandItems.find(
+          (command) => command.kind !== "skill" && `/${command.name}` === query
+        );
+        if (directCommand && this.runSlashCommand(directCommand)) {
+          this.inputQuery = "";
+          this.slashMenuDismissed = true;
+          return;
+        }
 
         if (!this.sessions[this.mode]) this.sessions[this.mode] = [];
 
@@ -398,6 +557,10 @@
             role: m.role,
             content: m.content
           }));
+          if (historyToSend.length > 0) {
+            const last = historyToSend[historyToSend.length - 1];
+            if (last.role === "user") last.content = this.normalizeSkillCommand(last.content);
+          }
           const plainParams = JSON.parse(JSON.stringify(this.genParams));
           window.electronAPI.aiChat_h_send({
             mode: this.mode,

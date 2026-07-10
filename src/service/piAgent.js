@@ -154,6 +154,44 @@ class PiAgentService {
     return dir;
   }
 
+  // 返回 Agent 实际可发现的 Skills，供输入框斜杠菜单使用。
+  // 与 streamAgentMode 使用相同的 cwd / agentDir / additionalSkillPaths，
+  // 避免菜单展示了运行时不可用的 Skill。
+  async getAvailableSkills(agentDir) {
+    try {
+      const codingAgent = await import("@earendil-works/pi-coding-agent");
+      const cwd = agentDir || process.cwd();
+      const agentConfigDir = typeof codingAgent.getAgentDir === "function"
+        ? codingAgent.getAgentDir()
+        : cwd;
+      const skillPaths = [];
+      try {
+        const { app } = _require("electron");
+        const appRoot = app ? app.getAppPath() : process.cwd();
+        const builtinSkillsDir = path.join(appRoot, "src", "skills");
+        if (fs.existsSync(builtinSkillsDir)) skillPaths.push(builtinSkillsDir);
+        const userSkillsDir = this.ensureUserSkillsDir();
+        if (fs.existsSync(userSkillsDir)) skillPaths.push(userSkillsDir);
+      } catch (e) {
+        console.warn("piAgent list skills path resolve failed:", e.message);
+      }
+      const result = codingAgent.loadSkills({
+        cwd,
+        agentDir: agentConfigDir,
+        skillPaths,
+        includeDefaults: true
+      });
+      return (result.skills || []).map((skill) => ({
+        name: skill.name,
+        description: skill.description || "",
+        source: skill.sourceInfo?.label || skill.sourceInfo?.kind || "skill"
+      }));
+    } catch (e) {
+      console.warn("piAgent getAvailableSkills failed:", e.message);
+      return [];
+    }
+  }
+
   // 路线 A：读取用户配置的 npm extension 包名列表（userData/ai_extensions.json）
   // 用户 npm install 后把包名写入此文件，piAgent 启动时 require 并注入 extensionFactories
   getExtraExtensions() {

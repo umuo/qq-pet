@@ -89,6 +89,17 @@ class MainClass {
               console.error("get sessions error:", err);
             }
           },
+          aiChat_h_get_skills_m: async (evt, agentDir) => {
+            try {
+              const skills = await piAgentService.getAvailableSkills(agentDir || "");
+              if (t && !t.isDestroyed()) {
+                t.webContents.send("aiChat_m_skills_h", skills);
+              }
+            } catch (err) {
+              console.error("get skills error:", err);
+              if (t && !t.isDestroyed()) t.webContents.send("aiChat_m_skills_h", []);
+            }
+          },
           aiChat_h_save_sessions_m: (evt, list) => {
             try {
               const req = typeof list === "string" ? JSON.parse(list) : list;

@@ -319,11 +319,44 @@
 
   <div class="chat-footer notSelect">
     <div class="input-box-wrapper">
+      <div class="slash-menu" v-if="slashMenuVisible">
+        <div class="slash-menu-head">
+          <span>斜杠命令</span>
+          <small>{{ slashMatches.length }} 项</small>
+        </div>
+        <div class="slash-menu-list" v-if="slashMatches.length">
+          <button
+            v-for="(command, index) in slashMatches"
+            :key="command.kind + ':' + command.name"
+            class="slash-item focusPress"
+            :class="{ active: slashIndex === index }"
+            @mouseenter="slashIndex = index"
+            @mousedown.prevent="selectSlashCommand(command)"
+          >
+            <span class="slash-item-icon" :class="{ skill: command.kind === 'skill' }">{{ command.icon }}</span>
+            <span class="slash-item-copy">
+              <b>/{{ command.name }} <em v-if="command.category">{{ command.category }}</em></b>
+              <small>{{ command.description }}</small>
+            </span>
+            <span class="slash-item-enter" v-if="slashIndex === index">↵</span>
+          </button>
+        </div>
+        <div class="slash-menu-empty" v-else>
+          没有匹配的命令
+        </div>
+        <div class="slash-menu-foot" v-if="slashMatches.length">
+          <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+          <span><kbd>Tab</kbd> 或 <kbd>Enter</kbd> 插入</span>
+          <span><kbd>Esc</kbd> 关闭</span>
+        </div>
+      </div>
       <textarea
+        ref="chatInput"
         v-model="inputQuery"
         class="chat-textarea"
-        :placeholder="mode === 'agent' && !agentDir ? '请先在上方选择 Agent 工作目录...' : '给 Q宠企鹅 发送指令，按 Enter 快捷发送，Shift + Enter 换行...'"
+        :placeholder="mode === 'agent' && !agentDir ? '请先在上方选择 Agent 工作目录...' : '输入 / 使用命令，或给 Q宠企鹅发送消息...'"
         @keydown="handleKeyDown"
+        @input="handleInput"
         :disabled="isGenerating || (mode === 'agent' && !agentDir)"
         rows="1"
       ></textarea>
