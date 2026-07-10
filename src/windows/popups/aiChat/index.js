@@ -56,6 +56,7 @@
         { name: "new", description: "新建一个空白会话", icon: "＋", kind: "action", action: "newSession" },
         { name: "clear", description: "清空当前会话内容", icon: "⌫", kind: "action", action: "clear" },
         { name: "history", description: "打开历史会话", icon: "◷", kind: "action", action: "history" },
+        { name: "usage", description: "查看当前会话的 Token 与工具调用统计", icon: "∿", kind: "action", action: "usage" },
         { name: "settings", description: "调整模型生成参数", icon: "☷", kind: "action", action: "settings" },
         { name: "theme", description: "切换界面主题", icon: "◐", kind: "action", action: "theme" }
       ],
@@ -315,6 +316,7 @@
           newSession: () => this.newSession(),
           clear: () => this.clearCurrentHistory(),
           history: () => this.toggleHistory(),
+          usage: () => this.showUsageReport(),
           settings: () => this.toggleParamsModal(),
           theme: () => {
             this.showThemePanel = true;
@@ -326,6 +328,77 @@
         if (!action) return false;
         action();
         return true;
+      },
+      calculateSessionUsage() {
+        const metrics = (this.sessions[this.mode] || [])
+          .map((message) => message.metrics)
+          .filter(Boolean);
+        const sum = (key) => metrics.reduce((total, item) => total + Number(item[key] || 0), 0);
+        const ttftValues = metrics.map((item) => item.ttftMs).filter((value) => Number.isFinite(value));
+        const inputTokens = metrics.reduce((total, item) => total + this.metricInputTokens(item), 0);
+        const outputTokens = sum("outputTokens");
+        const generationMs = sum("generationMs");
+        const toolCalls = sum("toolCalls");
+        const toolSuccess = sum("toolSuccess");
+        const toolFailed = sum("toolFailed");
+        return {
+          responses: metrics.length,
+          inputTokens,
+          outputTokens,
+          cacheReadTokens: sum("cacheReadTokens"),
+          cacheWriteTokens: sum("cacheWriteTokens"),
+          // 兼容旧历史：完整输入（含缓存）+ 输出。
+          totalTokens: inputTokens + outputTokens,
+          avgTtftMs: ttftValues.length ? ttftValues.reduce((a, b) => a + b, 0) / ttftValues.length : null,
+          avgDurationMs: metrics.length ? sum("durationMs") / metrics.length : 0,
+          tokensPerSecond: generationMs > 0 ? outputTokens / (generationMs / 1000) : 0,
+          toolCalls,
+          toolSuccess,
+          toolFailed,
+          toolSuccessRate: toolCalls > 0 ? toolSuccess / toolCalls : null,
+          hasEstimated: metrics.some((item) => item.estimated)
+        };
+      },
+      showUsageReport() {
+        if (!this.sessions[this.mode]) this.sessions[this.mode] = [];
+        this.sessions[this.mode].push({
+          role: "assistant",
+          content: "",
+          usageReport: this.calculateSessionUsage(),
+          createdAt: Date.now()
+        });
+        this.saveCurrentHistory();
+        this.scrollToBottom(true);
+      },
+      formatTokenCount(value) {
+        const n = Number(value || 0);
+        if (n >= 1000000) return (n / 1000000).toFixed(n >= 10000000 ? 1 : 2) + "M";
+        if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 1 : 2) + "K";
+        return String(Math.round(n));
+      },
+      metricTotalTokens(metrics) {
+        if (!metrics) return 0;
+        return this.metricInputTokens(metrics) + Number(metrics.outputTokens || 0);
+      },
+      metricInputTokens(metrics) {
+        if (!metrics) return 0;
+        const input = Number(metrics.inputTokens || 0);
+        if (metrics.inputIncludesCache) return input;
+        // 旧历史中的 inputTokens 使用框架语义，仅代表未缓存输入。
+        return input + Number(metrics.cacheReadTokens || 0) + Number(metrics.cacheWriteTokens || 0);
+      },
+      formatMetricDuration(ms) {
+        if (ms == null || !Number.isFinite(Number(ms))) return "—";
+        const value = Number(ms);
+        if (value < 1000) return Math.round(value) + " ms";
+        return (value / 1000).toFixed(value < 10000 ? 2 : 1) + " s";
+      },
+      formatTokenRate(value) {
+        const n = Number(value || 0);
+        return n > 0 ? n.toFixed(n >= 100 ? 0 : 1) + " tok/s" : "—";
+      },
+      formatPercent(value) {
+        return value != null && Number.isFinite(Number(value)) ? Math.round(Number(value) * 100) + "%" : "—";
       },
       normalizeSkillCommand(text) {
         const value = String(text || "").trim();
@@ -553,10 +626,13 @@
         this.saveCurrentHistory();
 
         if (window.electronAPI) {
-          const historyToSend = this.sessions[this.mode].slice(0, -1).map((m) => ({
-            role: m.role,
-            content: m.content
-          }));
+          const historyToSend = this.sessions[this.mode]
+            .slice(0, -1)
+            .filter((m) => !m.usageReport)
+            .map((m) => ({
+              role: m.role,
+              content: m.content
+            }));
           if (historyToSend.length > 0) {
             const last = historyToSend[historyToSend.length - 1];
             if (last.role === "user") last.content = this.normalizeSkillCommand(last.content);
@@ -574,6 +650,11 @@
         if (!event) return;
         const curList = this.sessions[this.mode] || [];
         const lastMsg = curList.length > 0 ? curList[curList.length - 1] : null;
+
+        if (event.type === "usage") {
+          if (lastMsg && lastMsg.role === "assistant") lastMsg.metrics = event.metrics || null;
+          return;
+        }
 
         if (event.type === "done") {
           this.isGenerating = false;

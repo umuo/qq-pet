@@ -6,6 +6,41 @@ const fs = _require("fs");
 const path = _require("path");
 const { exec } = _require("child_process");
 
+function estimateTokenCount(text) {
+  const value = String(text || "");
+  const cjk = (value.match(/[\u3400-\u9fff\uf900-\ufaff]/g) || []).length;
+  const rest = value.replace(/[\u3400-\u9fff\uf900-\ufaff]/g, "").length;
+  return cjk + Math.ceil(rest / 4);
+}
+
+function createUsageMetrics(startedAt, firstTokenAt, usage, tools, estimated) {
+  const finishedAt = Date.now();
+  const uncachedInput = Number(usage.input || 0);
+  const output = Number(usage.output || 0);
+  const cacheRead = Number(usage.cacheRead || 0);
+  const cacheWrite = Number(usage.cacheWrite || 0);
+  const input = uncachedInput + cacheRead + cacheWrite;
+  const generationMs = firstTokenAt ? Math.max(1, finishedAt - firstTokenAt) : 0;
+  return {
+    inputTokens: input,
+    uncachedInputTokens: uncachedInput,
+    inputIncludesCache: true,
+    outputTokens: output,
+    cacheReadTokens: cacheRead,
+    cacheWriteTokens: cacheWrite,
+    // 缓存 Token 是输入的组成部分；总量始终是完整输入 + 输出。
+    totalTokens: input + output,
+    ttftMs: firstTokenAt ? firstTokenAt - startedAt : null,
+    durationMs: finishedAt - startedAt,
+    generationMs,
+    tokensPerSecond: generationMs > 0 ? output / (generationMs / 1000) : 0,
+    toolCalls: Number(tools.calls || 0),
+    toolSuccess: Number(tools.success || 0),
+    toolFailed: Number(tools.failed || 0),
+    estimated: !!estimated
+  };
+}
+
 // ---- Node 18 兼容补丁 ----
 // pi-coding-agent 的嵌套依赖 lru-cache 在加载时会调用
 // `diagnostics_channel.tracingChannel(...)`（Node 19.9+ 才内置的 API）。
@@ -401,12 +436,51 @@ class PiAgentService {
       model: modelName || "deepseek-chat",
       messages: fullMessages,
       stream: true,
+      stream_options: { include_usage: true },
       temperature: temp,
       top_p: topP,
       max_tokens: maxTokens
     });
 
     return new Promise((resolve, reject) => {
+      const startedAt = Date.now();
+      let firstTokenAt = null;
+      let outputText = "";
+      let completed = false;
+      let providerUsage = null;
+      const recordParsed = (parsed) => {
+        if (parsed?.usage) providerUsage = parsed.usage;
+        const delta = parsed?.choices?.[0]?.delta?.content || "";
+        if (delta) {
+          if (!firstTokenAt) firstTokenAt = Date.now();
+          outputText += delta;
+          onEvent({ type: "text_delta", delta });
+        }
+      };
+      const finish = () => {
+        if (completed) return;
+        completed = true;
+        const actual = providerUsage && (
+          providerUsage.prompt_tokens != null || providerUsage.completion_tokens != null
+        );
+        const cacheRead = actual ? (providerUsage.prompt_tokens_details?.cached_tokens || 0) : 0;
+        const usage = actual ? {
+          input: Math.max(0, Number(providerUsage.prompt_tokens || 0) - cacheRead),
+          output: providerUsage.completion_tokens || 0,
+          cacheRead,
+          cacheWrite: 0,
+          totalTokens: providerUsage.total_tokens || 0
+        } : {
+          input: estimateTokenCount(fullMessages.map((m) => m.content || "").join("\n")),
+          output: estimateTokenCount(outputText),
+          cacheRead: 0,
+          cacheWrite: 0,
+          totalTokens: 0
+        };
+        onEvent({ type: "usage", metrics: createUsageMetrics(startedAt, firstTokenAt, usage, {}, !actual) });
+        onEvent({ type: "done" });
+        resolve();
+      };
       const client = parsedUrl.protocol === "http:" ? http : https;
       const req = client.request(
         {
@@ -442,15 +516,11 @@ class PiAgentService {
               if (!trimmed || !trimmed.startsWith("data: ")) continue;
               const dataStr = trimmed.slice(6).trim();
               if (dataStr === "[DONE]") {
-                onEvent({ type: "done" });
+                finish();
                 return;
               }
               try {
-                const parsed = JSON.parse(dataStr);
-                const delta = parsed.choices?.[0]?.delta?.content || "";
-                if (delta) {
-                  onEvent({ type: "text_delta", delta });
-                }
+                recordParsed(JSON.parse(dataStr));
               } catch (e) {}
             }
           });
@@ -460,25 +530,22 @@ class PiAgentService {
               const dataStr = buffer.trim().slice(6).trim();
               if (dataStr && dataStr !== "[DONE]") {
                 try {
-                  const parsed = JSON.parse(dataStr);
-                  const delta = parsed.choices?.[0]?.delta?.content || "";
-                  if (delta) onEvent({ type: "text_delta", delta });
+                  recordParsed(JSON.parse(dataStr));
                 } catch (e) {}
               }
             }
-            onEvent({ type: "done" });
-            resolve();
+            finish();
           });
         }
       );
 
       req.on("error", (err) => {
         if (err.name === "AbortError") {
-          onEvent({ type: "done" });
+          finish();
         } else {
           onEvent({ type: "error", error: err.message });
+          finish();
         }
-        resolve();
       });
 
       req.write(body);
@@ -488,6 +555,10 @@ class PiAgentService {
 
   async streamAgentMode(messages, params, agentDir, onEvent) {
     try {
+      const startedAt = Date.now();
+      let firstTokenAt = null;
+      const aggregateUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, totalTokens: 0 };
+      const toolMetrics = { calls: 0, success: 0, failed: 0 };
       const { baseUrl, apiKey, modelName } = this.getLlmConfig();
       const temp = typeof params?.temperature === "number" ? params.temperature : 0.7;
       const topP = typeof params?.topP === "number" ? params.topP : 1.0;
@@ -689,18 +760,34 @@ class PiAgentService {
 
       const unsubscribe = session.subscribe((event) => {
         if (event.type === "message_update" && event.assistantMessageEvent?.type === "text_delta") {
+          if (!firstTokenAt) firstTokenAt = Date.now();
           onEvent({ type: "text_delta", delta: event.assistantMessageEvent.delta });
         } else if (event.type === "tool_execution_start") {
+          toolMetrics.calls += 1;
           onEvent({ type: "tool_start", id: event.toolCallId, name: event.toolName, args: event.args });
           this.notifyBackgroundProgress(`🤖 正在执行工具 [${event.toolName}]...`);
         } else if (event.type === "tool_execution_end") {
+          if (event.isError) toolMetrics.failed += 1;
+          else toolMetrics.success += 1;
           onEvent({ type: "tool_end", id: event.toolCallId, name: event.toolName, result: event.result, isError: event.isError });
           if (event.isError) {
             this.notifyBackgroundProgress(`⚠️ 工具 [${event.toolName}] 执行出错了`);
           } else {
             this.notifyBackgroundProgress(`✅ 工具 [${event.toolName}] 执行完毕！`);
           }
-        } else if (event.type === "turn_end" || event.type === "message_end") {
+        } else if (event.type === "message_end") {
+          if (event.message?.role === "assistant" && event.message.usage) {
+            const usage = event.message.usage;
+            aggregateUsage.input += Number(usage.input || 0);
+            aggregateUsage.output += Number(usage.output || 0);
+            aggregateUsage.cacheRead += Number(usage.cacheRead || 0);
+            aggregateUsage.cacheWrite += Number(usage.cacheWrite || 0);
+            aggregateUsage.totalTokens += Number(usage.totalTokens || 0);
+          }
+          if (event.message?.stopReason === "error") {
+            onEvent({ type: "error", error: event.message.errorMessage || "生成报错" });
+          }
+        } else if (event.type === "turn_end") {
           if (event.message?.stopReason === "error") {
             onEvent({ type: "error", error: event.message.errorMessage || "生成报错" });
           }
@@ -709,6 +796,10 @@ class PiAgentService {
           if (lastMsg?.stopReason === "error") {
             onEvent({ type: "error", error: lastMsg.errorMessage || "生成报错" });
           }
+          onEvent({
+            type: "usage",
+            metrics: createUsageMetrics(startedAt, firstTokenAt, aggregateUsage, toolMetrics, false)
+          });
           onEvent({ type: "done" });
           this.notifyBackgroundProgress(`🎉 主人，AI 智能体任务已全部完成后台处理！`);
         }

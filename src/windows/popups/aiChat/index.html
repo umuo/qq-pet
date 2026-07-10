@@ -147,6 +147,34 @@
     >
       <div class="avatar fcc">{{ msg.role === 'user' ? '👤' : '🐧' }}</div>
       <div class="msg-content">
+        <div class="usage-report-card" v-if="msg.usageReport">
+          <div class="usage-report-head">
+            <div>
+              <span class="usage-report-kicker">SESSION USAGE</span>
+              <h3>当前会话用量</h3>
+            </div>
+            <span class="usage-report-count">{{ msg.usageReport.responses }} 次响应</span>
+          </div>
+          <div class="usage-report-primary">
+            <div><strong>{{ formatTokenCount(msg.usageReport.totalTokens) }}</strong><span>总 Token</span></div>
+            <div><strong>{{ formatTokenRate(msg.usageReport.tokensPerSecond) }}</strong><span>平均生成速度</span></div>
+            <div><strong>{{ formatMetricDuration(msg.usageReport.avgTtftMs) }}</strong><span>平均首 Token</span></div>
+          </div>
+          <div class="usage-report-details">
+            <span>输入（含缓存）<b>{{ formatTokenCount(msg.usageReport.inputTokens) }}</b></span>
+            <span>输出 <b>{{ formatTokenCount(msg.usageReport.outputTokens) }}</b></span>
+            <span>缓存命中 <b>{{ formatTokenCount(msg.usageReport.cacheReadTokens) }}</b></span>
+            <span>平均耗时 <b>{{ formatMetricDuration(msg.usageReport.avgDurationMs) }}</b></span>
+          </div>
+          <div class="usage-tool-summary">
+            <span>工具调用 {{ msg.usageReport.toolCalls }} 次</span>
+            <span class="success">成功 {{ msg.usageReport.toolSuccess }}</span>
+            <span class="failed">失败 {{ msg.usageReport.toolFailed }}</span>
+            <span>成功率 {{ formatPercent(msg.usageReport.toolSuccessRate) }}</span>
+          </div>
+          <div class="usage-estimated" v-if="msg.usageReport.hasEstimated">≈ 部分模型未返回 Usage，相关 Token 为本地估算值</div>
+        </div>
+
         <!-- 新版：按真实时间线交错渲染文本块与工具调用块 -->
         <template v-if="msg.blocks && msg.blocks.length">
           <template v-for="(blk, bi) in msg.blocks" :key="bi">
@@ -265,6 +293,34 @@
             </div>
           </div>
         </template>
+
+        <button
+          class="response-metrics"
+          v-if="msg.role === 'assistant' && msg.metrics"
+          type="button"
+          :aria-label="'本次响应：' + formatTokenCount(metricTotalTokens(msg.metrics)) + ' Token，' + formatTokenRate(msg.metrics.tokensPerSecond)"
+        >
+          <span class="response-metrics-summary">
+            <i></i>{{ msg.metrics.estimated ? '≈ ' : '' }}{{ formatTokenCount(metricTotalTokens(msg.metrics)) }} tokens
+            <em>·</em>{{ formatTokenRate(msg.metrics.tokensPerSecond) }}
+          </span>
+          <span class="response-metrics-popover">
+            <span class="metrics-popover-head">本次响应指标 <small v-if="msg.metrics.estimated">估算</small></span>
+            <span class="metrics-grid">
+              <span><small>输入 Token（含缓存）</small><b>{{ formatTokenCount(metricInputTokens(msg.metrics)) }}</b></span>
+              <span><small>输出 Token</small><b>{{ formatTokenCount(msg.metrics.outputTokens) }}</b></span>
+              <span><small>首 Token</small><b>{{ formatMetricDuration(msg.metrics.ttftMs) }}</b></span>
+              <span><small>生成速度</small><b>{{ formatTokenRate(msg.metrics.tokensPerSecond) }}</b></span>
+              <span><small>总耗时</small><b>{{ formatMetricDuration(msg.metrics.durationMs) }}</b></span>
+              <span><small>缓存命中</small><b>{{ formatTokenCount(msg.metrics.cacheReadTokens) }}</b></span>
+            </span>
+            <span class="metrics-tools" v-if="msg.metrics.toolCalls">
+              工具 {{ msg.metrics.toolCalls }} 次
+              <b class="success">✓ {{ msg.metrics.toolSuccess }}</b>
+              <b class="failed">× {{ msg.metrics.toolFailed }}</b>
+            </span>
+          </span>
+        </button>
       </div>
     </div>
   </div>
