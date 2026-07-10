@@ -36,7 +36,7 @@ class MainClass {
         minWidth: 600,
         minHeight: 400,
         transparent: false,
-        backgroundColor: "#12161f",
+        backgroundColor: "#111311",
         hasShadow: true,
         alwaysOnTop: false
       },
@@ -129,6 +129,16 @@ class MainClass {
               self.doClose();
             } else if (data?.event === "minimize") {
               if (t && !t.isDestroyed() && t.minimize) t.minimize();
+            } else if (data?.event === "theme") {
+              const themeBackgrounds = {
+                obsidian: "#10120f",
+                aurora: "#0b1020",
+                porcelain: "#f3f2ed",
+                sakura: "#f7efef",
+                ink: "#e8e5dc"
+              };
+              const color = themeBackgrounds[data.theme] || themeBackgrounds.obsidian;
+              if (t && !t.isDestroyed() && t.setBackgroundColor) t.setBackgroundColor(color);
             } else if (data?.event === "fullscreen") {
               try {
                 if (!t || t.isDestroyed()) return;

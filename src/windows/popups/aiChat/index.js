@@ -52,6 +52,15 @@
       isGenerating: false,
       showParamsModal: false,
       showHistory: false,
+      showThemePanel: false,
+      theme: "obsidian",
+      themes: [
+        { id: "obsidian", name: "曜石", description: "沉静黑 · 青柠绿" },
+        { id: "aurora", name: "极光", description: "深海蓝 · 电光紫" },
+        { id: "porcelain", name: "瓷白", description: "柔和白 · 鼠尾草" },
+        { id: "sakura", name: "樱雾", description: "暖粉灰 · 莓果红" },
+        { id: "ink", name: "墨纸", description: "黑与白 · 琥珀橙" }
+      ],
       isFullscreen: false,
       autoFollow: true,
       genParams: {
@@ -81,12 +90,27 @@
       }
     },
     mounted() {
+      try {
+        const savedTheme = localStorage.getItem("qpet-ai-theme");
+        if (this.themes.some((item) => item.id === savedTheme)) this.theme = savedTheme;
+      } catch (e) {}
+
       window.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === "l") {
+          e.preventDefault();
+          this.clearCurrentHistory();
+          return;
+        }
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "c") {
           const selectedText = window.getSelection().toString();
           if (selectedText && window.electronAPI && window.electronAPI.copyText) {
             window.electronAPI.copyText(selectedText);
           }
+        }
+        if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "t") {
+          e.preventDefault();
+          const index = this.themes.findIndex((item) => item.id === this.theme);
+          this.setTheme(this.themes[(index + 1) % this.themes.length].id, false);
         }
       });
 
@@ -142,6 +166,7 @@
         });
 
         window.electronAPI.aiChat_h_bus({ event: "mounted" });
+        window.electronAPI.aiChat_h_bus({ event: "theme", theme: this.theme });
         window.electronAPI.aiChat_h_get_config();
         window.electronAPI.aiChat_h_get_sessions();
       }
@@ -190,6 +215,22 @@
       },
       toggleHistory() {
         this.showHistory = !this.showHistory;
+        this.showThemePanel = false;
+        this.showParamsModal = false;
+      },
+      toggleThemePanel() {
+        this.showThemePanel = !this.showThemePanel;
+        this.showHistory = false;
+        this.showParamsModal = false;
+      },
+      setTheme(themeId, closePanel = true) {
+        if (!this.themes.some((item) => item.id === themeId)) return;
+        this.theme = themeId;
+        if (closePanel) this.showThemePanel = false;
+        try { localStorage.setItem("qpet-ai-theme", themeId); } catch (e) {}
+        if (window.electronAPI && window.electronAPI.aiChat_h_bus) {
+          window.electronAPI.aiChat_h_bus({ event: "theme", theme: themeId });
+        }
       },
       deriveTitle(messages) {
         const firstUser = messages.find((m) => m.role === "user");
@@ -273,7 +314,7 @@
       },
       clearCurrentHistory() {
         if (this.isGenerating) return;
-        if (confirm("确定要清空当前【" + (this.mode === 'chat' ? '闲聊模式' : 'Agent模式') + "】的所有对话记录吗？")) {
+        if (confirm("是否清空当前【" + (this.mode === 'chat' ? '闲聊模式' : 'Agent 模式') + "】会话？\n\n当前对话内容将被删除，此操作无法撤销。")) {
           // 从历史中移除当前会话并清空实时消息
           if (this.activeId[this.mode]) {
             this.historyList = this.historyList.filter((s) => s.id !== this.activeId[this.mode]);
@@ -286,6 +327,8 @@
       },
       toggleParamsModal() {
         this.showParamsModal = !this.showParamsModal;
+        this.showThemePanel = false;
+        this.showHistory = false;
       },
       resetParams() {
         this.genParams = {

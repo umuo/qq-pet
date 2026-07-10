@@ -1,9 +1,9 @@
-<div id="appMain" class="ai-chat-container">
+<div id="appMain" class="ai-chat-container" :data-theme="theme">
   <div class="chat-header notSelect">
     <div class="header-left">
-      <div class="ai-logo fcc">🤖</div>
+      <div class="ai-logo fcc" aria-label="Q宠 AI">Q</div>
       <div class="header-title">
-        <span class="title-text">Q宠 AI 智能助手</span>
+        <span class="title-text">Q宠·智能助手</span>
         <span class="status-badge" :class="isGenerating ? 'active' : ''">{{ isGenerating ? '处理中...' : '在线' }}</span>
       </div>
     </div>
@@ -15,7 +15,7 @@
           @click="switchMode('chat')"
           title="普通对话模式：快速响应，闲聊陪伴"
         >
-          💬 闲聊模式
+          <span class="mode-dot"></span>对话
         </div>
         <div 
           class="mode-btn agent-btn not_drag focusPress" 
@@ -23,17 +23,46 @@
           @click="switchMode('agent')"
           title="Agent 智能体模式：调用工具，操作宠物，监控系统"
         >
-          ⚡ Agent 模式
+          <span class="mode-dot"></span>Agent
         </div>
       </div>
       <div class="header-tools">
+        <div class="tool-icon-btn theme-trigger not_drag focusPress" :class="{ active: showThemePanel }" @click="toggleThemePanel" title="切换界面主题" aria-label="切换界面主题">
+          <span class="theme-trigger-dot"></span>
+        </div>
         <div class="tool-icon-btn not_drag focusPress" :class="{ active: showHistory }" @click="toggleHistory" title="历史会话（区分闲聊 / Agent）">🕘</div>
-        <div class="tool-icon-btn not_drag focusPress" @click="clearCurrentHistory" title="清空当前模式会话记录">🗑️</div>
-        <div class="tool-icon-btn not_drag focusPress" :class="{ active: showParamsModal }" @click="toggleParamsModal" title="设置生成参数 (Temperature, TopP, MaxTokens)">⚙️</div>
       </div>
       <div class="win-btn fullscreen-btn not_drag focusPress" :class="{ active: isFullscreen }" @click="toggleFullscreen" :title="isFullscreen ? '退出全屏' : '进入全屏'">{{ isFullscreen ? '⛗' : '⛶' }}</div>
       <div class="win-btn minimize-btn not_drag focusPress" @click="minimizeWindow" title="最小化到后台 (桌宠将显示任务进度)">─</div>
       <div class="win-btn close-btn not_drag focusPress" @click="closeWindow" title="关闭对话框">✕</div>
+    </div>
+  </div>
+
+  <div class="theme-panel notSelect" v-if="showThemePanel">
+    <div class="theme-panel-head">
+      <div>
+        <div class="theme-panel-title">界面主题</div>
+        <div class="theme-panel-subtitle">选择适合此刻的氛围</div>
+      </div>
+      <button class="theme-panel-close focusPress" @click="showThemePanel = false" aria-label="关闭主题面板">✕</button>
+    </div>
+    <div class="theme-grid">
+      <button
+        v-for="item in themes"
+        :key="item.id"
+        class="theme-card focusPress"
+        :class="{ active: theme === item.id }"
+        @click="setTheme(item.id)"
+      >
+        <span class="theme-preview" :data-preview="item.id">
+          <i></i><i></i><i></i>
+        </span>
+        <span class="theme-meta">
+          <b>{{ item.name }}</b>
+          <small>{{ item.description }}</small>
+        </span>
+        <span class="theme-check">{{ theme === item.id ? '✓' : '' }}</span>
+      </button>
     </div>
   </div>
 
@@ -296,25 +325,23 @@
         :placeholder="mode === 'agent' && !agentDir ? '请先在上方选择 Agent 工作目录...' : '给 Q宠企鹅 发送指令，按 Enter 快捷发送，Shift + Enter 换行...'"
         @keydown="handleKeyDown"
         :disabled="isGenerating || (mode === 'agent' && !agentDir)"
-        rows="2"
+        rows="1"
       ></textarea>
-      <div class="action-buttons">
-        <button 
-          v-if="isGenerating" 
-          class="btn abort-btn focusPress"
-          @click="abortGeneration"
-          title="停止当前任务"
-        >
-          ⏹ 停止
-        </button>
-        <button 
-          v-else 
-          class="btn send-btn focusPress"
-          :class="{ disabled: !inputQuery.trim() }"
-          @click="sendMessage"
-        >
-          发送 🚀
-        </button>
+      <div class="composer-actions-row">
+        <div class="composer-toolbar">
+          <button class="composer-tool focusPress" @click="clearCurrentHistory" aria-label="清空当前会话" title="清空当前会话（Command/Ctrl + L）">
+            <span class="composer-tool-icon" aria-hidden="true">⌫</span>
+          </button>
+          <button class="composer-tool focusPress" :class="{ active: showParamsModal }" :aria-pressed="showParamsModal" @click="toggleParamsModal" aria-label="生成参数设置" title="生成参数设置">
+            <span class="composer-tool-icon" aria-hidden="true">☷</span>
+          </button>
+        </div>
+        <div class="action-buttons">
+          <button v-if="isGenerating" class="btn abort-btn focusPress" @click="abortGeneration" title="停止当前任务">⏹ 停止</button>
+          <button v-else class="btn send-btn focusPress" :class="{ disabled: !inputQuery.trim() }" @click="sendMessage">
+            发送 <span class="send-arrow">↑</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
