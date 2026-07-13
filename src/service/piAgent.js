@@ -785,16 +785,16 @@ class PiAgentService {
             aggregateUsage.totalTokens += Number(usage.totalTokens || 0);
           }
           if (event.message?.stopReason === "error") {
-            onEvent({ type: "error", error: event.message.errorMessage || "生成报错" });
+            onEvent({ type: "error", error: event.message.errorMessage || "生成报错", recoverable: true });
           }
         } else if (event.type === "turn_end") {
           if (event.message?.stopReason === "error") {
-            onEvent({ type: "error", error: event.message.errorMessage || "生成报错" });
+            onEvent({ type: "error", error: event.message.errorMessage || "生成报错", recoverable: true });
           }
         } else if (event.type === "agent_end") {
           const lastMsg = event.messages?.[event.messages.length - 1];
           if (lastMsg?.stopReason === "error") {
-            onEvent({ type: "error", error: lastMsg.errorMessage || "生成报错" });
+            onEvent({ type: "error", error: lastMsg.errorMessage || "生成报错", recoverable: false });
           }
           onEvent({
             type: "usage",

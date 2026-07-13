@@ -684,10 +684,16 @@
           this.saveCurrentHistory();
           return;
         } else if (event.type === "error") {
-          this.isGenerating = false;
-          this.settleRunningTools(lastMsg);
+          // Agent 的某一轮 LLM 请求失败后框架可能继续重试。只有终止错误或后续 done
+          // 才结束运行态，确保停止按钮在后台 Agent 仍工作时始终可用。
+          const recoverable = event.recoverable === true;
+          if (!recoverable) {
+            this.isGenerating = false;
+            this.settleRunningTools(lastMsg);
+          }
           if (lastMsg && lastMsg.role === "assistant") {
-            const errText = `\n\n> [!WARNING]\n> ⚠️ **生成错误**: ${event.error || "未知异常"}`;
+            const errTitle = recoverable ? "请求失败，Agent 将继续执行" : "生成错误";
+            const errText = `\n\n> [!WARNING]\n> ⚠️ **${errTitle}**: ${event.error || "未知异常"}`;
             lastMsg.content = (lastMsg.content || "") + errText;
             if (!lastMsg.blocks) lastMsg.blocks = [];
             const lastBlock = lastMsg.blocks[lastMsg.blocks.length - 1];
