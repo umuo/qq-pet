@@ -82,6 +82,25 @@
     </div>
   </div>
 
+  <section class="todo-dock" v-if="mode === 'agent' && (visibleTodoTasks.length || todoSyncing || todoLastError)">
+    <button type="button" class="todo-dock-head clickable" @click="toggleTodoPanel" :aria-expanded="todoExpanded" :aria-label="todoExpanded ? '收起任务清单' : '展开全部任务'">
+      <span class="todo-dock-chevron" :class="{ open: todoExpanded }">▸</span>
+      <div class="todo-dock-title"><span>✓</span><b>{{ todoExpanded ? '全部任务' : '当前工作' }}</b><em>{{ visibleTodoTasks.length }} 项</em></div>
+      <div class="todo-dock-progress"><i><u :style="{ width: todoProgress + '%' }"></u></i><strong>{{ todoProgress }}%</strong></div>
+      <span class="todo-sync" v-if="todoSyncing"><i class="tc-spinner"></i>同步中</span>
+    </button>
+    <div class="todo-list" v-if="displayedTodoTasks.length">
+      <article class="todo-item" v-for="task in displayedTodoTasks" :key="task.id" :class="task.status">
+        <span class="todo-state">{{ task.status === 'completed' ? '✓' : task.status === 'in_progress' ? '●' : '○' }}</span>
+        <div class="todo-copy"><b>{{ task.subject }}</b><small v-if="task.description">{{ task.description }}</small></div>
+        <span class="todo-owner" v-if="task.owner">{{ task.owner }}</span>
+        <span class="todo-status">{{ todoStatusLabel(task.status) }}</span>
+      </article>
+    </div>
+    <div class="todo-empty" v-else-if="visibleTodoTasks.length && !todoExpanded">当前没有进行中的任务，点击查看全部清单</div>
+    <div class="todo-error" v-if="todoLastError">{{ todoLastError }}</div>
+  </section>
+
   <div class="params-modal" v-if="showParamsModal">
     <div class="params-header">
       <span>⚙️ 模型生成参数设置</span>

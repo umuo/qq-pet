@@ -63,6 +63,10 @@
       slashIndex: 0,
       slashMenuDismissed: false,
       isGenerating: false,
+      todoTasks: [],
+      todoSyncing: false,
+      todoLastError: "",
+      todoExpanded: false,
       showParamsModal: false,
       showHistory: false,
       showThemePanel: false,
@@ -89,6 +93,18 @@
     computed: {
       messages() {
         return this.sessions[this.mode] || [];
+      },
+      visibleTodoTasks() {
+        return this.todoTasks.filter((task) => task && task.status !== "deleted");
+      },
+      displayedTodoTasks() {
+        if (this.todoExpanded) return this.visibleTodoTasks;
+        return this.visibleTodoTasks.filter((task) => task.status === "in_progress");
+      },
+      todoProgress() {
+        const tasks = this.visibleTodoTasks;
+        if (!tasks.length) return 0;
+        return Math.round(tasks.filter((task) => task.status === "completed").length / tasks.length * 100);
       },
       slashCommandItems() {
         const skills = this.mode === "agent"
@@ -260,6 +276,7 @@
         if (this.mode === newMode || this.isGenerating) return;
         // 仅切换显示，保留各模式的内存会话，不再从磁盘重载覆盖
         this.mode = newMode;
+        this.rebuildTodoPanel();
         this.scrollToBottom(true);
       },
       selectAgentDir() {
@@ -489,6 +506,7 @@
         this.sessions[this.mode] = [];
         this.activeId[this.mode] = null;
         this.showHistory = false;
+        this.rebuildTodoPanel();
         this.scrollToBottom(true);
       },
       // 载入历史中的某条会话
@@ -499,6 +517,7 @@
         this.mode = sess.mode;
         if (sess.mode === "agent") this.agentDir = sess.dir || this.agentDir;
         this.showHistory = false;
+        this.rebuildTodoPanel();
         this.scrollToBottom(true);
       },
       deleteSession(sess) {
@@ -518,6 +537,7 @@
           }
           this.sessions[this.mode] = [];
           this.activeId[this.mode] = null;
+          this.rebuildTodoPanel();
           this.persistSessions();
           this.scrollToBottom(true);
         }
@@ -697,6 +717,10 @@
             .join("");
           this.scrollToBottom();
         } else if (event.type === "tool_start") {
+          if (event.name === "todo") {
+            this.todoSyncing = true;
+            this.todoLastError = "";
+          }
           if (!lastMsg.blocks) lastMsg.blocks = [];
           if (!lastMsg.toolCalls) lastMsg.toolCalls = [];
           // 检测是否在调用 skill（AI 用 read 加载 SKILL.md = 技能的 progressive disclosure）
@@ -747,8 +771,45 @@
             // 出错时自动展开，避免错误被折叠隐藏
             if (event.isError) tc.expanded = true;
           }
+          if (event.name === "todo") this.applyTodoResult(event.result, event.isError);
           this.scrollToBottom();
         }
+      },
+      applyTodoResult(result, isError = false) {
+        this.todoSyncing = false;
+        let payload = result;
+        if (typeof payload === "string") {
+          try { payload = JSON.parse(payload); } catch (e) {}
+        }
+        const details = payload && payload.details;
+        if (details && Array.isArray(details.tasks)) {
+          this.todoTasks = details.tasks.map((task) => ({ ...task }));
+          this.todoLastError = details.error || "";
+        } else if (isError) {
+          this.todoLastError = "Todo 清单同步失败";
+        }
+      },
+      rebuildTodoPanel() {
+        this.todoTasks = [];
+        this.todoSyncing = false;
+        this.todoLastError = "";
+        this.todoExpanded = false;
+        const messages = this.sessions[this.mode] || [];
+        for (let mi = messages.length - 1; mi >= 0; mi--) {
+          const calls = messages[mi].toolCalls || [];
+          for (let ci = calls.length - 1; ci >= 0; ci--) {
+            if (calls[ci] && calls[ci].name === "todo" && calls[ci].result) {
+              this.applyTodoResult(calls[ci].result, calls[ci].status === "error");
+              return;
+            }
+          }
+        }
+      },
+      todoStatusLabel(status) {
+        return ({ pending: "待处理", in_progress: "进行中", completed: "已完成", deleted: "已删除" })[status] || status;
+      },
+      toggleTodoPanel() {
+        this.todoExpanded = !this.todoExpanded;
       },
       // 收尾：把指定消息里仍停留在 running 状态的工具块统一标记为已中断，
       // 防止「LLM 已结束但部分工具面板还在转圈」的状态残留（典型场景：用户点停止中断、框架漏发 tool_end）
