@@ -439,6 +439,7 @@ body, html {
 /* Chat Messages Area */
 .chat-messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 16px;
   display: flex;
@@ -709,7 +710,7 @@ body, html {
   border-radius: 12px;
   background: color-mix(in srgb, var(--accent) 5%, var(--panel));
   box-shadow: 0 8px 24px rgba(0,0,0,.14);
-  max-height: 230px;
+  max-height: min(230px, 28vh);
   overflow: auto;
   -webkit-app-region: no-drag;
 }
@@ -1009,6 +1010,7 @@ body, html {
 
 /* Footer Area */
 .chat-footer {
+  flex: none;
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.03);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -1628,6 +1630,7 @@ body, html {
   transition: background-color .35s ease, background-image .35s ease;
 }
 .chat-header { height: 72px; padding-top: 6px; background: color-mix(in srgb, var(--bg) 88%, transparent); border-color: var(--line); }
+.chat-header, .config-banner, .dir-banner { flex: none; }
 .header-left, .header-right, .dir-left, .cfg-text { min-width: 0; }
 .header-right { flex-shrink: 1; }
 .dir-banner { min-width: 0; }

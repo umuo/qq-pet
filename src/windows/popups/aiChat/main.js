@@ -10,15 +10,72 @@ class MainClass {
     this._fsBounds = null;
   }
 
+  isWindowUsable(win = this.window) {
+    return !!win && !win.isDestroyed();
+  }
+
+  ensureWindowOnScreen(win) {
+    if (!this.isWindowUsable(win)) return;
+
+    try {
+      const bounds = win.getBounds();
+      const displays = screen.getAllDisplays();
+      const visible = displays.some(({ workArea }) => {
+        const overlapWidth = Math.max(
+          0,
+          Math.min(bounds.x + bounds.width, workArea.x + workArea.width) -
+            Math.max(bounds.x, workArea.x)
+        );
+        const overlapHeight = Math.max(
+          0,
+          Math.min(bounds.y + bounds.height, workArea.y + workArea.height) -
+            Math.max(bounds.y, workArea.y)
+        );
+        return overlapWidth >= Math.min(80, bounds.width) && overlapHeight >= Math.min(48, bounds.height);
+      });
+
+      if (visible) return;
+
+      const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+      const area = display.workArea;
+      const width = Math.min(Math.max(bounds.width, 600), area.width);
+      const height = Math.min(Math.max(bounds.height, 400), area.height);
+      win.setBounds({
+        x: area.x + Math.max(0, Math.round((area.width - width) / 2)),
+        y: area.y + Math.max(0, Math.round((area.height - height) / 2)),
+        width,
+        height
+      });
+    } catch (err) {
+      console.error("aiChat restore bounds error:", err);
+    }
+  }
+
+  activateWindow(win = this.window) {
+    if (!this.isWindowUsable(win)) return false;
+
+    try {
+      // Windows 下 show() 不一定会退出最小化状态，必须先 restore()。
+      if (win.isMinimized()) win.restore();
+      this.ensureWindowOnScreen(win);
+      win.setSkipTaskbar(false);
+      win.show();
+      win.focus();
+      if (typeof win.moveTop === "function") win.moveTop();
+      this.show = true;
+      return true;
+    } catch (err) {
+      console.error("aiChat activate window error:", err);
+      return false;
+    }
+  }
+
   cleate() {
     this.width = 800;
     this.height = 600;
     let self = this;
 
-    if (this.window && !this.window.isDestroyed()) {
-      this.window.show();
-      this.window.focus();
-      this.show = true;
+    if (this.activateWindow()) {
       return;
     }
 
@@ -35,6 +92,9 @@ class MainClass {
         resizable: true,
         minWidth: 600,
         minHeight: 400,
+        show: false,
+        skipTaskbar: false,
+        title: "Q宠·智能助手",
         transparent: false,
         backgroundColor: "#111311",
         hasShadow: true,
@@ -44,6 +104,26 @@ class MainClass {
         let { vm: t, preloads: n, getinfo } = e;
         t.setIgnoreMouseEvents(false);
         t.setOpacity(1);
+        t.setSkipTaskbar(false);
+        t.setTitle("Q宠·智能助手");
+
+        // 独立窗口的可见状态由原生窗口事件维护，避免最小化后菜单误判为“仍在显示”。
+        t.on("minimize", () => {
+          self.show = false;
+        });
+        t.on("restore", () => {
+          self.show = true;
+        });
+        t.on("show", () => {
+          self.show = true;
+        });
+        t.on("hide", () => {
+          self.show = false;
+        });
+        t.on("page-title-updated", (event) => {
+          event.preventDefault();
+          if (!t.isDestroyed()) t.setTitle("Q宠·智能助手");
+        });
 
         const sendConfig = () => {
           if (t && !t.isDestroyed()) {
@@ -199,15 +279,15 @@ class MainClass {
       },
       onload(win) {
         console.log("onload", self.name);
-        self.show = true;
         if (win && win.setOpacity) win.setOpacity(1);
+        self.activateWindow(win);
       },
       onshow(win) {
         console.log("onshow", self.name);
         self.window = win;
-        self.show = true;
         if (win && win.setOpacity) win.setOpacity(1);
-        if (win && !win.isDestroyed()) {
+        self.activateWindow(win);
+        if (self.isWindowUsable(win)) {
           win.webContents.send("aiChat_m_config_h", piAgentService.getLlmConfig());
         }
       },
@@ -223,7 +303,7 @@ class MainClass {
     })
       .then((win) => {
         this.window = win;
-        this.show = true;
+        this.show = win.isVisible() && !win.isMinimized();
       })
       .catch((err) => {
         console.error("aiChat create window error:", err);

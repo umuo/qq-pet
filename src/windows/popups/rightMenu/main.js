@@ -236,7 +236,8 @@ class mainClass {
     const item = val.data || {};
 
     if (item.value === "openAiChat") {
-      if (!aiChat.show) aiChat.cleate();
+      // 每次都交给 AI 窗口执行恢复；Windows 最小化时 show 状态可能滞后。
+      aiChat.cleate();
     } else if (item.value === "openSwfViewer") {
       if (global.toolWindow?.viewSwf) global.toolWindow.viewSwf.cleate();
     } else if (["food", "clean", "cure"].includes(item.value)) {
