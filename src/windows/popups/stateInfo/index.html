@@ -96,8 +96,8 @@
         + (petInfo?.otherOptions?.sweetHeart? 'h_up':'h_down') 
         +'.png)'}"></div>
     <!-- title="注意，开启后自动使用物品~" -->
-    <div class="openSweetHeart focusPress" v-if="!this.petInfo?.otherOptions?.sweetHeart" @click="doSweetHeart(true)">
+    <div class="openSweetHeart focusPress" title="开启自动照料：数值低于 60% 时，每分钟使用背包中的一件食物、清洁用品或玩具" v-if="!this.petInfo?.otherOptions?.sweetHeart" @click="doSweetHeart(true)">
     </div>
-    <div class="closeSweetHeart focusPress" v-else @click="doSweetHeart(false)"></div>
+    <div class="closeSweetHeart focusPress" title="关闭自动照料" v-else @click="doSweetHeart(false)"></div>
   </div>
 </div>

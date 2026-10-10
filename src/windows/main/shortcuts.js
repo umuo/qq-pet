@@ -30,7 +30,8 @@ class Shotycuts {
     return this;
   }
   init() {
-    let t = getSys("shortcuts");
+    const configured = getSys("shortcuts");
+    let t = configured && typeof configured === "object" && !Array.isArray(configured) ? configured : {};
     let e = Object.keys(t);
     for (let r in e) {
       this.upShotycut(e[r], t[e[r]]);

@@ -1,0 +1,41 @@
+// Compatibility spike for the verified reference Farm.swf/props/XML/font.
+const { app, BrowserWindow } = require('electron');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+const assert = require('node:assert/strict');
+const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'qq-pet-farm-spike-'));
+const root = path.resolve(__dirname, '..');
+app.setPath('userData', path.join(temp, 'userData'));
+const url = p => pathToFileURL(path.join(root, p)).href;
+const timeout = setTimeout(() => app.exit(2), 30000);
+let win;
+app.whenReady().then(async () => {
+  win = new BrowserWindow({ show: false, width: 700, height: 550, webPreferences: { offscreen: true, backgroundThrottling: false, webSecurity: false } });
+  const file = path.join(temp, 'farm.html');
+  fs.writeFileSync(file, `<html><head><style>body{margin:0}ruffle-player{width:700px;height:550px}</style><script>window.RufflePlayer={config:{autoplay:'on',splashScreen:false,unmuteOverlay:'hidden',allowScriptAccess:true}};</script><script src="${url('src/windows/js/ruffle/ruffle.js')}"></script><script src="${url('src/windows/util/pet/sol.js')}"></script></head><body></body></html>`);
+  await win.loadFile(file);
+  const result = await win.webContents.executeJavaScript(`(async()=>{
+    const config={url:${JSON.stringify(url('src/assets/reference/qqfarm/Farm.swf'))},base:${JSON.stringify(url('src/assets/reference/qqfarm/'))},allowScriptAccess:true,fontSources:[${JSON.stringify(url('src/assets/reference/qqfont.ttf'))}],defaultFonts:{sans:['HappyZcool-2016'],serif:['HappyZcool-2016'],typewriter:['HappyZcool-2016']}};
+    const load=async()=>{if(window.player)player.remove();window.player=RufflePlayer.newest().createPlayer();document.body.appendChild(player);await player.ruffle().load(config);const end=Date.now()+10000;while(typeof player.farmAll!=='function'){if(Date.now()>end)throw Error('farmAll callback not registered');await new Promise(r=>setTimeout(r,100));}};
+    await load();
+    player.farmAll('care'); await new Promise(r=>setTimeout(r,500));
+    const key=Object.keys(localStorage).find(key=>key.endsWith('//test'));
+    const seeded=PetSol.readSol(key).user;seeded.burden=[{Items:'RadishSeed',name:'白萝卜',number:2}];player.remove();PetSol.writeSol(key,'test',{user:seeded});
+    await load();player.farmAll('plant');await new Promise(r=>setTimeout(r,300));
+    const planted=PetSol.readSol(key).user;const plantedCount=planted.farmland.filter(p=>p.crop==='RadishSeed').length;
+    for(const land of planted.farmland)if(land.crop)land.time=Math.floor(Date.now()/1000)-7*86400;
+    player.remove();PetSol.writeSol(key,'test',{user:planted});await load();player.farmAll('harvest');await new Promise(r=>setTimeout(r,300));
+    const user=PetSol.readSol(key).user;
+    return {metadata:player.ruffle().metadata,callbacks:typeof player.farmAll,keys:Object.keys(localStorage),solBytes:atob(localStorage.getItem(key)||'').length,user,planted:plantedCount,harvested:user.farmland.filter(p=>p.harvest!==undefined).length};
+  })()`);
+  console.log('Farm load result: ' + JSON.stringify(result));
+  assert.equal(result.callbacks, 'function'); assert.ok(result.solBytes > 100);
+  assert.ok(result.metadata.numFrames > 0);
+  assert.equal(result.user.wealth, '2000'); assert.equal(result.user.farmland.length, 18);
+  assert.equal(result.planted, 2); assert.equal(result.harvested, 2); assert.ok(result.user.warehouse.length > 0);
+  fs.writeFileSync(path.join(temp, 'farm.png'), (await win.webContents.capturePage()).toPNG());
+  console.log('PASS: actual Farm.swf dependencies load, SOL round-trip, planted 2 fixture seeds, harvested 2 ripe fixture plots. ' + JSON.stringify({solBytes:result.solBytes,keys:result.keys,screenshot:path.join(temp,'farm.png')}));
+  clearTimeout(timeout); win.destroy(); app.quit();
+}).catch(error=>{console.error(error);if(win&&!win.isDestroyed())win.destroy();app.exit(1);});

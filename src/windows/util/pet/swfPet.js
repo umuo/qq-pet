@@ -1,5 +1,63 @@
 (() => {
   var t = {};
+  // Ruffle does not expose the old Flash playhead API. Estimate the root
+  // timeline from metadata, clamping at the last frame so polling cannot miss it.
+  class PetPlayer {
+    constructor(element) {
+      this.element = element;
+      this.metadata = null;
+      this.startedAt = 0;
+      this.pausedAt = null;
+      this.frameOffset = 0;
+    }
+    async load(src) {
+      const ready = new Promise(resolve => this.element.addEventListener("loadedmetadata", resolve, { once: true }));
+      await this.element.ruffle().load({
+        url: new URL(src, document.baseURI).href,
+        autoplay: "on",
+        wmode: "transparent",
+        backgroundColor: null,
+        letterbox: "off",
+        splashScreen: false,
+        contextMenu: "off",
+        allowScriptAccess: true
+      });
+      await ready;
+      this.metadata = this.element.ruffle().metadata;
+      if (!this.metadata?.numFrames || !this.metadata?.frameRate) {
+        throw new Error("Pet animation has no timeline metadata: " + src);
+      }
+      this.startedAt = performance.now();
+    }
+    CurrentFrame() {
+      if (!this.metadata) return -1;
+      const elapsed = (this.pausedAt ?? performance.now()) - this.startedAt;
+      return Math.min(this.TotalFrames() - 1,
+        this.frameOffset + Math.floor(elapsed * this.metadata.frameRate / 1000));
+    }
+    TotalFrames() { return this.metadata?.numFrames || 0; }
+    PercentLoaded() { return this.metadata ? 100 : 0; }
+    IsPlaying() { return this.element.ruffle().isPlaying; }
+    StopPlay() {
+      this.element.ruffle().suspend();
+      this.pausedAt ??= performance.now();
+    }
+    Play() {
+      if (this.pausedAt !== null) {
+        this.startedAt += performance.now() - this.pausedAt;
+        this.pausedAt = null;
+      }
+      this.element.ruffle().resume();
+    }
+    GotoFrame(frame) {
+      // Ruffle has no public seek API; this offset is only for the scheduler.
+      this.frameOffset = frame;
+      this.startedAt = performance.now();
+      if (this.pausedAt !== null) this.pausedAt = this.startedAt;
+    }
+    Rewind() { this.GotoFrame(0); }
+    click() { this.element.click(); }
+  }
   class e {
     useData = ["id", "dom", "backFn", "normalSwf", "router"];
     id = "";
@@ -37,67 +95,65 @@
       };
     }
     saveChange = null;
-    changeSwf(t = {}) {
-      let {
-        option: e,
-        backFn: a
-      } = t;
-      if (!r([e.src])) {
-        try {
-          let t = this.dom;
-          var i = t.cloneNode(true);
-          for (let t in this.defaultAttribute) {
-            i.setAttribute(t, this.defaultAttribute[t]);
-          }
-          for (let t in e) {
-            i.setAttribute(t, e[t]);
-          }
-          if (this.changeIng) {
-            this.saveChange = e;
-            return;
-          }
-          this.changeIng = true;
-          if (this.nextSwfRouter?.opt?.size) {
-            let t = this.nextSwfRouter?.opt?.size;
-            i.style.width = t[0] + "px";
-            i.style.height = t[1] + "px";
-          }
-          t.parentNode.appendChild(i);
-          t.style.position = "absolute";
-          t.style.transition = "all 0.08s !important";
-          t.style.top = "0.2px";
-          t.style.left = "0.2px";
-          t.style.opacity = 0;
-          setTimeout(() => {
-            try {
-              t.remove();
-              t = null;
-              this.changeIng = false;
-              if (this.saveChange) {
-                this.changeSwf(this.saveChange);
-                this.saveChange = null;
-              }
-            } catch (t) {}
-            this.dom = document.getElementById(this.id);
-            let i = {
-              ...e,
-              event: "setState",
-              dom: this.dom
-            };
-            if (s(a)) {
-              a(i);
-            }
-            if (s(this.backFn)) {
-              this.backFn(i);
-            }
-            this.changeNum++;
-          }, this.delayTime);
-        } catch (t) {
-          console.log(t);
+    async changeSwf(t = {}) {
+      const { option, backFn } = t;
+      if (!option?.src) return;
+      if (this.changeIng) {
+        this.saveChange = t;
+        return;
+      }
+      this.changeIng = true;
+      const old = this.dom;
+      const oldPose = this.oldNext;
+      const oldElement = old.element || old;
+      const element = window.RufflePlayer.newest().createPlayer();
+      element.className = "pet";
+      element.style.visibility = "hidden";
+      const size = option.opt?.size;
+      if (size) {
+        element.style.width = size[0] + "px";
+        element.style.height = size[1] + "px";
+      }
+      oldElement.parentNode.appendChild(element);
+      const player = new PetPlayer(element);
+      try {
+        await player.load(option.src);
+        // Keep the previous pose visible until the next player has painted.
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        oldElement.removeAttribute("id");
+        element.id = this.id;
+        element.style.visibility = "visible";
+        oldElement.remove();
+        this.dom = player;
+        if (!this.oldNext.name) this.oldNext = option;
+        const event = { ...option, event: "setState", dom: player };
+        if (s(backFn)) backFn(event);
+        if (s(this.backFn)) this.backFn(event);
+        this.changeNum++;
+        if (s(option.callBack?.load)) option.callBack.load();
+        if (option.name === "normal" && this.normalSwf() === "normal") this.scheduleIdle();
+        if (this.returnAfterLoad) {
+          const returnToNormal = this.returnAfterLoad;
+          this.returnAfterLoad = null;
+          returnToNormal();
+        }
+      } catch (error) {
+        element.remove();
+        this.oldNext = oldPose;
+        this.returnAfterLoad = null;
+        if (oldPose.name === "normal") this.scheduleIdle();
+        console.error("Cannot load pet animation", option.src, error);
+      } finally {
+        this.changeIng = false;
+        if (this.saveChange) {
+          const next = this.saveChange;
+          this.saveChange = null;
+          this.changeSwf(next);
         }
       }
     }
     setState(t) {
+      if (this.changeIng || !t.frame || t.currentFrame < 0) return;
       this.state = t;
       let {
         currentFrame: e,
@@ -105,6 +161,11 @@
         isPlaying: i,
         percentLoaded: n
       } = this.state;
+      if (this.oldNext?.callBack?.finish && e >= a - (this.oldNext?.opt?.lastTimeCut || 1) - 1) {
+        const finish = this.oldNext.callBack.finish;
+        this.oldNext.callBack.finish = null;
+        finish();
+      }
       if (this.nextSwfRouter && this.oldNext.name !== "exit") {
         if (this.oldNext.name == "game") {
           return;
@@ -117,23 +178,20 @@
           return;
         }
         let t = this.oldNext?.opt?.lastTimeCut || 1;
-        if ((this.onceNext?.name ? (this.onceNext.name + "").indexOf(this.nextSwfRouter.name) != -1 : this.onceNext) || a == e + t || this.nextSwfRouter?.opt?.power > this.oldNext?.opt?.power || this.nextSwfRouter?.opt?.power == this.oldNext?.opt?.power && this.nextSwfRouter?.opt?.canSelfSet || this.nextSwfRouter.name === "exit" || this.oldNext?.opt?.isOverState == "normal") {
+        if ((this.onceNext?.name ? (this.onceNext.name + "").indexOf(this.nextSwfRouter.name) != -1 : this.onceNext) || e >= a - t || this.nextSwfRouter?.opt?.power > this.oldNext?.opt?.power || this.nextSwfRouter?.opt?.power == this.oldNext?.opt?.power && this.nextSwfRouter?.opt?.canSelfSet || this.nextSwfRouter.name === "exit" || this.oldNext?.opt?.isOverState == "normal") {
           this.onceNext &&= false;
           this.changeSwf({
             option: this.nextSwfRouter
           });
-          if (this.nextSwfRouter?.callBack?.load) {
-            this.nextSwfRouter?.callBack?.load();
-          }
           if (this.nextSwfRouter?.opt?.backSwf) {
             let t = null;
             let e = this.nextSwfRouter?.opt?.backSwf;
             t = typeof e == "string" ? e == "normal" ? null : e : e.backSwfChange ? "canNext" : e.name == "normal" ? null : e.name;
-            setTimeout(() => {
+            this.returnAfterLoad = () => {
               if (t != "canNext" || !this.nextSwfRouter) {
-                this.nextSwf(t == "canNext" ? "" : t, () => {}, this.oldNext.opt);
+                this.nextSwf(t == "canNext" ? "" : t, null, this.oldNext.opt);
               }
-            }, this.delayTime + 10);
+            };
           }
           this.oldNext = this.nextSwfRouter;
           this.nextSwfRouter = null;
@@ -145,18 +203,6 @@
           }
           this.play();
           return;
-        }
-      }
-      if (this.oldNext?.callBack?.finish) {
-        if (this.changeIng) {
-          return;
-        }
-        if ((this.changeNum == -1 || this.changeNum == 0) && e == -1) {
-          return;
-        }
-        if (a == e + (this.oldNext?.opt?.lastTimeCut || 1) + 1) {
-          this.oldNext.callBack.finish();
-          this.oldNext.callBack.finish = null;
         }
       }
     }
@@ -173,36 +219,27 @@
       };
       if (!this.oldNext?.opt?.state || this.oldNext?.opt?.state != this.saveNext?.opt?.state || this.saveNext?.opt?.state != "normal" || this.oldNext.src != this.saveNext.src) {
         this.nextSwfRouter = this.saveNext;
-        if (this.normalSwf() != "normal" || t) {
-          if (this.playTime) {
-            clearTimeout(this.playTime);
-          }
-        } else {
-          let t = Math.trunc(Math.random() * 2000 * 15 + 22500);
-          if (this.playTime) {
-            clearTimeout(this.playTime);
-          }
-          this.playTime = setTimeout(() => {
-            if (o({
-              start: 0,
-              end: 100
-            }) < 30) {
-              let t = {
-                tolkName: "smallTalk",
-                tolkActive: "speak",
-                event: "setState"
-              };
-              if (s(this.backFn)) {
-                this.backFn(t);
-              }
-            } else {
-              let t = this.router.getRouter("play");
-              this.nextSwf(t);
-            }
-          }, t);
-        }
+        clearTimeout(this.playTime);
+        this.playTime = null;
       }
     }
+    scheduleIdle() {
+      clearTimeout(this.playTime);
+      this.playTime = setTimeout(() => {
+        this.playTime = null;
+        if (this.normalSwf() !== "normal" || this.oldNext.name !== "normal" || this.changeIng || this.nextSwfRouter) return;
+        if (Math.random() < 0.2) {
+          // Re-arm if small talk is suppressed (for example by quiet mode).
+          this.scheduleIdle();
+          if (s(this.backFn)) this.backFn({
+            tolkName: "smallTalk", tolkActive: "speak", event: "setState"
+          });
+        } else {
+          this.nextSwf(this.router.getRouter("play"));
+        }
+      }, Math.trunc(Math.random() * 40000 + 20000));
+    }
+
     click() {
       try {
         this.dom.click();
@@ -261,7 +298,6 @@
     state = "happy";
     use = "";
     backFn = () => {};
-    changeStateTime = 0;
     SwfList = {};
     isSick = 0;
     isSickTime = null;
@@ -310,11 +346,10 @@
       }
       let i = "";
       if (this.age == "Adult") {
-        let t = ["happy", "prostrate"];
         if (e?.mood || e.mood == 0) {
           let a = l(e.mood, [{
             rule: [null, 900],
-            value: t.includes(this.state) ? this.state : "happy"
+            value: "happy"
           }, {
             rule: [900, 800],
             value: "peaceful"
@@ -395,7 +430,6 @@
     getRouter(t, e = {}) {
       let a = this.SwfList[this.sex][this.age];
       let i = `${this.baseRouter}/${this.sex}/${this.age}`;
-      let n = ["hideright", "hideleft"];
       let s = a => {
         if (t === "enter" && +this.ageNum === 1 && this.agegrow == 0) {
           return this.getRouter("first");
@@ -415,24 +449,6 @@
               ...this.getRouter("die"),
               state: "die"
             };
-          }
-        }
-        if (this.state == "happy" || this.state == "prostrate") {
-          if (t == "normal") {
-            let t = this.state;
-            if (e.name) {
-              this.doRandom();
-            }
-            if (n.includes(e?.opt?.state) && this.state == "prostrate" && this.sex != "MM") {
-              return this.getRouter("etoj");
-            } else {
-              return t != this.state && this.sex != "MM" && (t == "happy" ? this.getRouter("etoj") : this.getRouter("jtoc"));
-            }
-          }
-          if (this.state == "prostrate" && n.includes(t) && e?.opt?.state != "jtoc" && this.sex != "MM") {
-            let e = this.getRouter("jtoc");
-            e.opt.backSwf = t;
-            return e;
           }
         }
       };
@@ -526,23 +542,6 @@
           opt: t,
           name: "changeState"
         };
-      }
-    }
-    doRandom() {
-      this.randomProstrateOrHappy();
-    }
-    randomProstrateOrHappy() {
-      this.changeStateTime++;
-      if (this.changeStateTime == 1) {
-        if (this.state == "prostrate" || this.state == "happy") {
-          let t = o({
-            start: 1,
-            end: 10
-          });
-          this.state = t < 6 ? "prostrate" : "happy";
-        }
-      } else if (this.changeStateTime >= 10) {
-        this.changeStateTime = 0;
       }
     }
     initSwfList() {
@@ -728,7 +727,8 @@
           normal: {
             name: "Stand.swf",
             opt: {
-              afterState: ["hideleft", "hideright", "play", ...t],
+              isOverState: "normal",
+              afterState: ["hideleft", "hideright", "play", "interact", ...t],
               ...(n?.opt || {})
             }
           },
@@ -1171,7 +1171,7 @@
   const o = (t = {}) => {
     let e = t.start || 1;
     let a = t.end || 0;
-    return Math.trunc(Math.random() * a + e) + "";
+    return Math.trunc(Math.random() * (a - e + 1) + e) + "";
   };
   const l = (t, e) => {
     let a = e[0].value;
@@ -1289,6 +1289,9 @@
     }
     changeSwf(t, e) {
       this.swf.nextSwf(t ? this.router.getRouter(t) : "", e);
+    }
+    interact(src, loaded) {
+      this.swf.nextSwf({ src, name: "interact", opt: { state: "interact", power: 80, backSwf: "normal" }, callBack: { load: loaded } });
     }
     setPetState(t) {
       if (this.router?.changeState) {

@@ -82,13 +82,15 @@ class mainClass {
           },
           stateInfo_h_stopState_m: (e, t) => {
             let o = getPetInfoOne("", "activeOption");
-            o[o?.work ? "work" : o?.study ? "study" : o?.trip ? "trip" : ""].stopNow = true;
-            setPetInfo({
-              activeOption: o
-            });
-            petControl.GrowUp.GrowUpMain({
-              unGrow: true
-            });
+            if (o.trip?.managedTravel) {
+              _require("../../../service/gameplay/travel").travel().cancel();
+              return;
+            }
+            const activity = o.work ? "work" : o.study ? "study" : o.trip ? "trip" : null;
+            if (!activity) return;
+            o[activity].stopNow = true;
+            setPetInfo({ activeOption: o });
+            petControl.GrowUp.GrowUpMain({ unGrow: true });
           }
         });
         n([{

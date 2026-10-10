@@ -1,4 +1,5 @@
 const _require = eval("require");
+const { raiseDesktopWindow } = _require("../../util/windowLayer");
 const { app, screen, BrowserWindow } = _require("electron");
 const infoCard = _require("../infoCard/main.js");
 const control = _require("../control/main.js");
@@ -15,7 +16,7 @@ const raiseDevTools = () => {
   for (const w of BrowserWindow.getAllWindows()) {
     const wc = w.webContents;
     if (wc && typeof wc.getType === "function" && wc.getType() === "devtools" && !_raisedDevTools.has(w.id)) {
-      w.setAlwaysOnTop(true);
+      raiseDesktopWindow(w);
       _raisedDevTools.add(w.id);
     }
   }
@@ -40,7 +41,7 @@ class mainClass {
     const { nowPosition = [0, 0], positionType } = options;
     this.positionType = positionType;
     this.width = 340;
-    this.height = 300;
+    this.height = 340;
 
     const position = this.getWindowPosition(nowPosition, positionType);
     const self = this;
@@ -80,10 +81,10 @@ class mainClass {
               if (petInfo.activeOption[key] && key !== "ill") active = petInfo.activeOption[key];
             }
 
-            const item = active
-              ? { label: "停止状态", value: "stopState" }
-              : petInfo?.maxInfo?.stopGrowth
-                ? { label: "开启成长", value: "openGrowth" }
+            const item = petInfo?.maxInfo?.stopGrowth
+              ? { label: "开启成长", value: "openGrowth" }
+              : active
+                ? { label: "停止状态", value: "stopState" }
                 : { label: "停止成长", value: "stopGrowth" };
 
             updateMenuItem(item, [7]);
@@ -235,7 +236,9 @@ class mainClass {
 
     const item = val.data || {};
 
-    if (item.value === "openAiChat") {
+    if (item.value === "openPlayroom") {
+      _require("../playroom/main").cleate();
+    } else if (item.value === "openAiChat") {
       // 每次都交给 AI 窗口执行恢复；Windows 最小化时 show 状态可能滞后。
       aiChat.cleate();
     } else if (item.value === "openSwfViewer") {
@@ -250,9 +253,16 @@ class mainClass {
       petControl.determineHealth({ communication: ["state", "startGrowth"] });
     } else if (item.value === "stopState") {
       const activeOption = getPetInfoOne("", "activeOption");
-      activeOption[activeOption?.work ? "work" : activeOption?.study ? "study" : activeOption?.trip ? "trip" : ""].stopNow = true;
-      setPetInfo({ activeOption });
-      petControl.GrowUp.GrowUpMain({ unGrow: true });
+      if (activeOption.trip?.managedTravel) {
+        _require("../../../service/gameplay/travel").travel().cancel();
+      } else {
+        const activity = activeOption.work ? "work" : activeOption.study ? "study" : activeOption.trip ? "trip" : null;
+        if (activity) {
+          activeOption[activity].stopNow = true;
+          setPetInfo({ activeOption });
+          petControl.GrowUp.GrowUpMain({ unGrow: true });
+        }
+      }
     } else if (item.value === "quit") {
       app.quit();
     } else if (item.value === "petInfo") {

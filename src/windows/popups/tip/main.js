@@ -1,4 +1,5 @@
 const _require = eval("require");
+const { raiseDesktopWindow } = _require("../../util/windowLayer");
 const path = _require("path");
 class mainClass {
   constructor(t) {
@@ -38,7 +39,7 @@ class mainClass {
           getinfo: o,
           wsMethods: a
         } = t;
-        s.setAlwaysOnTop(true);
+        raiseDesktopWindow(s);
         const h = t => {
           if (!s?.webContents?.send) {
             return;
@@ -85,7 +86,11 @@ class mainClass {
               }
               if (e.otherMsgData) {
                 console.log("_this.otherMsgData", e.otherMsgData);
-                if (e.otherMsgData?.type == "click") {
+                if (e.otherMsgData?.type === 'gameplayHarvest') {
+                  let response;
+                  try { response=JSON.parse(i.data); } catch (_) {}
+                  if(response?.closeType===true) _require('../../../service/gameplay/harvest').openHarvest(e.otherMsgData.target);
+                } else if (e.otherMsgData?.type == "click") {
                   if (e.otherMsgData?.fn) {
                     e.otherMsgData?.fn();
                   }

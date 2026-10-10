@@ -11,7 +11,8 @@ body {
   border-radius: 10px !important;
 }
 #appMain {
-  cursor: none !important;
+  /* Styles are injected into windows/app.html, so URLs are relative to that page. */
+  cursor: url("../assets/img_res/hand/focus/normal.cur"), pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,15 +27,15 @@ body {
   /* opacity: 0.4; */
   /* padding: 30px; */
   user-select: none;
-  cursor: url("../../assets/img_res/hand/default/normal.cur"), default;
+  cursor: url("../assets/img_res/hand/focus/normal.cur"), pointer;
   position: relative;
 }
 #move:active {
-  cursor: url("../../assets/img_res/hand/default/press.cur"), default;
+  cursor: url("../assets/img_res/hand/focus/press.cur"), pointer;
 }
 #pet, ruffle-player, ruffle-player * {
   /* opacity: 0.2; */
-  cursor: pointer !important;
+  cursor: inherit !important;
   width: 100%;
   height: 100%;
   z-index: 1;
@@ -42,6 +43,7 @@ body {
   left: 0;
   top: 0;
   transition: all 0.08s !important;
+  /* Let #move own dragging and menus; SWFs receive cursor coordinates via API. */
   pointer-events: none !important;
 }
 #move {
@@ -113,3 +115,9 @@ body {
   width: 9.7px;
   height: 13.15px;
 }
+
+.pet-interactions { position:absolute; inset:0; z-index:20; pointer-events:none; }
+.pet-spot { position:absolute; width:14px; height:14px; padding:0; border:0; border-radius:50%; transform:translate(-50%,-50%); background:transparent; pointer-events:auto; -webkit-app-region:no-drag; }
+.show-hints .pet-spot { background:#fff4a9bb; border:1px solid #826a3f88; box-shadow:0 0 5px #fff7b0; }
+.pet-spot:hover { background:#fff3a7; transform:translate(-50%,-50%) scale(1.25); }
+.pet-away #pet, .pet-away ruffle-player { visibility:hidden!important; }

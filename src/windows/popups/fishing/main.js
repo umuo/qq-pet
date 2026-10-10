@@ -19,6 +19,7 @@
           windowsMain.open({
             name: this.name,
             loadFile: "popups/" + this.name,
+            localPageUrl: `http://${e.host}:${e.port}/${e.fileName}/windows/app.html`,
             default: {
               width: this.width,
               height: this.height

@@ -15,6 +15,7 @@
       },
       open: true,
       changeIng: false,
+      loadError: "",
       baseRouter: "../assets/game/",
       gameList: [{
         name: "QQ地下城与勇士之Q宠版",
@@ -114,7 +115,7 @@
       });
     },
     methods: {
-      changeSwf(e) {
+      async changeSwf(e) {
         console.log(e);
         if (e?.children) {
           e.show = !e.show;
@@ -123,31 +124,37 @@
         if (this.changeIng) {
           return;
         }
+        this.changeIng = true;
+        this.loadError = "";
         this.current = e.router;
-        t({
-          event: "showSwf",
-          title: e.name
-        });
-        let r = this.dom;
-        var n = r.cloneNode(true);
-        for (let e in this.defaultAttribute) {
-          n.setAttribute(e, this.defaultAttribute[e]);
-        }
-        n.setAttribute("src", this.baseRouter + e.router);
-        r.parentNode.appendChild(n);
-        r.style.position = "absolute";
-        r.style.transition = "all 0.08s !important";
-        r.style.top = "0.2px";
-        r.style.left = "0.2px";
-        r.style.opacity = 0;
-        setTimeout(() => {
-          try {
-            r.remove();
-            r = null;
-            this.changeIng = false;
-          } catch (e) {}
-          this.dom = document.getElementById("gameMain");
-        }, 100);
+        t({ event: 'showSwf', title: e.name, router: e.router });
+        const old = this.dom;
+        const player = window.RufflePlayer.newest().createPlayer();
+        player.className = 'gameMain';
+        player.id = 'gameLoading';
+        player.tabIndex = 0;
+        player.style.visibility = 'hidden';
+        old.parentNode.appendChild(player);
+        try {
+          const url = new URL(this.baseRouter + e.router, document.baseURI);
+          await player.ruffle().load({ url: url.href, base: new URL('./', url).href, autoplay: 'on', splashScreen: false, unmuteOverlay: 'hidden', contextMenu: 'off', allowScriptAccess: true });
+          // Ruffle can resolve load() before movie metadata is available.
+          // Keep the player hidden and reward timer stopped during that gap.
+          const deadline = Date.now() + 20000;
+          while (!player.ruffle().metadata) {
+            if (Date.now() >= deadline) throw new Error('游戏加载超时');
+            await new Promise(resolve => setTimeout(resolve, 50));
+          }
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          old.remove(); player.id = 'gameMain'; player.style.visibility = 'visible'; player.focus();
+          this.dom = player;
+          t({ event: 'gameReady', router: e.router });
+        } catch (error) {
+          player.remove(); this.current = '';
+          t({ event: 'gameFailed' });
+          console.error('小游戏加载失败', error);
+          this.loadError = `「${e.name}」加载失败，请重新选择。如果仍然失败，请检查游戏资源是否完整。`;
+        } finally { this.changeIng = false; }
       },
       closeWindow() {
         t({

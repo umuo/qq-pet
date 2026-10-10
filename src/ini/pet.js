@@ -49,6 +49,7 @@
       work: null,
       study: null,
       trip: null,
+      desktopGame: null,
       ill: null,
       die: null
     },
@@ -70,6 +71,7 @@
       power: 0,
       needTime: 0
     },
+    playroom: null,
     listenMain: {}
   };
   const t = {
@@ -150,7 +152,9 @@
       activeOption: r,
       otherOptions: c,
       activeValue: h,
-      fishing: f
+      fishing: f,
+      playroom,
+      inventory
     } = t;
     let u = null;
     let g = null;
@@ -193,6 +197,7 @@
     }
     if (r) {
       for (let t in e.activeOption) {
+        if (t === 'desktopGame' && !(t in r)) continue;
         if (r[t] != e.activeOption[t]) {
           m ||= {};
           m[t] = r[t];
@@ -227,7 +232,18 @@
         }
       }
     }
-    if (!u && !g && !m && !d && !p && !changeFishing) {
+    const playroomChanged = playroom && JSON.stringify(playroom) !== JSON.stringify(e.playroom);
+    if (playroomChanged) e.playroom = playroom;
+    const inventoryChanged = inventory && JSON.stringify(inventory) !== JSON.stringify(e.cache);
+    if (inventoryChanged) {
+      // Goods keeps a reference to cache.store, including delayed saves.
+      // Preserve that object so its next save cannot overwrite newly granted gifts.
+      for (const key in inventory) {
+        if (e.cache[key] && typeof e.cache[key] === 'object' && !Array.isArray(e.cache[key]) && inventory[key] && typeof inventory[key] === 'object' && !Array.isArray(inventory[key])) Object.assign(e.cache[key], inventory[key]);
+        else e.cache[key] = inventory[key];
+      }
+    }
+    if (!u && !g && !m && !d && !p && !changeFishing && !playroomChanged && !inventoryChanged) {
       return;
     }
     let b = {
@@ -244,12 +260,19 @@
       changeValue: p,
       ...b
     };
-    $Store.setItem("pet", v);
+    if (inventoryChanged && typeof $Store.setItems === 'function') $Store.setItems({pet:v,cache:e.cache});
+    else {
+      $Store.setItem("pet", v);
+      if (inventoryChanged) $Store.setItem("cache", e.cache);
+    }
     if (!o) {
       if (e.listenMain.pet) {
         for (let t in e.listenMain.pet) {
           e.listenMain.pet[t](v);
         }
+      }
+      if (inventoryChanged && e.listenMain.cache) {
+        for (const name in e.listenMain.cache) e.listenMain.cache[name](e.cache);
       }
       return v;
     }
@@ -325,6 +348,7 @@
     clip: true,
     doNotDisturb: false,
     startupSelf: false,
+    hdImages: true,
     shortcuts: {
       screenshot: ["ALT", "Q"],
       openStting: ["ALT", "D"],
@@ -345,7 +369,9 @@
       windowsMain.setOpacity(n == "opacity" ? i || 1 : l.opacity || 1);
     }
     if (l) {
-      e.system = l;
+      // Older profiles can contain only settings that the user changed.
+      // Preserve defaults for missing fields, while honoring explicit values.
+      e.system = { ...e.system, ...l };
       return;
     }
     if (!n) {

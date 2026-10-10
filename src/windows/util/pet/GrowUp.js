@@ -116,6 +116,7 @@
           let l = JSONto(i.info);
           let r = JSONto(i.activeOption);
           let s = JSONto(i.activeValue);
+          let toyProgress = null;
           if (t) {
             if (l.growth == 0) {
               setTimeout(() => {
@@ -138,6 +139,10 @@
               let r = 100;
               let s = Math.trunc(a.growthRate / 60 / (60 / (this.growTime / 1000)) * r) / r;
               l.growth = Math.trunc((isNumber(l.growth) + s) * r) / r;
+              toyProgress = require('../../../service/gameplay/toys').advanceToy(i.playroom, this.growTime / 60000);
+              if (toyProgress) l.growth += toyProgress.growth;
+              const backgroundProgress = require('../../../service/gameplay/backgrounds').advanceBackground(toyProgress?.state || i.playroom, this.growTime / 60000);
+              if (backgroundProgress) { l.growth += backgroundProgress.growth; toyProgress = backgroundProgress; }
               l.onLineTime = isNumber(l.onLineTime) + this.growTime / 60000;
               l.onlineDataTime = isNumber(l.onlineDataTime) + this.growTime / 60000;
             }
@@ -154,8 +159,10 @@
           setPetInfo({
             info: l,
             activeOption: r,
-            activeValue: s
+            activeValue: s,
+            ...(toyProgress ? {playroom:toyProgress.state} : {})
           });
+          if (!t && !o) this.sweetHeartAuto();
         }
         getEffectGrowthRate(e) {
           let t = [0, 0, 0, 0, 0];
@@ -235,10 +242,16 @@
         doGetMS(e, t) {
           return e / t | 0;
         }
-        sweetHeartAuto() {}
+        sweetHeartAuto() {
+          const result = require('../../../service/gameplay/sweetheart').selfCare();
+          if (result?.type === 'toy') require('../../../service/gameplay/speech').speech().say({data:{type:'text',data:result.message},active:'speak'});
+          return result;
+        }
         countdownActiveTime(e, t, o, i) {
           let n = e?.work ? "work" : e?.study ? "study" : e?.trip ? "trip" : "";
           if (n) {
+            // Wall-clock trips are settled by gameplay/travel, never by online ticks.
+            if (n === "trip" && e.trip.managedTravel) return e;
             if (e[n]?.stopNow) {
               this.callBackState({
                 type: "normal",
@@ -251,6 +264,7 @@
             }
             if (e[n].stateTime + 1 > e[n].overTime) {
               o(e[n].obtain);
+              if (n === "work" || n === "study") eval("require")("../../../service/gameplay/companion").companion().record(n === "work" ? "Work" : "Study");
               let a = "";
               let l = getRandom(1, 4);
               l = l <= 3 ? 1 : 2;

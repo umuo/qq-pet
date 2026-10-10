@@ -1,6 +1,6 @@
 <div id="appMain" class="not_drag">
   <!-- :style="sizeStyle" -->
-  <div id="move" :style="sizeStyle">
+  <div id="move" :style="sizeStyle" :class="{'pet-away':petInfo.activeOption.desktopGame}">
     <div class="focusPress phantom"></div>
     <embed id="pet" name="pet" class="pet"> </embed>
   </div>

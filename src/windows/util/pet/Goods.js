@@ -241,6 +241,8 @@ class Goods {
       this.storeGoods[e.type].splice(a, 1);
     }
     this.toSaveGoodsCache();
+    const event = { food: "Eat", commodity: "Clean" }[e.type];
+    if (event) _require("../../../service/gameplay/companion").companion().record(event);
     return true;
   }
   getScData() {

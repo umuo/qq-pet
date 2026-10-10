@@ -4,6 +4,8 @@ const {
   ipcRenderer
 } = _require("electron");
 let main_html = {
+  main_ToHtml_interact: e => ipcRenderer.on("main_bus-html_interact", e),
+  main_ToHtml_cursor: e => ipcRenderer.on("main_bus-html_cursor", e),
   main_ToHtml_setPet: e => ipcRenderer.on("main_bus-html_setPet", e),
   main_ToHtml_setPotision: e => ipcRenderer.on("main_bus-html_setPotision", e),
   main_ToHtml_setSay: e => ipcRenderer.on("main_bus-html_setSay", e),
@@ -12,6 +14,10 @@ let main_html = {
   main_m_setFloat: e => ipcRenderer.on("main_m_setFloat_h", e)
 };
 let html_main = {
+  html_ToMain_gameplayStorage: e => ipcRenderer.send("html_bus-main_gameplayStorage", e),
+  html_ToMain_openPlayroom: () => ipcRenderer.send("html_bus-main_openPlayroom"),
+  html_ToMain_poke: e => ipcRenderer.send("html_bus-main_poke", e),
+  html_ToMain_pokeLoaded: e => ipcRenderer.send("html_bus-main_pokeLoaded", e),
   html_ToMain_move: e => ipcRenderer.send("html_bus-main_move", e),
   html_ToMain_openMenu: e => ipcRenderer.send("html_bus-main_openMenu", e),
   html_ToMain_close: e => ipcRenderer.send("html_bus-main_close", e),

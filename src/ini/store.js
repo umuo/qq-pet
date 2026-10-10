@@ -14,6 +14,9 @@ class St {
   setItem(e, t) {
     this.ElectronStore.set(e, t);
   }
+  setItems(values) {
+    this.ElectronStore.store = { ...this.ElectronStore.store, ...values };
+  }
   getItem(e) {
     let t = {};
     try {

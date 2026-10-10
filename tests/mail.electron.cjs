@@ -1,0 +1,54 @@
+// Real mailbox UI and native clicks, isolated pet/browser storage.
+const {app,BrowserWindow}=require('electron');
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),assert=require('node:assert/strict');
+const temp=fs.mkdtempSync(path.join(os.tmpdir(),'qq-pet-mail-'));
+app.setPath('userData',path.join(temp,'userData'));app.on('window-all-closed',()=>{});
+const saves=[],speaks=[],transactions=[];require('../src/ini/store');
+const writeItem=$Store.setItem.bind($Store),writeItems=$Store.setItems.bind($Store);
+$Store.setItem=(key,value)=>{saves.push({key,value:JSON.parse(JSON.stringify(value))});writeItem(key,value);};
+$Store.setItems=values=>{transactions.push(Object.keys(values));for(const [key,value] of Object.entries(values))saves.push({key,value:JSON.parse(JSON.stringify(value))});writeItems(values);};
+require('../src/ini/pet');let quiet=true;global.getSys=key=>key==='doNotDisturb'?quiet:1;global.openSpeak=message=>speaks.push(message);
+const rewrites=[];global.llmService={rewriteGameplay:async source=>{rewrites.push(source);return source+'开心收好啦~';}};
+const delay=ms=>new Promise(r=>setTimeout(r,ms));async function until(fn){for(let i=0;i<150;i++){if(await fn())return;await delay(100);}throw Error('Mailbox UI timeout');}
+const timeout=setTimeout(()=>app.exit(2),40000);
+app.whenReady().then(async()=>{
+  global.windowsMain=new(require('../src/windows/window'))();const open=windowsMain.open.bind(windowsMain);
+  windowsMain.open=option=>{option.default.show=false;option.default.webPreferences={offscreen:true,backgroundThrottling:false};return open(option);};
+  setPetInfo({info:{name:'测试企鹅',host:'测试',sex:'GG',birthDay:'2020-10-01 08',health:5,yb:300,mood:800,hunger:1500,clean:1500,growth:500},maxInfo:{level:10,hunger:3000,clean:3000}});
+  const {mailbox}=require('../src/service/gameplay/mail');let now=new Date(2026,9,1,12).getTime();mailbox().now=()=>now;
+  mailbox().drawItems=()=>[{id:'_100010031',type:'food',name:'雪泥爽',count:1},{id:'_100020032',type:'commodity',name:'自动喷湿器(绝)',count:1}];
+  const {Goods}=require('../src/windows/util/pet/Goods');const goods=new Goods();goods.toSaveGoodsCache();
+  const stop=require('../src/service/gameplay/runtime').startGameplay();
+  assert.equal(mailbox().view().letters.length,3);assert.equal(speaks.length,0,'quiet mode preserves mail without speaking');
+  const room=require('../src/windows/popups/playroom/main');room.cleate('mail');
+  await until(()=>room.window&&room.window.webContents.executeJavaScript("document.querySelectorAll('.gift-mail .postcard-list button').length===3 && document.querySelector('.mail-pane').checkVisibility()"));
+  let win=room.window;
+  async function click(expression){const point=await win.webContents.executeJavaScript(`(()=>{const el=${expression};el.scrollIntoView({block:'center'});const r=el.getBoundingClientRect();return {x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)}})()`);for(const type of ['mouseMove','mouseDown','mouseUp']){win.webContents.sendInputEvent({type,...point,button:'left',clickCount:1});await delay(80);}}
+  await click("Array.from(document.querySelectorAll('.gift-mail .postcard-list button')).find(el=>el.textContent.includes('生日'))");
+  await until(()=>getPetInfo().playroom.mail.letters.find(l=>l.id==='birthday-2026').read);
+  assert.equal(await win.webContents.executeJavaScript("document.querySelectorAll('.gift-letter .letter-items li').length"),2);
+  await click("document.querySelector('.gift-letter button')");
+  await until(()=>Number(getPetInfo().info.yb)===600);
+  await until(()=>win.webContents.executeJavaScript("document.querySelector('footer[role=status]').textContent.includes('开心收好啦~')"));
+  assert.ok(rewrites.some(source=>source.includes('300 元宝')),'claim UI reuses gameplay rewrite after the reward is saved');
+  assert.ok(getPetInfo().playroom.mail.letters.find(l=>l.id==='birthday-2026').claimed);
+  assert.deepEqual(transactions.at(-1),['pet','cache']);
+  const stored=JSON.parse(fs.readFileSync(path.join(app.getPath('userData'),'config-macos.json'),'utf8'));
+  assert.equal(stored.pet.info.yb,600);assert.ok(stored.pet.playroom.mail.letters.find(l=>l.id==='birthday-2026').claimed);assert.ok(stored.cache.store.food.includes('_100010031-1'));assert.ok(stored.cache.store.commodity.includes('_100020032-1'));
+  const save=saves.filter(s=>s.key==='pet').at(-1).value;assert.equal(Number(save.info.yb),600);assert.ok(save.playroom.mail.letters.find(l=>l.id==='birthday-2026').claimed);
+  await win.webContents.executeJavaScript("electronAPI.playroomAction({type:'claimLetter',id:'birthday-2026'})");await delay(100);assert.equal(Number(getPetInfo().info.yb),600);
+  await delay(1100);assert.ok(getCache('store').food.includes('_100010031-1'),'a pending Goods save retains the claimed gift');assert.equal(getCache('store').food.filter(item=>item.startsWith('_100010031-')).length,1);
+  fs.writeFileSync(path.join(temp,'birthday-mail.png'),(await win.webContents.capturePage()).toPNG());
+  const closed=new Promise(r=>win.once('closed',r));win.close();await closed;room.cleate('mail');
+  await until(()=>room.window&&room.window.webContents.executeJavaScript("document.querySelectorAll('.gift-mail .postcard-list button').length===3"));win=room.window;
+  await click("Array.from(document.querySelectorAll('.gift-mail .postcard-list button')).find(el=>el.textContent.includes('生日'))");
+  await until(()=>win.webContents.executeJavaScript("document.querySelector('.gift-letter button')?.disabled===true"));
+  assert.equal(mailbox().deliver(),null);assert.equal(mailbox().view().letters.length,3);
+  const {State}=require('../src/windows/util/pet/State');const state=Object.create(State.prototype);state.callBackState=()=>{};global.isNumber=Number;goods.backUseConsumables=item=>state.useConsumables(item);
+  const food=goods.getGoodsInfo({goodName:'food*_100010031-1'});assert.equal(food.name,'雪泥爽');assert.ok(goods.useConsumables(food));assert.equal(getPetInfo().info.hunger,2220);
+  await delay(1100);assert.ok(!getCache('store').food.some(item=>item.startsWith('_100010031-')));assert.ok($Store.getItem('cache').store.commodity.includes('_100020032-1'));
+  quiet=false;now=new Date(2027,9,1,12).getTime();assert.equal(mailbox().deliver().sent,2);
+  assert.equal(mailbox().view().letters.length,5);assert.equal(mailbox().deliver(),null);
+  stop();console.log('PASS: startup mail in quiet mode, real mailbox birthday read/claim, atomic saved reward, duplicate rejection, reopen persistence and next-year delivery. Screenshot: '+path.join(temp,'birthday-mail.png'));
+  clearTimeout(timeout);for(const w of BrowserWindow.getAllWindows())w.destroy();app.quit();
+}).catch(error=>{console.error(error);for(const w of BrowserWindow.getAllWindows())w.destroy();app.exit(1);});

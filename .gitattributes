@@ -1,0 +1,2 @@
+# Keep imported resource bytes identical to the reference asset manifest.
+src/assets/reference/** -text

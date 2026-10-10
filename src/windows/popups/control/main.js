@@ -106,6 +106,11 @@ class mainClass {
               } catch (e) {}
 
               studyContext = payload.value === "study" ? payload : null;
+              if (payload.value === "trip") {
+                _require("../playroom/main").cleate('travel');
+                self.changeState({ type: "menu" });
+                return;
+              }
               let page = petControl.Goods.getConsumablesPage({
                 ...payload,
                 getWhere: payload.getWhere || "store",
@@ -450,6 +455,8 @@ class mainClass {
     try {
       payload = JSON.parse(raw);
     } catch (e) {}
+
+    if (payload.value === 'farm') { _require('../farm/main').cleate(); return; }
 
     if (payload.value === "status") {
       const stateInfo = _require("../stateInfo/main");

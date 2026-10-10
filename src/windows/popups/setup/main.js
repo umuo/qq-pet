@@ -256,6 +256,11 @@ class mainClass {
               });
             }
             if (t.data?.type == "buts") {
+              if (['exportSave', 'importSave'].includes(t.data.value)) {
+                if (e.sender !== a.webContents) return;
+                _require("../../../service/gameplay/saveUI").run(t.data.value, a);
+                return;
+              }
               if (h) {
                 return;
               }

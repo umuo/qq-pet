@@ -120,7 +120,7 @@
 }
 /* 二级菜单 */
 .obliqueHover:hover .m_children {
-  max-height: 200px !important;
+  max-height: 260px !important;
 }
 .m_children {
   max-height: 0px;

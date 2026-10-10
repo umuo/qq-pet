@@ -2,6 +2,7 @@ const _require = eval("require");
 const { BrowserWindow, shell } = _require("electron");
 const path = _require("path");
 const doTypes = _require("./doTypes");
+const { installHandCursor } = _require("../../util/handCursor");
 
 class mainClass {
   constructor() {
@@ -56,6 +57,7 @@ class mainClass {
       if (childWindow && !childWindow.isDestroyed()) return childWindow;
 
       childWindow = new BrowserWindow(childOptions(parent));
+      installHandCursor(childWindow);
       childWindow.setOpacity(1);
       childWindow.setMenu(null);
       childWindow.setMinimizable(false);

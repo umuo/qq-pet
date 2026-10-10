@@ -70,6 +70,7 @@ const activeDefs = {
     type: "openWindow",
     icon: "../assets/control/icons/mstx.png",
   },
+  farm: { value: 'farm', name: '农场', type: 'openWindow', icon: '../assets/active/play/nongchang00.png' },
   fz: {
     value: "fz",
     type: "fz",
@@ -117,7 +118,7 @@ const app = {
       {
         name: "活动",
         icon: "../assets/control/icons/gonggao.png",
-        children: [activeDefs.task, activeDefs.hlyg, activeDefs.fz],
+        children: [activeDefs.task, activeDefs.hlyg, activeDefs.farm, activeDefs.fz],
       },
     ],
     activeList: [],

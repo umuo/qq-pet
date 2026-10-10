@@ -1,6 +1,6 @@
 {
   "name": "qq-pet-macos",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "description": "QQ宠物 macOS 干净版 - 已移除遥测和设备指纹采集",
   "license": "SEE LICENSE IN ../LICENSE",
   "main": "main.js",
@@ -57,7 +57,8 @@
       "main.js",
       "src/**/*",
       "!src/**/node_modules",
-      "!**/*.map"
+      "!**/*.map",
+      "!**/*.partial"
     ],
     "mac": {
       "category": "public.app-category.entertainment",

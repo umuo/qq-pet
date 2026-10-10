@@ -1,5 +1,12 @@
 const _require = eval("require");
+const { raiseDesktopWindow } = _require("../util/windowLayer");
 const checkUpdate = _require("../util/UpdateController");
+const { companion } = _require("../../service/gameplay/companion");
+const { startGameplay } = _require("../../service/gameplay/runtime");
+const faceData = _require("../util/pet/facePoints");
+const exitState = _require("../../service/gameplay/exit");
+const fs = _require("fs");
+const path = _require("path");
 const {
   app,
   globalShortcut,
@@ -59,10 +66,11 @@ class mainClass {
     let i = null;
     this.bd = true;
     this.wellClose = false;
+    exitState.waitingForPet = false;
     this.petState = "";
     let a = {};
     if (this.bd) {
-      a.jsFiles = ["./util/move.js", "./util/pet/swfPet.js", "../service/websocket.js"];
+      a.jsFiles = ["./util/move.js", "./util/pet/sol.js", "./util/pet/facePoints.js", "./util/pet/swfPet.js", "./util/pet/interactions.js"];
     } else {
       a.url = `http://${t.host}:${t.post}/${t.fileName}/windows/main/indexOnline.html`;
     }
@@ -81,6 +89,24 @@ class mainClass {
           wsMethods: l
         } = e;
         n.nowPosition = t.getPosition();
+        companion().view();
+        let pendingPoke = null;
+        let pokeSequence = 0;
+        // SWF eyes query ExternalInterface even while the cursor is outside the pet.
+        let lastCursor = "";
+        const cursorTimer = setInterval(() => {
+          if (t.isDestroyed() || !t.isVisible()) return;
+          const cursor = screen.getCursorScreenPoint();
+          const bounds = t.getBounds();
+          const point = { x: cursor.x - bounds.x, y: cursor.y - bounds.y };
+          const key = `${point.x},${point.y},${bounds.width},${bounds.height}`;
+          if (key === lastCursor) return;
+          lastCursor = key;
+          t.webContents.send("main_bus-html_cursor", point);
+        }, 50);
+        t.on("closed", () => clearInterval(cursorTimer));
+        t.webContents.on("did-finish-load", () => { lastCursor = ""; });
+
         let c = {
           food: "eat",
           commodity: "clean",
@@ -248,6 +274,7 @@ class mainClass {
         });
         app.on("before-quit", e => {
           if (global.isQuittingForUpdate) {
+            exitState.waitingForPet = false;
             n.wellClose = true;
             setOutProjectMain(true);
             setSys({
@@ -277,6 +304,7 @@ class mainClass {
           }
           if (!n.wellClose) {
             n.wellClose = true;
+            exitState.waitingForPet = true;
             e.preventDefault();
             setOutProjectMain(true);
             setSys({
@@ -290,6 +318,7 @@ class mainClass {
               }
             });
             setTimeout(() => {
+              exitState.waitingForPet = false;
               try {
                 app.quit();
               } catch (e) {}
@@ -600,6 +629,35 @@ class mainClass {
               n.close();
             }
           },
+          "html_bus-main_poke": (event, pose) => {
+            if (event.sender !== t.webContents || n.petState !== "normal" || pendingPoke && pendingPoke.until > Date.now()) return;
+            const pet = getPetInfo();
+            const level = +pet.maxInfo.level;
+            const age = level <= 4 ? "Egg" : level < 9 ? "Kid" : "Adult";
+            const mood = +pet.info.mood;
+            const states = age !== "Adult" ? [""] : mood >= 900 ? ["happy", "prostrate"] : [mood >= 800 ? "peaceful" : mood >= 500 ? "upset" : "sad"];
+            if (!pose || pose.sex !== pet.info.sex || pose.age !== age || !states.includes(pose.state) || !companion().usable(pet) || ['work', 'study', 'trip'].some(k => pet.activeOption[k])) return;
+            const point = faceData.points(pose)[pose.key];
+            if (!point) return;
+            const start = point.s || 1;
+            const variant = start + Math.floor(Math.random() * ((point.e || start) - start + 1));
+            const relative = faceData.target(pose, pose.key, variant);
+            if (!relative || !fs.existsSync(path.join(__dirname, '../../assets/Action', relative))) return;
+            const token = ++pokeSequence;
+            pendingPoke = { token, until: Date.now() + 15000 };
+            t.webContents.send("main_bus-html_interact", { token, src: "../assets/Action/" + relative });
+          },
+          "html_bus-main_pokeLoaded": (event, token) => {
+            if (event.sender !== t.webContents || !pendingPoke || pendingPoke.token !== token || pendingPoke.until < Date.now()) return;
+            pendingPoke = null;
+            companion().poke();
+          },
+          "html_bus-main_openPlayroom": event => {
+            if (event.sender === t.webContents) _require("../popups/playroom/main").cleate('travel');
+          },
+          "html_bus-main_gameplayStorage": (event, payload) => {
+            if (event.sender === t.webContents) _require("../popups/farm/main").recoverOnStartup(payload);
+          },
           "html_bus-main_move": (e, t) => {
             doMovePosition(t);
           },
@@ -681,6 +739,7 @@ class mainClass {
                 }
               }
             } else {
+              exitState.waitingForPet = false;
               app.quit();
             }
           },
@@ -726,7 +785,14 @@ class mainClass {
               if (_cached) {
                 return _emit(_cached);
               }
-              if (getSys("llmEnabled") && (_tn === "enter" || _tn === "levUp")) {
+              if (_tn === "enter") {
+                const line = _require("../../service/gameplay/greeting").greeting().take(!!getSys("doNotDisturb"));
+                if (!line) return;
+                return _require("../../service/gameplay/speech").speech().rewrite(line.tolk).then(text => {
+                  if (!n.isStop() && !getSys("doNotDisturb")) _emit({...line, tolk:text});
+                });
+              }
+              if (getSys("llmEnabled") && _tn === "levUp") {
                 return llmService.generateOnce(_tn, _buildLLMCtx(_tn), getPetInfo()).then(r => _emit(r?.tolk ? r : getCommunication(_tn || "")));
               }
               _emit(getCommunication(_tn || ""));
@@ -784,6 +850,8 @@ class mainClass {
             }
           }
         }]);
+        const stopGameplay = startGameplay();
+        t.on("closed", stopGameplay);
         clipboardWatcherMain = clipboardWatcher({
           watchDelay: 200,
           shakeTime: 300,
@@ -1134,9 +1202,7 @@ class mainClass {
     if (!this.show) {
       this.window.show();
     }
-    if (!this.window.isAlwaysOnTop()) {
-      this.window.setAlwaysOnTop(true);
-    }
+    raiseDesktopWindow(this.window);
     this.show = true;
   }
 }

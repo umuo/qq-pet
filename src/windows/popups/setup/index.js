@@ -25,6 +25,18 @@
           type: "slider",
           value: "opacity"
         }, {
+          label: "高清界面素材（重开窗口或重启生效）",
+          type: "radio",
+          value: "hdImages"
+        }, {
+          label: "导出宠物存档（先关闭农场和游戏）",
+          type: "buts",
+          value: "exportSave"
+        }, {
+          label: "导入宠物存档（备份后重启）",
+          type: "buts",
+          value: "importSave"
+        }, {
           label: "开机自启",
           type: "radio",
           value: "startupSelf"

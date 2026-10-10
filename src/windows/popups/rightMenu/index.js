@@ -33,6 +33,7 @@ const app = {
         fn: 1,
       },
       { label: "停止成长", value: "stopGrowth" },
+      { label: "陪伴与冒险", value: "openPlayroom" },
       { label: "调试控制台", value: "openDevTools" },
       { label: "退出宠物", value: "quit" },
     ],
@@ -64,7 +65,7 @@ const app = {
     applyPositionStyle() {
       if (this.positionType !== "followMain") return;
 
-      this.menu[8].unShow = true;
+      this.menu.find(item => item.value === "openDevTools").unShow = true;
       this.menuMainStyle.bottom = "20px";
 
       if (this.menuSide === "left") {

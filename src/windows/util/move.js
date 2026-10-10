@@ -7,6 +7,9 @@
       this.isMoveIn = false;
       this.isMoveInOnce = false;
       this.start = [0, 0];
+      this.startScreen = [0, 0];
+      this.dragThreshold = e.dragThreshold || 0;
+      this.dragged = false;
       this.next = [0, 0];
       this.callBack = {
         contextmenu: e.contextmenu || null,
@@ -76,6 +79,8 @@
     mousedownFn(e) {
       if (e.which == 1) {
         this.start = [e.clientX, e.clientY];
+        this.startScreen = [e.screenX, e.screenY];
+        this.dragged = false;
         this.isDown = true;
       } else if (e.which != 2) {
         e.which;
@@ -91,6 +96,12 @@
       }
       this.next = null;
       if (this.isDown) {
+        this.dragged ||= Math.max(
+          Math.hypot(e.screenX - this.startScreen[0], e.screenY - this.startScreen[1]),
+          Math.hypot(e.clientX - this.start[0], e.clientY - this.start[1])
+        ) >= this.dragThreshold;
+      }
+      if (this.isDown && this.dragged) {
         this.next = [this.start[0] - e.clientX, this.start[1] - e.clientY];
       }
       this.callBack.mousemove(e, {
@@ -101,7 +112,8 @@
     }
     mouseupFn(e) {
       this.callBack.mouseup(e, {
-        isDown: this.isDown
+        isDown: this.isDown,
+        dragged: this.dragged
       });
       this.isDown &&= false;
     }

@@ -46,6 +46,9 @@ function startDataWatcher() {
     if (pet.info) payload.info = pet.info;
     if (pet.maxInfo) payload.maxInfo = pet.maxInfo;
     if (pet.activeOption) payload.activeOption = pet.activeOption;
+    // Versioned gameplay state uses deep equality in setPetInfo, so it is safe
+    // to restore together with activity/stats without an object-reference loop.
+    if (pet.playroom && pet.playroom.version === 1) payload.playroom = pet.playroom;
 
     if (typeof global.setPetInfo === "function" && Object.keys(payload).length) {
       global.setPetInfo(payload);

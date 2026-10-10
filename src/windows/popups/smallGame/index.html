@@ -98,6 +98,7 @@
       </div>
     </div>
     <div class="swfMain">
+      <div v-if="loadError" class="game-load-error" role="alert">{{loadError}}</div>
       <embed id="gameMain" name="gameMain" class="gameMain" />
     </div>
   </div>

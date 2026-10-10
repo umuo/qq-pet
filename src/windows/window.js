@@ -2,6 +2,9 @@ const _require = eval("require");
 const { BrowserWindow, ipcMain } = _require("electron");
 const path = _require("path");
 const fs = _require("fs");
+const { installHandCursor } = _require("./util/handCursor");
+const { configureDesktopWindow } = _require("./util/windowLayer");
+const { hdCss, hdScript } = _require("./util/hdImages");
 
 let icon = "";
 try {
@@ -44,6 +47,10 @@ class addWindow {
       "setup",
       "rightMenu",
       "smallGame",
+      "playroom",
+      "travel",
+      "farm",
+      "desktopGames",
       "viewSwf",
       "store",
       "aiChat",
@@ -84,6 +91,8 @@ class addWindow {
     this.wins[option.name] = entry;
     option.default = winOption;
     entry.win = new BrowserWindow(winOption);
+    configureDesktopWindow(entry.win, option);
+    installHandCursor(entry.win);
 
     return option.url ? this.openUrl(entry) : this.doListener(entry);
   }
@@ -132,7 +141,8 @@ class addWindow {
       const win = entry.win;
       const option = entry.option;
 
-      win.loadFile(path.join(__dirname, "./app.html"));
+      if (option.localPageUrl) win.loadURL(option.localPageUrl);
+      else win.loadFile(path.join(__dirname, "./app.html"));
       win.setIgnoreMouseEvents(true);
 
       const jsFiles = ["./lib/icon/iconfont.js", "./lib/vue/vue.global.js"];
@@ -150,7 +160,7 @@ class addWindow {
       if (option.cssFiles) cssFiles.unshift(...option.cssFiles);
 
       entry.didFinishLoad = () => {
-        this.loadLocalWindow(entry, jsFiles, cssFiles);
+        this.loadLocalWindow(entry, jsFiles, cssFiles).catch(error => { if (!win.isDestroyed()) console.error("Window initialization failed", option.name, error); });
       };
       win.webContents.on("did-finish-load", entry.didFinishLoad);
 
@@ -164,10 +174,11 @@ class addWindow {
     });
   }
 
-  loadLocalWindow(entry, jsFiles, cssFiles) {
+  async loadLocalWindow(entry, jsFiles, cssFiles) {
     const win = entry.win;
     const option = entry.option;
     if (!win || win.isDestroyed()) return;
+    const hdEnabled = typeof global.getSys === 'function' ? getSys()?.hdImages !== false : true;
 
     try {
       const html = fs
@@ -189,7 +200,7 @@ class addWindow {
         win.setOpacity(this.winOpacity);
       }
 
-      win.webContents.executeJavaScript(`
+      await win.webContents.executeJavaScript(`
         const seeApp = () => {
           const app = document.getElementById('app')
           app.style.display = 'flex'
@@ -200,32 +211,37 @@ class addWindow {
           app.style.opacity = opacity || '1'
         }
         let appDom = document.getElementById('app');
-        appDom.innerHTML = \`${html}\`;
-        seeApp()
+        appDom.innerHTML = ${JSON.stringify(html)};
+        seeApp();
+        void 0;
       `);
-    } catch (e) {}
+    } catch (e) { if (!win.isDestroyed()) console.error("Cannot initialize window HTML", option.name, e); }
 
     for (const file of cssFiles) {
       try {
         const css = fs.readFileSync(path.join(__dirname, file)).toString();
-        win.webContents.insertCSS(css);
+        await win.webContents.insertCSS(hdCss(css, hdEnabled));
       } catch (e) {}
     }
 
+    const imageScript = hdScript(hdEnabled);
+    if (imageScript) await win.webContents.executeJavaScript(imageScript + "\n;void 0;");
+    // Controllers register globals used by the renderer mounted hook.
+    if (typeof option.onload === "function") option.onload(win);
     for (const file of jsFiles) {
       try {
         const js = fs.readFileSync(path.join(__dirname, file)).toString();
-        win.webContents.executeJavaScript(js);
-      } catch (e) {}
+        await win.webContents.executeJavaScript(js + "\n;void 0;\n//# sourceURL=qqpet/" + file.replace(/\\/g, "/"));
+      } catch (e) { if (!win.isDestroyed()) console.error("Cannot initialize window script", option.name, file, e); }
     }
 
+    if (win.isDestroyed()) return;
     if (win.isFocusable() === false || option.default?.focusable === false) {
       win.showInactive();
     } else if (option.default?.show === false) {
       win.show();
     }
 
-    if (typeof option.onload === "function") option.onload(win);
   }
 
   openUrl(entry) {
@@ -241,6 +257,7 @@ class addWindow {
         skipTaskbar: true,
         alwaysOnTop: true,
       });
+      installHandCursor(entry.urlLoadingWin);
       entry.urlLoadingWin.setIgnoreMouseEvents(true);
       entry.urlLoadingWin.loadFile(path.join(__dirname, "./app.html"));
 

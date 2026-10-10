@@ -1,0 +1,16 @@
+<div class="box" :class="{vip}" v-if="state">
+  <div class="head"><img v-for="(file,index) in head" :key="file" :class="'head'+(index+1)" :src="frame(file)"><button class="close" title="关闭旅行窗口" aria-label="关闭旅行窗口" @click="action('close')"></button></div>
+  <div class="content"><div class="content1"></div><div class="content2">
+    <div class="ui-travel"><div class="travel">
+      <nav class="travelTabs"><button class="travelTab" :class="{on:tab==='map'}" @click="tab='map'">旅行地图</button><button class="travelTab" :class="{on:tab==='album'}" @click="tab='album'">相簿</button></nav>
+      <div v-show="tab==='map'" class="map-pane">
+        <div class="tip"><span>提示: 每次随机旅行，旅行时间为60分钟 --- 当前已点亮 {{visited}} 个城市（共{{state.destinations.length}}个）</span><img class="lvcjImg" :class="{noneLvcj:!state.tours}" src="../assets/reference/achievement/travel.svg" :title="'旅行成就*'+(state.tours || '未点亮')"></div>
+        <div class="travelMain"><svg class="travel-map" :view-box.camel="'0 0 '+state.map.w+' '+state.map.h" role="img" aria-label="旅行目的地地图"><path v-for="region in state.map.provinces" :key="region.name" :d="region.d" :class="{visited:state.visits[region.name]}" :fill="state.visits[region.name] ? '#ff5428' : '#eeeeee'"><title>{{region.name}}：{{state.visits[region.name] ? '已点亮'+state.visits[region.name]+'次' : '未点亮'}}</title></path><text v-for="region in state.map.provinces" :key="region.name" :x="region.x" :y="region.y">{{region.name}}</text></svg></div>
+        <div class="toTarvelBut"><button class="but_normal start-travel" :disabled="!state.available" @click="action('start')">去旅行</button><button class="but_normal stop-travel" :disabled="!state.session" @click="action('stop')">{{state.session ? '当前所在城市：'+state.session.place+' 已经旅行 '+elapsed+'分钟 ' : ''}}停止旅行</button><button v-if="visited===state.destinations.length" class="but_normal finish-tour" @click="action('finishTour')" title="花费 8888 元宝完成成就并重开地图">完成旅游成就</button></div>
+        <p class="feedback" aria-live="polite">{{state.paused && state.session ? '停止成长期间，旅行也已暂停。' : message}}</p>
+      </div>
+      <div v-show="tab==='album'" class="album-pane"><p v-if="!state.photos.length">还没有旅行照片，去旅行拍一张吧~</p><figure v-if="photo"><img :src="photoUrl(photo.id)"><figcaption>{{photo.city}} · {{new Date(photo.sentAt).toLocaleDateString()}}</figcaption></figure><div class="album-grid"><button v-for="item in state.photos" :key="item.id" @click="photo=item"><img :src="photoUrl(item.id)"><span>{{item.city}}</span></button></div></div>
+    </div></div>
+  </div><div class="content3"></div></div>
+  <div class="foot"><img v-for="(file,index) in foot" :key="file" :class="'foot'+(index+1)" :src="frame(file)"></div>
+</div>

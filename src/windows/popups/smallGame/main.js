@@ -1,3 +1,8 @@
+const { companion } = require('../../../service/gameplay/companion');
+const { GameSession } = require('../../../service/gameplay/gameSession');
+const { powerMonitor } = require('electron');
+const fs = require('fs');
+const path = require('path');
 (() => {
   var e = {
     693: e => {
@@ -21,6 +26,7 @@
               alwaysOnTop: false,
               skipTaskbar: false,
               transparent: false,
+              backgroundColor: "#ffffff",
               resizable: true
             },
             created(e) {
@@ -30,13 +36,25 @@
                 getinfo: n,
                 wsMethods: l
               } = e;
+              const session = new GameSession({ reward: (minutes, day) => {
+                const result = companion().rewardGame(minutes, day);
+                if (result.minutes && !getSys('doNotDisturb')) openSpeak({ data: { type: 'text', data: `陪我玩了${result.minutes}分钟，好开心！获得${result.yb}元宝~` }, active: 'speak' });
+              } });
+              const active = () => !s.isDestroyed() && s.isVisible() && !s.isMinimized() && s.isFocused() && powerMonitor.getSystemIdleTime() < 60 && companion().usable(getPetInfo());
+              const timer = setInterval(() => session.tick(active()), 1000);
+              const stop = () => { session.close(active()); clearInterval(timer); };
+              s.on('closed', stop);
+              s.webContents.on('render-process-gone', () => { session.setReady(false); });
+              s.on('blur', () => session.tick(false));
+              let loadingRoute = null;
               t({
                 smallGame_h_say_m: (e, o) => {
                   console.log(o, " --- smallGame_h_say_m say");
                 },
                 smallGame_h_bus_m: (e, t) => {
+                  if (e.sender !== s.webContents) return;
                   if (t.event == "mounted") {
-                    s.webContents.send("smallGame_m_bus", {
+                    s.webContents.send("smallGame_m_bus_h", {
                       data: "load",
                       type: "load"
                     });
@@ -44,7 +62,17 @@
                   } else if (t.event == "close") {
                     o.doClose();
                   } else if (t.event == "showSwf") {
+                    session.setReady(false);
+                    const root = path.resolve(__dirname, '../../../assets/game');
+                    const file = typeof t.router === 'string' ? path.resolve(root, t.router) : '';
+                    loadingRoute = file.startsWith(root + path.sep) && file.endsWith('.swf') && fs.existsSync(file) ? t.router : null;
                     s.setTitle("小游戏：" + t.title);
+                  } else if (t.event === 'gameReady' && loadingRoute && t.router === loadingRoute) {
+                    session.setReady(true);
+                    loadingRoute = null;
+                  } else if (t.event === 'gameFailed') {
+                    session.setReady(false);
+                    loadingRoute = null;
                   }
                 }
               });

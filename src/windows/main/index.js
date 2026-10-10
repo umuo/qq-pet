@@ -45,9 +45,24 @@
       }, false);
     },
     mounted() {
+      window.electronAPI.html_ToMain_gameplayStorage?.({ raw: localStorage.getItem('localhost//test'), id: localStorage.getItem('qqpet:farm-session') });
+      const cursor = { x: 0, y: 0 };
+      window.API = {
+        ...(window.API || {}),
+        GetCursorPosition: () => `${cursor.x},${cursor.y},0`,
+        GetWindowRect: () => `0,0,${innerWidth},${innerHeight}`
+      };
+      window.electronAPI.main_ToHtml_cursor((event, point) => {
+        cursor.x = point.x;
+        cursor.y = point.y;
+      });
       this.loads = true;
       this.initPet();
       this.doMove();
+      this.initInteractions();
+      window.electronAPI.main_ToHtml_interact((event, { src, token }) => {
+        this.swfPet.interact(src, () => window.electronAPI.html_ToMain_pokeLoaded(token));
+      });
       this.getNowPosition();
       window.electronAPI.main_ToHtml((t, e) => {
         if (e.type == "load") {
@@ -75,10 +90,14 @@
         }
       });
       window.electronAPI.main_ToHtml_setPet((t, e) => {
+        const wasAway = !!this.petInfo.activeOption.desktopGame;
         this.petInfo = e;
+        this.interactions?.schedule();
         if (this.swfPet.setPetState) {
           this.swfPet.setPetState(e);
         }
+        const isAway = !!e.activeOption.desktopGame;
+        if (wasAway !== isAway && this.swfPet.swf) this.swfPet.changeSwf(isAway ? 'hide' : 'appear');
       });
       window.electronAPI.main_ToHtml_active((t, e) => {
         if (this.swfPet.changeSwf) {
@@ -150,6 +169,10 @@
           goNormal: this.goNormal,
           backFn: t => {
             console.log("e", t);
+            if (this.interactions) {
+              if (t.name === "normal") this.interactions.schedule();
+              else this.interactions.clear();
+            }
             window.electronAPI.main_h_setPetState({
               type: "setState",
               data: JSON.stringify(t)
@@ -158,6 +181,7 @@
         });
       },
       goNormal() {
+        if (this.petInfo.activeOption.desktopGame) return "hide";
         if (this.position == "left") {
           return "hideleft";
         } else if (this.position == "right") {
@@ -175,9 +199,24 @@
           notChangeSize: e.changeSize || this.notChangeSize || false
         });
       },
+      openPlayroom() { window.electronAPI.html_ToMain_openPlayroom(); },
+      initInteractions() {
+        this.interactions = new PetInteractions({
+          root: document.getElementById("move"),
+          mode: () => this.petInfo.playroom?.settings?.faceMode ?? 2,
+          pose: () => {
+            const swf = this.swfPet?.swf;
+            if (!swf || swf.changeIng || swf.oldNext.name !== "normal" || swf.nextSwfRouter || this.position !== "center" || +this.petInfo.info.health <= 1 || this.petInfo.maxInfo.stopGrowth || ['work', 'study', 'trip'].some(k => this.petInfo.activeOption[k])) return null;
+            const { sex, age, state } = this.swfPet.router;
+            return { sex, age, state };
+          },
+          request: pose => window.electronAPI.html_ToMain_poke(pose)
+        });
+      },
       async doMove() {
         this.moveOut = new move({
           id: "move",
+          dragThreshold: 4,
           contextmenu: () => {
             this.isClosed;
           },
@@ -185,7 +224,7 @@
             if (t.which == 1) {
               this.curState = true;
               window.electronAPI.html_ToMain_mouse({
-                data: t,
+                data: { isDown: !t.target.closest('[data-pet-spot]'), clientX: t.clientX, clientY: t.clientY },
                 type: "which"
               });
             } else if (t.which == 2) {
@@ -208,12 +247,12 @@
               this.setMainPosition(e.next);
             }
             window.electronAPI.html_ToMain_mouse({
-              data: t,
+              data: { clientX: t.clientX, clientY: t.clientY },
               type: "move"
             });
           },
           mouseup: (t, e) => {
-            if (e.isDown) {
+            if (e.dragged) {
               this.swfPet.changeSwf();
             }
             this.curState = false;

@@ -17,36 +17,18 @@
       window.electronAPI.fishing_m_bus((s, r) => {
         console.log("msg", r);
         if (r.type == "load") {
+          const frame = document.querySelector("iframe");
+          frame.addEventListener("load", () => {
+            t = frame.contentWindow;
+            t.getPetInfoFromMain = () => o({ event: "getInfo" });
+            t.saveInfoData = data => o({ event: "saveDatas", data });
+            t.close_game = () => o({ event: "close" });
+            window.__qqPetInstallHandCursor?.(t);
+            t.selfeLoad = true;
+          });
+          // Register before navigating, including fast cached iframe loads.
           e.url = r.data;
           seeApp();
-          setTimeout(() => {
-            let e = document.querySelector("iframe");
-            console.log("ifram", e);
-            e.addEventListener("load", e => {
-              (t = e.target.contentWindow.window).getPetInfoFromMain = function () {
-                console.log("getInfo");
-                o({
-                  event: "getInfo"
-                });
-              };
-              t.saveInfoData = e => {
-                console.log("datas", e);
-                o({
-                  event: "saveDatas",
-                  data: e
-                });
-              };
-              t.close_game = () => {
-                o({
-                  event: "close"
-                });
-              };
-              setTimeout(() => {
-                t.selfeLoad = true;
-                console.log("selfeLoad", t);
-              }, 0);
-            });
-          }, 0);
         } else if (r.type == "setPetInfo" && t) {
           t.setPetInfo(r.data);
         }

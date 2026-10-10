@@ -60,6 +60,7 @@ root.createMain((e, t, i) => {
       }
     },
     activeOption: {
+      desktopGame: { start: { always: true }, fn: () => null },
       ill: {
         start: {
           always: true
@@ -67,7 +68,7 @@ root.createMain((e, t, i) => {
         fn: e => {
           n.activeOption.work = null;
           n.activeOption.study = null;
-          n.activeOption.trip = null;
+          if (e || !n.activeOption.trip?.managedTravel) n.activeOption.trip = null;
           return e;
         }
       }

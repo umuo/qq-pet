@@ -129,3 +129,24 @@
 .TopTip:hover .TopTipTitle {
   display: flex;
 }
+
+/* Games own mouse/keyboard input; only the desktop pet stays click-through. */
+#gameMain, #gameLoading { pointer-events:auto!important; width:100%; height:100%; }
+
+/* This is an opaque game window; the shared pet page uses transparency. */
+html body #app { background-color: #fff !important; }
+
+.swfMain { position: relative; }
+.game-load-error {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  padding: 12px;
+  border: 1px solid #dfb57e;
+  border-radius: 8px;
+  color: #65421a;
+  background: #fff5e8;
+  pointer-events: none;
+}

@@ -1,0 +1,11 @@
+// Timed background goods from qqpet goods.json (6e2c8bf, GPL-3.0).
+const GOODS=require('./data/backgrounds.json');
+const {Companion,companion}=require('./companion');
+function advanceBackground(state,minutes){const active=state?.backgrounds?.active,good=GOODS[active?.id];if(!good||!Number.isFinite(good.group)||!Number.isFinite(active.left)||active.left<=0||!Number.isFinite(minutes)||minutes<=0)return null;const used=Math.min(active.left,minutes),next=JSON.parse(JSON.stringify(state));next.backgrounds.active=active.left>used?{...active,left:active.left-used}:null;return {state:next,growth:good.group*used/60};}
+class Backgrounds {
+ constructor(options={}){this.companion=options.companion||new Companion(options);this.readCache=options.readCache||(()=>getCache());}
+ count(id,cache=this.readCache()){const list=cache.store?.background;const value=Array.isArray(list)?list.find(x=>typeof x==='string'&&x.split('-')[0]===id):null;const n=value?Number(value.split('-')[1]):0;return Number.isSafeInteger(n)&&n>0?n:0;}
+ use(id){const good=typeof id==='string'&&Object.hasOwn(GOODS,id)?GOODS[id]:null,{p,state}=this.companion.load();if(!good||!this.companion.usable(p)||p.activeOption.ill||['work','study','trip','desktopGame'].some(k=>p.activeOption[k]))return {ok:false,message:'先恢复健康、继续成长，并完成正在做的事，再使用背景吧~'};const inventory=JSON.parse(JSON.stringify(this.readCache())),count=this.count(id,inventory);if(!count)return {ok:false,message:'背包中没有这个背景。'};const list=inventory.store.background,index=list.findIndex(x=>x.split('-')[0]===id);if(count===1)list.splice(index,1);else list[index]=id+'-'+(count-1);state.backgrounds={active:good.useTimeing?{id,left:good.useTimeing}:null};this.companion.writePet({playroom:state,inventory});return {ok:true,message:`使用「${good.name}」，每小时额外成长 ${good.group||0}，持续 ${good.useTimeing||0} 分钟。`};}
+ view(){const {p,state}=this.companion.load();return {active:state.backgrounds?.active||null,list:Object.entries(GOODS).filter(([id])=>this.count(id)>0).map(([id,g])=>({...g,id,count:this.count(id),canUse:this.companion.usable(p)&&!p.activeOption.ill&&!['work','study','trip','desktopGame'].some(k=>p.activeOption[k])}))};}
+}
+let instance;function backgrounds(){return instance ||=new Backgrounds({companion:companion()});}module.exports={Backgrounds,backgrounds,advanceBackground,GOODS};

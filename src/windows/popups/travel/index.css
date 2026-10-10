@@ -1,0 +1,137 @@
+/* Reference box/travel/button styles adapted from qqpet 6e2c8bf, GPL-3.0. */
+/* The original "box" window frame. */
+.box {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 700;
+}
+.box .head,
+.box .foot,
+.box .content {
+  display: flex;
+}
+.box .head {
+  position: relative;
+  height: 18px;
+}
+.box .foot {
+  height: 6px;
+}
+.box .head img,
+.box .foot img {
+  display: block;
+  height: 100%;
+}
+.box .head1,
+.box .head3,
+.box .foot1,
+.box .foot3,
+.box .content1,
+.box .content3 {
+  width: 5px;
+}
+.box .head2,
+.box .foot2 {
+  flex: 1;
+  min-width: 0;
+}
+.box .content1 {
+  background: url(../assets/reference/windowTip/normal/beijing4.svg) repeat-y;
+}
+.box .content2 {
+  flex: 1;
+  background: url(../assets/reference/windowTip/normal/bg.bmp);
+}
+.box .content3 {
+  background: url(../assets/reference/windowTip/normal/beijing5.svg) repeat-y;
+}
+.box .close {
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  width: 26px;
+  height: 16px;
+  background: url(../assets/reference/windowTip/normal/btn_close1.svg) 0 0 / 100% 100%;
+}
+.box .close:hover {
+  background-image: url(../assets/reference/windowTip/normal/btn_close2.svg);
+}
+.box .close:active {
+  background-image: url(../assets/reference/windowTip/normal/btn_close3.svg);
+}
+.box.vip .head {
+  height: 32px;
+}
+.box.vip .foot {
+  height: 15px;
+}
+.box.vip .head1,
+.box.vip .head3,
+.box.vip .foot1,
+.box.vip .foot3,
+.box.vip .content1 {
+  width: 15px;
+}
+.box.vip .content3 {
+  width: 14px;
+}
+.box.vip .content1 {
+  background-image: url(../assets/reference/windowTip/vip/Q_04.svg);
+}
+.box.vip .content3 {
+  background-image: url(../assets/reference/windowTip/vip/Q_06.svg);
+}
+.box.vip .content2 {
+  background-image: url(../assets/reference/windowTip/vip/bg.bmp);
+}
+.box.vip .close {
+  width: 40px;
+  height: 30px;
+  background-image: url(../assets/reference/windowTip/vip/btn_closedefault.svg);
+}
+.ui-travel .travel {width:600px;height:500px;padding:20px 20px 0}
+.ui-travel .travelMain {width:100%;background-color:#f1ab6525;border-radius:10px}
+.ui-travel .toTarvelBut {margin:16px 0;height:30px;box-sizing:border-box}
+.ui-travel .tip {height:30px;padding-bottom:16px}
+.ui-travel .lvcjImg {width:30px;height:40px}
+.ui-travel .noneLvcj {filter:grayscale(80%) contrast(120%)}
+.ui-travel svg {width:100%;height:100%}
+.ui-travel path {stroke:#fff;stroke-width:1}
+.ui-travel path:hover {fill:#f1ab6539}
+.ui-travel text {fill:#e68470;stroke:#fff;stroke-width:2px;paint-order:stroke;font-size:9px;text-anchor:middle;pointer-events:none}
+.ui-travel .travelTabs {gap:8px;padding-bottom:10px}
+.ui-travel .travelTab {padding:3px 14px;border-radius:12px;background:#f1ab6530;color:#c07a3a;font-weight:700;cursor:pointer}
+.ui-travel .travelTab.on {background:#f1ab65;color:#fff}
+.but_normal {
+  min-width: 60px;
+  padding: 0 10px;
+  height: 30px;
+  background-color: #fccd60;
+  border-radius: 8px;
+  box-shadow: 2px 2px 4px -1px #000;
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 1px 1px 1px #000;
+  font-size: 16px;
+}
+.but_normal:hover {
+  background-color: #e9ba4c;
+}
+.but_normal:active {
+  background-color: #c59d3f;
+}
+.but_normal:disabled {
+  background-color: #dedede !important;
+}
+
+#app {display:block!important;width:100%!important;height:100%!important;margin:0!important;background:transparent!important;font-family:Arial,"Microsoft YaHei",sans-serif;}
+.box {position:absolute;z-index:1;} .box button {border:0;-webkit-app-region:no-drag;} .box .head {-webkit-app-region:drag;} .box .close {padding:0;cursor:pointer;} .box img {object-fit:fill;}
+.box .head2,.box .foot2 {contain:size;align-self:stretch;} .box .content2 {min-width:0;} .box .content1,.box .content3 {flex-shrink:0;}
+.travel {display:flex;flex-direction:column;box-sizing:content-box;} .travelTabs {display:flex;flex-shrink:0;}
+.map-pane {display:flex;flex:1;min-height:0;flex-direction:column;} .tip {display:flex;align-items:center;gap:8px;font-size:12px;font-weight:bold;color:#a27340;} .tip span {flex:1;} .tip img {flex-shrink:0;}
+.travelMain {flex:1;min-height:0;} .toTarvelBut {display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;}
+.but_normal {font-size:13px;} .but_normal:disabled {color:#aaa;text-shadow:none;box-shadow:none;} .feedback {min-height:18px;margin:0 0 8px;text-align:center;font-size:12px;color:#a27340;}
+.album-pane {flex:1;min-height:0;overflow:auto;color:#a27340;} .album-pane figure {margin:8px;} .album-pane figure img {width:100%;max-height:220px;object-fit:contain;} .album-pane figcaption {text-align:center;}
+.album-grid {display:grid;grid-template-columns:repeat(3,1fr);gap:8px;} .album-grid button {padding:6px;background:#f1ab6525;color:#a27340;border-radius:8px;} .album-grid img {width:100%;height:90px;object-fit:contain;}
