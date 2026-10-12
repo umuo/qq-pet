@@ -7,7 +7,7 @@ const GAMES = [
   {dir:'rope',name:'跳绳',help:'点击企鹅开始，看准绳子转到身前，再点击企鹅跳起来。连续跳过 5 次可获得奖励。'},
   {dir:'mouse',name:'捉老鼠',help:'点击企鹅开始。老鼠跑近时点击企鹅跳起来，躲过 5 只就能获得奖励。'},
   {dir:'ball',name:'颠球',help:'点击企鹅开始，再点击抛起的球接住它。'},
-  {dir:'100ceng',name:'下一百层',kidOnly:true,help:'点击企鹅开始，使用左右方向键移动，继续往下跳。'}
+  {dir:'100ceng',name:'下一百层',kidOnly:true,help:'点击云朵开始，用左右方向键移动，及时落到下方的云层。每前进 5 层可获得奖励，落空或撞到顶部会结束。'}
 ];
 class DesktopGames {
   window = null;

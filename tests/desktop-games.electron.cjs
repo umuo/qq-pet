@@ -178,13 +178,76 @@ app.whenReady().then(async()=>{
     await until(async()=>{state=await win.webContents.executeJavaScript("Array.from(desktopGameView.wins.values(),w=>({name:w.name,ready:!!w.player?.ruffle().metadata,width:w.w,height:w.h,hand:!!w.player?.shadowRoot?.querySelector('canvas')&&getComputedStyle(w.player.shadowRoot.querySelector('canvas')).cursor.includes('data:image')}))");return state.length>0&&state.every(w=>w.ready&&w.hand);});
     assert.ok(state.length>0);assert.ok(state.every(w=>w.ready));assert.ok(state.every(w=>w.hand));
     if(game.dir==='100ceng'){
+      if(process.env.QQPET_TEST_FLOOR_REWARD)await win.webContents.executeJavaScript("(()=>{window.floorEvents=[];window.floorRewards=[];const cloud=desktopGameView.wins.get('w_name_cloud').frame.contentWindow.API,remote=cloud.RemoteCall;cloud.RemoteCall=(name,fn,...args)=>{if(fn==='clickStart'||fn==='gameOver')floorEvents.push({fn,at:Date.now()});return remote(name,fn,...args)};const root=desktopGameView.wins.get('main').frame.contentWindow,reward=root.TICKLE_SendAction;root.TICKLE_SendAction=(...args)=>{floorRewards.push(args);return reward(...args)};})()");
       const cloud=await win.webContents.executeJavaScript("(()=>{const r=document.querySelector('[data-name=w_name_cloud]').getBoundingClientRect();return {x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)}})()");
       for(const type of ['mouseMove','mouseDown','mouseUp']){win.webContents.sendInputEvent({type,...cloud,button:'left',clickCount:1});await delay(100);}
+      if(process.env.QQPET_TEST_FLOOR_REWARD){
+        const before=Number(getPetInfo().info.yb);let key=null,lastY=null,phase='walk',target=null,exitSide=null,exitGoal=null,fallOrigin=null,previousPlatforms=[];
+        const press=next=>{if(key===next)return;if(key)win.webContents.sendInputEvent({type:'keyUp',keyCode:key});key=next;if(key)win.webContents.sendInputEvent({type:'keyDown',keyCode:key});};
+        for(let i=0;i<180&&!win.isDestroyed()&&Number(getPetInfo().info.yb)===before;i++){
+          const scene=await win.webContents.executeJavaScript("(()=>{const c=desktopGameView.wins.get('w_name_cloud'),p=desktopGameView.wins.get('w_name_player');if(!c||!p)return null;const r=c.box.getBoundingClientRect();return {cloud:{x:c.x,y:c.y},player:{x:p.x,y:p.y},rect:{x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)},events:floorEvents}})()");
+          if(!scene||scene.events.some(e=>e.fn==='gameOver'))break;
+          const crop=await win.webContents.capturePage(scene.rect),pixels=crop.toBitmap(),logical=crop.getSize(),scale=Math.sqrt(pixels.length/(logical.width*logical.height*4)),size={width:Math.round(logical.width*scale),height:Math.round(logical.height*scale)},factor=size.width/scene.rect.width;
+          scene.player=await win.webContents.executeJavaScript("(()=>{const p=desktopGameView.wins.get('w_name_player');return {x:p.x,y:p.y}})()");
+          const foot=scene.player.y+127-scene.cloud.y,center=scene.player.x+70-scene.cloud.x,platforms=[];let group=null;
+          for(let y=Math.max(0,Math.floor((foot-5)*factor));y<size.height;y++){
+            let count=0,left=size.width,right=0,total=0;
+            for(let x=4;x<size.width-4;x++){
+              const at=(y*size.width+x)*4,b=pixels[at],g=pixels[at+1],r=pixels[at+2];
+              if(r>170&&g>215&&b>215){count++;left=Math.min(left,x);right=Math.max(right,x);total+=x;}
+            }
+            if(count>20){if(!group)group={top:y,left,right,sum:0,count:0};group.bottom=y;group.left=Math.min(group.left,left);group.right=Math.max(group.right,right);group.sum+=total;group.count+=count;}
+            else if(group){platforms.push({...group,x:group.sum/group.count/factor,top:group.top/factor,left:group.left/factor,right:group.right/factor});group=null;}
+          }
+          if(group)platforms.push({...group,x:group.sum/group.count/factor,top:group.top/factor,left:group.left/factor,right:group.right/factor});
+          for(let j=platforms.length-1;j>=0;j--)if(platforms[j].right-platforms[j].left<80)platforms.splice(j,1);
+          for(const p of platforms){
+            const bottomAt=f=>{let bottom=p.top*factor;const cx=(p.left+(p.right-p.left)*f)*factor;for(let y=Math.floor(p.top*factor);y<=p.bottom;y++)for(let x=Math.floor(cx-factor*2);x<=cx+factor*2;x++){const at=(y*size.width+x)*4;if(pixels[at]>215&&pixels[at+1]>215&&pixels[at+2]>170)bottom=Math.max(bottom,y);}return bottom/factor;};
+            p.valley=(bottomAt(.25)+bottomAt(.75))/2-bottomAt(.5);p.sinking=p.valley>3;
+            const old=previousPlatforms.filter(old=>Math.abs(old.x-p.x)<30&&Math.abs(old.top-p.top)<25).sort((a,b)=>Math.abs(a.top-p.top)-Math.abs(b.top-p.top))[0];p.at=Date.now();p.vx=old?Math.max(-.16,Math.min(.16,(p.x-old.x)/(p.at-old.at||1))):0;
+            p.confirmed=p.valley< -2&&previousPlatforms.some(old=>old.valley< -2&&Math.abs(old.x-p.x)<30&&Math.abs(old.top-p.top)<25&&(old.confirmed||old.top-p.top>1));
+          }
+          const current=platforms.find(p=>p.top<foot+25&&center>=p.left-35&&center<=p.right+35),below=platforms.find(p=>p.top>foot+35&&p.confirmed);
+          if(lastY!==null&&scene.player.y>lastY+1&&phase==='walk'){phase='leave';fallOrigin=lastY;}
+          if(phase==='leave'&&scene.player.y>fallOrigin+25){phase='fall';exitSide=null;}
+          else if(lastY!==null&&scene.player.y<lastY-1&&phase==='fall'){phase='walk';exitSide=null;}
+          if(current&&Math.abs(current.top-foot)<10&&(phase==='fall'||(phase==='leave'&&lastY!==null&&scene.player.y<lastY-1))){phase='walk';exitSide=null;}
+          if(phase==='leave'&&current&&Math.abs(current.top-foot)<15)exitGoal=exitSide==='left'?current.left-45:current.right+45;
+          if(below&&phase==='walk')target=below;
+          else if(target){const moved=platforms.filter(p=>Math.abs(p.top-target.top)<60).sort((a,b)=>Math.abs(a.x-target.x)+Math.abs(a.top-target.top)-Math.abs(b.x-target.x)-Math.abs(b.top-target.top))[0];if(moved)target=moved;}
+          const project=(p,ms)=>{if(!p)return 175;let x=p.x+p.vx*ms;if(x>280)x=560-x;if(x<70)x=140-x;return x;};
+          let goal=phase==='leave'?exitGoal:project(target,160);
+          if(phase==='walk'&&current){
+            const left=current.left-45,right=current.right+45;
+            if(!exitSide||target&&Math.abs(project(target,600)-current.x)>8)exitSide=target&&project(target,600)<current.x?(left>15?'left':'right'):(right<335?'right':'left');
+            goal=exitSide==='left'?left:right;exitGoal=goal;
+          }
+          if(phase==='walk'&&!below){goal=center;exitSide=null;}
+          press(Math.abs(goal-center)<12?null:goal<center?'Left':'Right');
+          if(i%3===0){console.log('Floor visual control',JSON.stringify({i,phase,center,foot,goal,platforms:platforms.map(p=>({x:p.x,y:p.top,valley:p.valley,sinking:p.sinking})),events:scene.events.length}));fs.writeFileSync(path.join(temp,`floor-control-${i}.png`),crop.toPNG());}
+          previousPlatforms=platforms.map(p=>({...p}));lastY=scene.player.y;await delay(20);
+        }
+        if(!win.isDestroyed())press(null);
+        console.log('Floor native reward',JSON.stringify({before,after:getPetInfo().info.yb,screenshots:temp}));
+        assert.equal(Number(getPetInfo().info.yb),before+1,'actual five-floor progress triggers the original reward');
+        assert.equal(getPetInfo().info.mood,905);
+        assert.equal(await win.webContents.executeJavaScript('floorRewards[0][1]'),5,'original TICKLE request includes actual floor 5');
+        await until(()=>win.webContents.executeJavaScript("document.getElementById('game-status').textContent.includes('元宝 +1')"));
+        await delay(300);fs.writeFileSync(path.join(temp,'floor-score.png'),(await win.webContents.capturePage()).toPNG());
+      }else{
       const before=await win.webContents.executeJavaScript("desktopGameView.wins.get('w_name_player').x");
       win.webContents.sendInputEvent({type:'keyDown',keyCode:'Left'});await delay(400);win.webContents.sendInputEvent({type:'keyUp',keyCode:'Left'});
       const after=await win.webContents.executeJavaScript("desktopGameView.wins.get('w_name_player').x");
       fs.writeFileSync(path.join(temp,'100ceng-keyboard.png'),(await win.webContents.capturePage()).toPNG());console.log('100 floor positions: '+before+' -> '+after+' screenshot '+temp);
       assert.notEqual(after,before,'100 floors arrow key moves the actual player window');
+      }
+      if(process.env.QQPET_TEST_FLOOR_OBSERVE){
+        console.log('Floor observed windows',await win.webContents.executeJavaScript("JSON.stringify(Array.from(desktopGameView.wins.values(),w=>({name:w.name,x:w.x,y:w.y,width:w.w,height:w.h})))"));
+        for(let i=0;i<30&&!win.isDestroyed();i++){
+          fs.writeFileSync(path.join(temp,`floor-frame-${String(i).padStart(2,'0')}.png`),(await win.webContents.capturePage()).toPNG());await delay(200);
+        }
+        console.log('Floor observation '+temp);clearTimeout(timeout);for(const w of BrowserWindow.getAllWindows())w.destroy();app.quit();return;
+      }
     }
     fs.writeFileSync(path.join(temp,game.dir+'.png'),(await win.webContents.capturePage()).toPNG());
     console.log('GAME '+sex+'/'+level+'/'+game.dir+' '+JSON.stringify(state));
@@ -204,8 +267,8 @@ app.whenReady().then(async()=>{
       assert.ok(quit,'original renderer sends the quit event');
       assert.equal(Number(getPetInfo().info.yb),rewarded,'miss/automatic close cannot re-award');
       console.log('PASS original no-input ball motion, automatic quit event and unchanged reward');
-    }else if(process.env.QQPET_TEST_BUBBLE_FINISH||process.env.QQPET_TEST_MOUSE_FINISH||process.env.QQPET_TEST_GUESS_FINISH||process.env.QQPET_TEST_ROPE_FINISH){
-      assert.equal(game.dir,process.env.QQPET_TEST_ROPE_FINISH?'rope':process.env.QQPET_TEST_GUESS_FINISH?'guess':process.env.QQPET_TEST_MOUSE_FINISH?'mouse':'paopao2');const rewarded=Number(getPetInfo().info.yb);let quit=false;
+    }else if(process.env.QQPET_TEST_BUBBLE_FINISH||process.env.QQPET_TEST_MOUSE_FINISH||process.env.QQPET_TEST_GUESS_FINISH||process.env.QQPET_TEST_ROPE_FINISH||process.env.QQPET_TEST_FLOOR_FINISH){
+      assert.equal(game.dir,process.env.QQPET_TEST_FLOOR_FINISH?'100ceng':process.env.QQPET_TEST_ROPE_FINISH?'rope':process.env.QQPET_TEST_GUESS_FINISH?'guess':process.env.QQPET_TEST_MOUSE_FINISH?'mouse':'paopao2');const rewarded=Number(getPetInfo().info.yb);let quit=false;
       win.webContents.on('ipc-message',(_event,channel,data)=>{if(channel==='desktopGames_h_event'&&data?.type==='quit')quit=true;});
       for(let i=0;i<120&&!win.isDestroyed();i++)await delay(500);
       assert.ok(win.isDestroyed(),'stopping input naturally ends the original game');
