@@ -1,0 +1,2295 @@
+{
+  "referenceCommit": "6e2c8bf976d66192382f86065fdeb76528f6716c",
+  "mappings": {
+    "active/play/fish01.png": {
+      "high": "reference/control/icons/fish01@2x.png",
+      "sha256": "0eac9854f260c3ca047cca8f418c08157b621f3983eacbf61d372cbd08919f68",
+      "source": "resources/pet/control/icons/fish01.png"
+    },
+    "active/play/nongchang01.png": {
+      "high": "reference/control/icons/nongchang01@2x.png",
+      "sha256": "a5f3c292d9fd779ab42461eff3f86cd55a0e67e39cfd6de306cf6b51dd3e37f5",
+      "source": "resources/pet/control/icons/nongchang01.png"
+    },
+    "help/guanbi00.png": {
+      "high": "reference/sysSeting/guanbi00@2x.png",
+      "sha256": "d7c5bb1f0bc180b47d8f856bd5f740ecbf341f66ca33a99c6c92caeb7a8e195f",
+      "source": "resources/pet/sysSeting/guanbi00.png"
+    },
+    "help/guanbi01.png": {
+      "high": "reference/sysSeting/guanbi01@2x.png",
+      "sha256": "f4e6090cd6a89bf6fac1bf4e21d0852cd8e029dae2406f4c93b4338ee41737ca",
+      "source": "resources/pet/sysSeting/guanbi01.png"
+    },
+    "help/guanbi02.png": {
+      "high": "reference/sysSeting/guanbi02@2x.png",
+      "sha256": "ec66229dc317d01bd6d94ed3dc1908375b58e7df17e1959abd786c70474d1681",
+      "source": "resources/pet/sysSeting/guanbi02.png"
+    },
+    "iconList/DailyTask/icon.png": {
+      "high": "reference/control/icons/renwu1@2x.png",
+      "sha256": "27847429eae64d417fa76aeabcff17c7644629f21366aa7e7bca460ca9438864",
+      "source": "resources/pet/control/icons/renwu1.png"
+    },
+    "iconList/DeskNotice/icon.png": {
+      "high": "reference/control/icons/gonggao1@2x.png",
+      "sha256": "f2b542eb0688edf18db9f0ab61333f72858961dd4dba3ab5ab33d23e7d5c2b00",
+      "source": "resources/pet/control/icons/gonggao1.png"
+    },
+    "iconList/LoginPanel/fs.gif": {
+      "high": "reference/img_res/clean/102020025@2x.png",
+      "sha256": "f4a502a2554c1ce5d648733347cba2695199799c9cc063892abbe327f5a2b4aa",
+      "source": "resources/pet/img_res/clean/102020025.gif"
+    },
+    "iconList/LoginPanel/l1.gif": {
+      "high": "reference/img_res/muns/l1@2x.png",
+      "sha256": "05162d6980f9818c44d9183395b05145d77e3377b40c1db9f298cd1ad3288e6c",
+      "source": "resources/pet/img_res/muns/l1.gif"
+    },
+    "iconList/LoginPanel/l2.gif": {
+      "high": "reference/img_res/food/102010012@2x.png",
+      "sha256": "cfdbc272f7e2f8d355e2bfa2359838b9527054e9e94bb247938c1e45c68daecb",
+      "source": "resources/pet/img_res/food/102010012.gif"
+    },
+    "iconList/LoginPanel/l3.gif": {
+      "high": "reference/img_res/clean/102020003@2x.png",
+      "sha256": "88db9def37af7fba2b46a58af76d4eafaaeecf18e608e2e63b7c8c7eac960e1a",
+      "source": "resources/pet/img_res/clean/102020003.gif"
+    },
+    "iconList/LoginPanel/l4.gif": {
+      "high": "reference/img_res/food/102010033@2x.png",
+      "sha256": "ecd8cd646e563db56dd46f4f9abdc51f02c9f3a3487dcb7dbfab29a215eac98f",
+      "source": "resources/pet/img_res/food/102010033.gif"
+    },
+    "iconList/LoginPanel/l5.gif": {
+      "high": "reference/img_res/clean/102020020@2x.png",
+      "sha256": "9311c8f5ac41960ce770ef0684800753b6b6a85dd3d68e48edfdeaef45c551a8",
+      "source": "resources/pet/img_res/clean/102020020.gif"
+    },
+    "iconList/LoginPanel/l6.gif": {
+      "high": "reference/img_res/medicine/50001@2x.png",
+      "sha256": "b84192c3c07e249502fe231fb9fe6bf7d361548bb5dc51ee336895511b3ba94d",
+      "source": "resources/pet/img_res/medicine/50001.gif"
+    },
+    "iconList/LoginPanel/ml.gif": {
+      "high": "reference/img_res/food/102010046@2x.png",
+      "sha256": "47d5774f4ffd787e29c1dd71c535e10ee943bd985981857edd0279efd18f2567",
+      "source": "resources/pet/img_res/food/102010046.gif"
+    },
+    "iconList/LoginPanel/mmh.gif": {
+      "high": "reference/img_res/food/102010004@2x.png",
+      "sha256": "b3c71209738f0d146ee295bc2a78b84ed65ee94556d94b29a43d815a996bb124",
+      "source": "resources/pet/img_res/food/102010004.gif"
+    },
+    "iconList/LoginPanel/np.gif": {
+      "high": "reference/img_res/food/102010056@2x.png",
+      "sha256": "4d3243c15dbd0871659026404dd4e6bb982ff746ff10bb0e5797bf487f02b9bd",
+      "source": "resources/pet/img_res/food/102010056.gif"
+    },
+    "iconList/LoginPanel/qq.gif": {
+      "high": "reference/img_res/food/102010001@2x.png",
+      "sha256": "7c900c39bc67dd22dfc4fce82e9f0deaf462626ebbb4dc818d24074cdf722e55",
+      "source": "resources/pet/img_res/food/102010001.gif"
+    },
+    "iconList/LoginPanel/ssf.gif": {
+      "high": "reference/img_res/clean/102020011@2x.png",
+      "sha256": "101559b93af9561146ddd537e3af022d800f2956760387abdfe8a71049667cd4",
+      "source": "resources/pet/img_res/clean/102020011.gif"
+    },
+    "iconList/Online/icon.png": {
+      "high": "reference/control/icons/songli@2x.png",
+      "sha256": "19e30bfa6f4f6a54caa2ddc945920a0bbe3c49ccfa946db37af729f684c3e36c",
+      "source": "resources/pet/control/icons/songli.png"
+    },
+    "iconList/OnlineQuitPrompt/Button_exit_00.png": {
+      "high": "reference/answerQuestions/Button_exit_00@2x.png",
+      "sha256": "b6de981a3be321a55d95913efdcd9242451b465d283815541732263d7dec61ad",
+      "source": "resources/pet/answerQuestions/Button_exit_00.png"
+    },
+    "iconList/OnlineQuitPrompt/Button_exit_01.png": {
+      "high": "reference/answerQuestions/Button_exit_01@2x.png",
+      "sha256": "0dd0b17003a1fd901ab776f7e244f4099c7355f179d4f6e5e4e3a6628aaf1a42",
+      "source": "resources/pet/answerQuestions/Button_exit_01.png"
+    },
+    "iconList/OnlineQuitPrompt/Button_exit_02.png": {
+      "high": "reference/answerQuestions/Button_exit_02@2x.png",
+      "sha256": "206d2385e1611e9c063bd0216b090f556686d2c6057e049f8491a53314a5e9ed",
+      "source": "resources/pet/answerQuestions/Button_exit_02.png"
+    },
+    "iconList/OnlineQuitPrompt/exitbg.png": {
+      "high": "reference/answerQuestions/exitbg@2x.png",
+      "sha256": "fa7cc931f1fddef57ebb3424e5a10c6e16ba38db83fc35d817fffc2b16d562c4",
+      "source": "resources/pet/answerQuestions/exitbg.png"
+    },
+    "iconList/webtask/close_click.png": {
+      "high": "reference/email/close_click@2x.png",
+      "sha256": "a5502664b7b4b2cdef9c62c97fd7506b7352c536c1fe503377a22ab75cd60c18",
+      "source": "resources/pet/email/close_click.png"
+    },
+    "iconList/webtask/close_normal.png": {
+      "high": "reference/email/close_normal@2x.png",
+      "sha256": "811b90ba0108ab2ab76ba82fbc0b565b0b1d0a171c825107dee46854d042a317",
+      "source": "resources/pet/email/close_normal.png"
+    },
+    "iconList/webtask/close_over.png": {
+      "high": "reference/email/close_over@2x.png",
+      "sha256": "072edd1b8ff0c198cb5ef5cdf027c9e94594ee124f6929bb12753d6b47b4146b",
+      "source": "resources/pet/email/close_over.png"
+    },
+    "img_res/commodity/100020032.gif": {
+      "high": "reference/img_res/clean/100020032@2x.png",
+      "sha256": "9ea2c9739d804cbf2b4c26a834fc81f0fa4766e53cc09e6297510d6172a2c47b",
+      "source": "resources/pet/img_res/clean/100020032.gif"
+    },
+    "img_res/commodity/100020033.gif": {
+      "high": "reference/img_res/clean/100020033@2x.png",
+      "sha256": "6e0acedd385e99c0ad406082a1a7713c33f9c067076c88fa8c042ecde01a9e2e",
+      "source": "resources/pet/img_res/clean/100020033.gif"
+    },
+    "img_res/commodity/100020034.gif": {
+      "high": "reference/img_res/clean/100020034@2x.png",
+      "sha256": "e5b26dd356e3f55f0288ba081d9a3d73c75b63f6e4f863c69b45bdb2c3d79d35",
+      "source": "resources/pet/img_res/clean/100020034.gif"
+    },
+    "img_res/commodity/100020035.gif": {
+      "high": "reference/img_res/clean/100020035@2x.png",
+      "sha256": "870186c3d3231d174dbf442ca561076b5f9deb627ed70742a272f2fdaec10076",
+      "source": "resources/pet/img_res/clean/100020035.gif"
+    },
+    "img_res/commodity/100020036.gif": {
+      "high": "reference/img_res/clean/100020036@2x.png",
+      "sha256": "d57905c48b060459ebdd31f802806f9914c831a04206c20216edcbf243e38a99",
+      "source": "resources/pet/img_res/clean/100020036.gif"
+    },
+    "img_res/commodity/100020037.gif": {
+      "high": "reference/img_res/clean/100020037@2x.png",
+      "sha256": "6a6168020ab45870f3c712a92987a49740aafacabb2b1ca857b2ec8ff6a7aa8a",
+      "source": "resources/pet/img_res/clean/100020037.gif"
+    },
+    "img_res/commodity/100020038.gif": {
+      "high": "reference/img_res/clean/100020038@2x.png",
+      "sha256": "7b3237218e79617e25b3abb89a3df753253b11211d6bb4951235fed16775f132",
+      "source": "resources/pet/img_res/clean/100020038.gif"
+    },
+    "img_res/commodity/100020039.gif": {
+      "high": "reference/img_res/clean/100020039@2x.png",
+      "sha256": "86cb15522100db06e1a3417d13dea4f23463ffb9589805feec5952c1f4fec0a7",
+      "source": "resources/pet/img_res/clean/100020039.gif"
+    },
+    "img_res/commodity/100020040.gif": {
+      "high": "reference/img_res/clean/100020040@2x.png",
+      "sha256": "0d0c9f96c82fa1504714d8481da0cc2a080b96a2024b95ccb2bd55a2eaf8cc60",
+      "source": "resources/pet/img_res/clean/100020040.gif"
+    },
+    "img_res/commodity/100020041.gif": {
+      "high": "reference/img_res/clean/100020041@2x.png",
+      "sha256": "fbb0300b26d0c4890d601d9273ca454f3b8f20607d4f0825055f41fcbed1ad44",
+      "source": "resources/pet/img_res/clean/100020041.gif"
+    },
+    "img_res/commodity/100020042.gif": {
+      "high": "reference/img_res/clean/100020042@2x.png",
+      "sha256": "c7e2b3311a09e793e988298af7d7fa9445383ec04019d90c7c11330d08cfd117",
+      "source": "resources/pet/img_res/clean/100020042.gif"
+    },
+    "img_res/commodity/100020043.gif": {
+      "high": "reference/img_res/clean/100020043@2x.png",
+      "sha256": "4a991565437bfe3a83f33c1d6eba8f470608d12b15da9a91eda36c5039d9b1fc",
+      "source": "resources/pet/img_res/clean/100020043.gif"
+    },
+    "img_res/commodity/100020044.gif": {
+      "high": "reference/img_res/clean/100020044@2x.png",
+      "sha256": "26725fa504db0550d3cb0dc6831de2b56e88855e4f65d89eb64874f5fe85d69a",
+      "source": "resources/pet/img_res/clean/100020044.gif"
+    },
+    "img_res/commodity/100020045.gif": {
+      "high": "reference/img_res/clean/100020045@2x.png",
+      "sha256": "64e3605225e00dc36108e70a95dfc31da0d082b4cc494fe007a57fa9afe66f8b",
+      "source": "resources/pet/img_res/clean/100020045.gif"
+    },
+    "img_res/commodity/100020046.gif": {
+      "high": "reference/img_res/clean/100020046@2x.png",
+      "sha256": "18b37cc1f9065acfd98c88ccbf85f203c04dc1b5526bcea777b3c08cbb6d5eed",
+      "source": "resources/pet/img_res/clean/100020046.gif"
+    },
+    "img_res/commodity/100020047.gif": {
+      "high": "reference/img_res/clean/100020047@2x.png",
+      "sha256": "a0b9eff86c470b6c5001bc0a3b11f06a95db83bb0310d42532cddf01012b2ecf",
+      "source": "resources/pet/img_res/clean/100020047.gif"
+    },
+    "img_res/commodity/100020048.gif": {
+      "high": "reference/img_res/clean/100020048@2x.png",
+      "sha256": "5bdcbbcf3aa73d2dd37aa07fb8c631aa4c4d024028d9bda10a569c8441582259",
+      "source": "resources/pet/img_res/clean/100020048.gif"
+    },
+    "img_res/commodity/100020049.gif": {
+      "high": "reference/img_res/clean/100020049@2x.png",
+      "sha256": "6e1529c94c01575de6af3230f427b18c04715e2cbf90660a0fc99e06cb5f8463",
+      "source": "resources/pet/img_res/clean/100020049.gif"
+    },
+    "img_res/commodity/100020050.gif": {
+      "high": "reference/img_res/clean/100020050@2x.png",
+      "sha256": "1b6518cec087dad96ea97fa8a2321224ee396177bd20f8ace1d1aa4443f23810",
+      "source": "resources/pet/img_res/clean/100020050.gif"
+    },
+    "img_res/commodity/100020051.gif": {
+      "high": "reference/img_res/clean/100020051@2x.png",
+      "sha256": "10a7826fc6fb4acdbdc002088d577975cc99153ac23729449669e3ac5c671cdd",
+      "source": "resources/pet/img_res/clean/100020051.gif"
+    },
+    "img_res/commodity/100020052.gif": {
+      "high": "reference/img_res/clean/100020052@2x.png",
+      "sha256": "5e21f7196db2588be76735b1abc30604963d69e2737161d0594c31e901dd97b8",
+      "source": "resources/pet/img_res/clean/100020052.gif"
+    },
+    "img_res/commodity/100020053.gif": {
+      "high": "reference/img_res/clean/100020053@2x.png",
+      "sha256": "7718e86d6ff8e2181b6568dec9eb41d335007c1d52bcf2aae3d779fc0c7e3f01",
+      "source": "resources/pet/img_res/clean/100020053.gif"
+    },
+    "img_res/commodity/100020058.gif": {
+      "high": "reference/img_res/clean/100020058@2x.png",
+      "sha256": "f2a94692306cf043d70b5dc3edd78a94565aa07fbd181a931bdd92a944ff66e9",
+      "source": "resources/pet/img_res/clean/100020058.gif"
+    },
+    "img_res/commodity/100020059.gif": {
+      "high": "reference/img_res/clean/100020059@2x.png",
+      "sha256": "26b2bee4fcc2223c96ba3f088569d1962a847b3cce3cb198c544a633840ce6b2",
+      "source": "resources/pet/img_res/clean/100020059.gif"
+    },
+    "img_res/commodity/100020060.gif": {
+      "high": "reference/img_res/clean/100020060@2x.png",
+      "sha256": "b7e1c3437cf88509144a32fbb07190e0d537c020642ae47ae437cc4d79a09c53",
+      "source": "resources/pet/img_res/clean/100020060.gif"
+    },
+    "img_res/commodity/100020061.gif": {
+      "high": "reference/img_res/clean/100020061@2x.png",
+      "sha256": "7c623b36586d41becbc32010d3f88dd3c8dd0e195b073a83d6860fcaf078d635",
+      "source": "resources/pet/img_res/clean/100020061.gif"
+    },
+    "img_res/commodity/100020062.gif": {
+      "high": "reference/img_res/clean/100020062@2x.png",
+      "sha256": "67129c89b086e46c433985125da0336dd1059b564529eb65a35e27585ad62d73",
+      "source": "resources/pet/img_res/clean/100020062.gif"
+    },
+    "img_res/commodity/100020063.gif": {
+      "high": "reference/img_res/clean/100020063@2x.png",
+      "sha256": "14cc97185a143c638beb702e96fc2f2967989dfce7b5d76aacc08a084e0f91fa",
+      "source": "resources/pet/img_res/clean/100020063.gif"
+    },
+    "img_res/commodity/100020064.gif": {
+      "high": "reference/img_res/clean/100020064@2x.png",
+      "sha256": "ecf4f8f5f985a035ac89387b3f7fbfd3da3e0672a063ae6160277122227c523f",
+      "source": "resources/pet/img_res/clean/100020064.gif"
+    },
+    "img_res/commodity/100020065.gif": {
+      "high": "reference/img_res/clean/100020065@2x.png",
+      "sha256": "936f3406e2ac86adbd1651b580869b3f8d0a738d3b443d9169c4fb9cc276df04",
+      "source": "resources/pet/img_res/clean/100020065.gif"
+    },
+    "img_res/commodity/100020066.gif": {
+      "high": "reference/img_res/clean/100020066@2x.png",
+      "sha256": "7689d0b23af71f94c4ea5899f6e4b00ef2e3e8cdf402f633ba30dd72acbbd2b0",
+      "source": "resources/pet/img_res/clean/100020066.gif"
+    },
+    "img_res/commodity/100020067.gif": {
+      "high": "reference/img_res/clean/100020067@2x.png",
+      "sha256": "6d757f892f3b0dde91d4562ef8a9afbe7da48ea0b800ca4f8a790d11284eeaa1",
+      "source": "resources/pet/img_res/clean/100020067.gif"
+    },
+    "img_res/commodity/100020068.gif": {
+      "high": "reference/img_res/clean/100020068@2x.png",
+      "sha256": "4397474ead6582363264acf51a586cbaf530d37c0ec081422d37b331f50d15dd",
+      "source": "resources/pet/img_res/clean/100020068.gif"
+    },
+    "img_res/commodity/100020069.gif": {
+      "high": "reference/img_res/clean/100020069@2x.png",
+      "sha256": "4013128b69a700636f193f41dcbfe0d95f4e7e2028a36fee9c71250b485a5f6e",
+      "source": "resources/pet/img_res/clean/100020069.gif"
+    },
+    "img_res/commodity/100020070.gif": {
+      "high": "reference/img_res/clean/100020070@2x.png",
+      "sha256": "5e6330510445a6ad925c5220aaa72cc9a62f5732112f693c4be4aa34909e2a82",
+      "source": "resources/pet/img_res/clean/100020070.gif"
+    },
+    "img_res/commodity/100020071.gif": {
+      "high": "reference/img_res/clean/100020071@2x.png",
+      "sha256": "15d0b702ddaa06a31ab8055b98d5b510016c48aa0342ed1e3968f013a0740912",
+      "source": "resources/pet/img_res/clean/100020071.gif"
+    },
+    "img_res/commodity/100020072.gif": {
+      "high": "reference/img_res/clean/100020072@2x.png",
+      "sha256": "8db0481313feaca6f2c7fcba18e977b1cc7e54b70af1fd9a7108b9b809a9f174",
+      "source": "resources/pet/img_res/clean/100020072.gif"
+    },
+    "img_res/commodity/100020073.gif": {
+      "high": "reference/img_res/clean/100020073@2x.png",
+      "sha256": "b05a6269ece079f46e22dd72555385f1da1a138679e8ecede4eccec4995a5872",
+      "source": "resources/pet/img_res/clean/100020073.gif"
+    },
+    "img_res/commodity/100020074.gif": {
+      "high": "reference/img_res/clean/100020074@2x.png",
+      "sha256": "0ad32cf7b43e48e28886b51721b7194fd46e3eec5485ac97cc5e222f37ecdc55",
+      "source": "resources/pet/img_res/clean/100020074.gif"
+    },
+    "img_res/commodity/100020075.gif": {
+      "high": "reference/img_res/clean/100020075@2x.png",
+      "sha256": "f0a5bbd883044f3fc8b3345283a90f8a0e0ff127b9fd13b8249068df61c3aea0",
+      "source": "resources/pet/img_res/clean/100020075.gif"
+    },
+    "img_res/commodity/100020076.gif": {
+      "high": "reference/img_res/clean/100020076@2x.png",
+      "sha256": "7d44bae39fe927f1723677cb636a8aba6b34c72e80e72289af85def30830574b",
+      "source": "resources/pet/img_res/clean/100020076.gif"
+    },
+    "img_res/commodity/100020077.gif": {
+      "high": "reference/img_res/clean/100020077@2x.png",
+      "sha256": "cdd428dcfbd993e04903cc4d22588efb92b7eaa0b8ccdf5c14a2411c2d3fdf5c",
+      "source": "resources/pet/img_res/clean/100020077.gif"
+    },
+    "img_res/commodity/100020078.gif": {
+      "high": "reference/img_res/clean/100020078@2x.png",
+      "sha256": "0ae937a662f56f97693ae9ae5dea7a37c0c7b60a6ae181c87fd5cb2ade69c262",
+      "source": "resources/pet/img_res/clean/100020078.gif"
+    },
+    "img_res/commodity/100020079.gif": {
+      "high": "reference/img_res/clean/100020079@2x.png",
+      "sha256": "74af6c28cebf10f6d0f2f4e5f631b3580eac16df138d45b6afa16d48362c9954",
+      "source": "resources/pet/img_res/clean/100020079.gif"
+    },
+    "img_res/commodity/100020080.gif": {
+      "high": "reference/img_res/clean/100020080@2x.png",
+      "sha256": "149545c375c4e16891f6593c9087027598760f2e04d4751cd519456b4a49f174",
+      "source": "resources/pet/img_res/clean/100020080.gif"
+    },
+    "img_res/commodity/100020081.gif": {
+      "high": "reference/img_res/clean/100020081@2x.png",
+      "sha256": "d5f5fb448d7fee7d8976fa8b2e64d7c9a01a55815b40197d54ba8f961f43c930",
+      "source": "resources/pet/img_res/clean/100020081.gif"
+    },
+    "img_res/commodity/100020082.gif": {
+      "high": "reference/img_res/clean/100020082@2x.png",
+      "sha256": "053bc5bbe1855c8bab4aa82350336c19e863c3d10ffa6c6f207766dbd5b622f4",
+      "source": "resources/pet/img_res/clean/100020082.gif"
+    },
+    "img_res/commodity/100020083.gif": {
+      "high": "reference/img_res/clean/100020083@2x.png",
+      "sha256": "aa56521d4b0d8bd14ebe5dff83ba96986460fc40a993012d3a3727039b3ad5f0",
+      "source": "resources/pet/img_res/clean/100020083.gif"
+    },
+    "img_res/commodity/100020084.gif": {
+      "high": "reference/img_res/clean/100020084@2x.png",
+      "sha256": "f7d8330a3f3ce7738d9d6145474c7f6f9c3aea3981b6015a4aca88e67af14a8c",
+      "source": "resources/pet/img_res/clean/100020084.gif"
+    },
+    "img_res/commodity/100020085.gif": {
+      "high": "reference/img_res/clean/100020085@2x.png",
+      "sha256": "1982ebb4db0a36f69d4dbfeafeba471a8b4ff52d1fc540aef55335493b7ecd36",
+      "source": "resources/pet/img_res/clean/100020085.gif"
+    },
+    "img_res/commodity/100020086.gif": {
+      "high": "reference/img_res/clean/100020086@2x.png",
+      "sha256": "627c48483a381eb99ef9142c3ad03f53ce154b6af0d1e9fc50ebb00d357d522d",
+      "source": "resources/pet/img_res/clean/100020086.gif"
+    },
+    "img_res/commodity/100020087.gif": {
+      "high": "reference/img_res/clean/100020087@2x.png",
+      "sha256": "d6b8a199d8841358f621b447bb87e0ee78b2725965f8327cb955af6b353b34bb",
+      "source": "resources/pet/img_res/clean/100020087.gif"
+    },
+    "img_res/commodity/100020088.gif": {
+      "high": "reference/img_res/clean/100020088@2x.png",
+      "sha256": "5703ef3d93c50cdfc5deb2f1c9509d0047f34eb8c515b60feb1cac0717ab9c40",
+      "source": "resources/pet/img_res/clean/100020088.gif"
+    },
+    "img_res/commodity/100020089.gif": {
+      "high": "reference/img_res/clean/100020089@2x.png",
+      "sha256": "5dd11a14b2434988b4dd62affd285b8aa6a92c6d3ce64868339ffdb09502d5b7",
+      "source": "resources/pet/img_res/clean/100020089.gif"
+    },
+    "img_res/commodity/100020090.gif": {
+      "high": "reference/img_res/clean/100020090@2x.png",
+      "sha256": "1c5d57d645c30a5015b5401688f48401e02dec6976894c202d3ae1d0340f4584",
+      "source": "resources/pet/img_res/clean/100020090.gif"
+    },
+    "img_res/commodity/100020091.gif": {
+      "high": "reference/img_res/clean/100020091@2x.png",
+      "sha256": "7821abf6726b9a8621a0b1b6d53ce857a2b46d3897d17649f5fc3f6d70c96137",
+      "source": "resources/pet/img_res/clean/100020091.gif"
+    },
+    "img_res/commodity/100020092.gif": {
+      "high": "reference/img_res/clean/100020092@2x.png",
+      "sha256": "4fc1519dcbc96eedd52215d5b3a7bd6c1ed60793db083001204602e8f8312688",
+      "source": "resources/pet/img_res/clean/100020092.gif"
+    },
+    "img_res/commodity/100020093.gif": {
+      "high": "reference/img_res/clean/100020093@2x.png",
+      "sha256": "fc8e4b460e50a97e438d8e6f827fb7b465807a6c7413a94bbfd39b9a6ee4cd44",
+      "source": "resources/pet/img_res/clean/100020093.gif"
+    },
+    "img_res/commodity/100020094.gif": {
+      "high": "reference/img_res/clean/100020094@2x.png",
+      "sha256": "ade291317be7260ffbaa03ee46c04f3305f9b45d40462036ea7bc503b84fc6de",
+      "source": "resources/pet/img_res/clean/100020094.gif"
+    },
+    "img_res/commodity/100020095.gif": {
+      "high": "reference/img_res/clean/100020095@2x.png",
+      "sha256": "ae0b5b39f4c8df95ab419eb981cd061dc167e88c4143f56eb6e30f06d2414145",
+      "source": "resources/pet/img_res/clean/100020095.gif"
+    },
+    "img_res/commodity/100020096.gif": {
+      "high": "reference/img_res/clean/100020096@2x.png",
+      "sha256": "3d858f7cd1dc01b60b723235495b5afdd6760516a0738e80e535508fb12a92f3",
+      "source": "resources/pet/img_res/clean/100020096.gif"
+    },
+    "img_res/commodity/100020097.gif": {
+      "high": "reference/img_res/clean/100020097@2x.png",
+      "sha256": "f17f7e0390b1690c2f856fca2ba11a4a322325365f8c26c786080da4ab8bf09f",
+      "source": "resources/pet/img_res/clean/100020097.gif"
+    },
+    "img_res/commodity/100020098.gif": {
+      "high": "reference/img_res/clean/100020098@2x.png",
+      "sha256": "f0bc9a92d38b62b3da24a10b60df316e2566f0860cb6e5209371d4ab33128be6",
+      "source": "resources/pet/img_res/clean/100020098.gif"
+    },
+    "img_res/commodity/100020099.gif": {
+      "high": "reference/img_res/clean/100020099@2x.png",
+      "sha256": "7015456fecaeb93321e62e4b2ff3c37f0a7dd7bbdda6dee3cb3aa7a379ce1ff1",
+      "source": "resources/pet/img_res/clean/100020099.gif"
+    },
+    "img_res/commodity/100020100.gif": {
+      "high": "reference/img_res/clean/100020100@2x.png",
+      "sha256": "78ec0cbc0be7e180f73f819f87e9956d3bd82d2b6c1909168c3f2737f4853e49",
+      "source": "resources/pet/img_res/clean/100020100.gif"
+    },
+    "img_res/commodity/100020101.gif": {
+      "high": "reference/img_res/clean/100020101@2x.png",
+      "sha256": "02888db12d07f0a9108791f807b9910a8fa87eb6f8e3d7a8be0949a9c22f8d64",
+      "source": "resources/pet/img_res/clean/100020101.gif"
+    },
+    "img_res/commodity/100020102.gif": {
+      "high": "reference/img_res/clean/100020102@2x.png",
+      "sha256": "c735c35e6784a27807dad678801596861ea57dba7fa7e1d49a615f94e5076e2f",
+      "source": "resources/pet/img_res/clean/100020102.gif"
+    },
+    "img_res/commodity/100020103.gif": {
+      "high": "reference/img_res/clean/100020103@2x.png",
+      "sha256": "48bf07b6a3810c626320ad774e711a60cc6519a74214d68cfa8180133d74a7f0",
+      "source": "resources/pet/img_res/clean/100020103.gif"
+    },
+    "img_res/commodity/100020104.gif": {
+      "high": "reference/img_res/clean/100020104@2x.png",
+      "sha256": "c9284d7d43349a90364483cb3362b2d7e5a5f7283a6683ed4824118bff989f59",
+      "source": "resources/pet/img_res/clean/100020104.gif"
+    },
+    "img_res/commodity/100020105.gif": {
+      "high": "reference/img_res/clean/100020105@2x.png",
+      "sha256": "012cec7d2f77e0e1d564631ffd9733864bb55de4628c1ab722b378093568efe3",
+      "source": "resources/pet/img_res/clean/100020105.gif"
+    },
+    "img_res/commodity/100020106.gif": {
+      "high": "reference/img_res/clean/100020106@2x.png",
+      "sha256": "d1f2eb426a242c4208047c6f6102c483d855af814725b7a21f85a8744c516b83",
+      "source": "resources/pet/img_res/clean/100020106.gif"
+    },
+    "img_res/commodity/100020107.gif": {
+      "high": "reference/img_res/clean/100020107@2x.png",
+      "sha256": "a6eafa2f5e668a8b46f9dc0b4f838a65a8eb976d5e260d1663ae15fd8a75f06b",
+      "source": "resources/pet/img_res/clean/100020107.gif"
+    },
+    "img_res/commodity/100020108.gif": {
+      "high": "reference/img_res/clean/100020108@2x.png",
+      "sha256": "f63b764f3306e1f117e55ca52fa827a805e12783b379f521c6469ab0dfa1d111",
+      "source": "resources/pet/img_res/clean/100020108.gif"
+    },
+    "img_res/commodity/100020109.gif": {
+      "high": "reference/img_res/clean/100020109@2x.png",
+      "sha256": "dc6d31a4be465a41a13b2b1bbb9c08476c6a33ff3aa7306900f3343794447ae4",
+      "source": "resources/pet/img_res/clean/100020109.gif"
+    },
+    "img_res/commodity/100020110.gif": {
+      "high": "reference/img_res/clean/100020110@2x.png",
+      "sha256": "0e4db58fa21a2f7d2a6a8927a8fe2fac8a90376d8fdf6c3c848ef175c5f9feb3",
+      "source": "resources/pet/img_res/clean/100020110.gif"
+    },
+    "img_res/commodity/100020111.gif": {
+      "high": "reference/img_res/clean/100020111@2x.png",
+      "sha256": "c96244693ee83e979d77bf43eb3ec13d15a330d053269f4de6792f53cd148806",
+      "source": "resources/pet/img_res/clean/100020111.gif"
+    },
+    "img_res/commodity/100020112.gif": {
+      "high": "reference/img_res/clean/100020112@2x.png",
+      "sha256": "de79b896632267e311ed2793004ba207ef8e14ae47f0b4b5eb36af98c94f03be",
+      "source": "resources/pet/img_res/clean/100020112.gif"
+    },
+    "img_res/commodity/100020113.gif": {
+      "high": "reference/img_res/clean/100020113@2x.png",
+      "sha256": "1d6607d1e9515a8104d05f2d257f6406259ecab5354c67bb35fb47500b683647",
+      "source": "resources/pet/img_res/clean/100020113.gif"
+    },
+    "img_res/commodity/100020114.gif": {
+      "high": "reference/img_res/clean/100020114@2x.png",
+      "sha256": "a6ae4f927f9051ee4844d7368005895675ef0e99b97a6654146c03fe98bcf855",
+      "source": "resources/pet/img_res/clean/100020114.gif"
+    },
+    "img_res/commodity/100020115.gif": {
+      "high": "reference/img_res/clean/100020115@2x.png",
+      "sha256": "67350fa762e5f8b4f1466f9c85204390680b43e20c02d6585a88dc38e6663c8b",
+      "source": "resources/pet/img_res/clean/100020115.gif"
+    },
+    "img_res/commodity/100020116.gif": {
+      "high": "reference/img_res/clean/100020116@2x.png",
+      "sha256": "c66faeb5633a3706c992498130a32fbb6e6ec47565c48e005fba06bd111f0be6",
+      "source": "resources/pet/img_res/clean/100020116.gif"
+    },
+    "img_res/commodity/100020117.gif": {
+      "high": "reference/img_res/clean/100020117@2x.png",
+      "sha256": "c5a2c32a740b7e10267d6623f085662021bb7817444c230cc0184e58b41eea13",
+      "source": "resources/pet/img_res/clean/100020117.gif"
+    },
+    "img_res/commodity/100020118.gif": {
+      "high": "reference/img_res/clean/100020118@2x.png",
+      "sha256": "254a9684a43ba395e2e30fb185b23548f549928495c5574f833e6ed876b231d9",
+      "source": "resources/pet/img_res/clean/100020118.gif"
+    },
+    "img_res/commodity/100020119.gif": {
+      "high": "reference/img_res/clean/100020119@2x.png",
+      "sha256": "f3a4b07441d723a9eed22136e3173eb5609db1d82f877261af095d1f030b7ceb",
+      "source": "resources/pet/img_res/clean/100020119.gif"
+    },
+    "img_res/commodity/100020120.gif": {
+      "high": "reference/img_res/clean/100020120@2x.png",
+      "sha256": "9753c3f9e0f3bdd02b24b59dfaf64559ce61c16049845c3898c6f6658de3ef1e",
+      "source": "resources/pet/img_res/clean/100020120.gif"
+    },
+    "img_res/commodity/100020121.gif": {
+      "high": "reference/img_res/clean/100020121@2x.png",
+      "sha256": "e11bcbfd92840fa27ea4e35e0874f3cd38b1bd72b6c7908616e74daa8befe9f6",
+      "source": "resources/pet/img_res/clean/100020121.gif"
+    },
+    "img_res/commodity/100020122.gif": {
+      "high": "reference/img_res/clean/100020122@2x.png",
+      "sha256": "c946fdcb872a91c8dbb4f3324a0f1489f465372cac99612fa81530b1da994861",
+      "source": "resources/pet/img_res/clean/100020122.gif"
+    },
+    "img_res/commodity/100020123.gif": {
+      "high": "reference/img_res/clean/100020123@2x.png",
+      "sha256": "d2b7e398e38bfd099657362e9f36dffae8ae454fdac1835c062548c517626ee1",
+      "source": "resources/pet/img_res/clean/100020123.gif"
+    },
+    "img_res/commodity/100020124.gif": {
+      "high": "reference/img_res/clean/100020124@2x.png",
+      "sha256": "4bf346d36e39c754c67807888f790362ebbf75cd93bafee43836194ab4a3a307",
+      "source": "resources/pet/img_res/clean/100020124.gif"
+    },
+    "img_res/commodity/100020125.gif": {
+      "high": "reference/img_res/clean/100020125@2x.png",
+      "sha256": "6ba75ed1eabe62430ed2e75428657b407ca038234dff1ee01bd1589d47c9db0d",
+      "source": "resources/pet/img_res/clean/100020125.gif"
+    },
+    "img_res/commodity/100020126.gif": {
+      "high": "reference/img_res/clean/100020126@2x.png",
+      "sha256": "f72728b446923849301de649cdc4a3353f52f94b533f8057c2c1e6e2db3c0960",
+      "source": "resources/pet/img_res/clean/100020126.gif"
+    },
+    "img_res/commodity/100020127.gif": {
+      "high": "reference/img_res/clean/100020127@2x.png",
+      "sha256": "f1becbdb95e21f09d0a2d5ceb55493ba80d978b6e355d98658b46ebd98fa2969",
+      "source": "resources/pet/img_res/clean/100020127.gif"
+    },
+    "img_res/commodity/100020128.gif": {
+      "high": "reference/img_res/clean/100020128@2x.png",
+      "sha256": "d9f68b8777147fc9d3c979df6f364485db32f2c554013c1c5e52bfab6f1528f6",
+      "source": "resources/pet/img_res/clean/100020128.gif"
+    },
+    "img_res/commodity/100020129.gif": {
+      "high": "reference/img_res/clean/100020129@2x.png",
+      "sha256": "6ac80ccc4017dd4f1e3ac3bc2d1d8c46a8d7cbe913a2f7713b06896271cbd8d9",
+      "source": "resources/pet/img_res/clean/100020129.gif"
+    },
+    "img_res/commodity/100020130.gif": {
+      "high": "reference/img_res/clean/100020130@2x.png",
+      "sha256": "df2f5d26bb99886f782caf5e23aaf4fcb66fe3c3a2201a7040e7aac331fa8f37",
+      "source": "resources/pet/img_res/clean/100020130.gif"
+    },
+    "img_res/commodity/100020131.gif": {
+      "high": "reference/img_res/clean/100020131@2x.png",
+      "sha256": "320e91b0205fcc2fa662ff35a87e7dbd0bb2e036d998c18c7e0db36e3cc97bd8",
+      "source": "resources/pet/img_res/clean/100020131.gif"
+    },
+    "img_res/commodity/100020132.gif": {
+      "high": "reference/img_res/clean/100020132@2x.png",
+      "sha256": "58b58fb5473b0de1fcbea49bf60c891cfef9ef1ce833bcdca6018b5cfcaab849",
+      "source": "resources/pet/img_res/clean/100020132.gif"
+    },
+    "img_res/commodity/100020133.gif": {
+      "high": "reference/img_res/clean/100020133@2x.png",
+      "sha256": "e1ffd137545e88a108712e7d92ec7abc77100859212990be8396968935b1c4e7",
+      "source": "resources/pet/img_res/clean/100020133.gif"
+    },
+    "img_res/commodity/100020134.gif": {
+      "high": "reference/img_res/clean/100020134@2x.png",
+      "sha256": "6f735b559799215d27b6263fd586d7e7d8105a1db778f4a94b11ec85fca5b2d4",
+      "source": "resources/pet/img_res/clean/100020134.gif"
+    },
+    "img_res/commodity/100020135.gif": {
+      "high": "reference/img_res/clean/100020135@2x.png",
+      "sha256": "6704ccc6137f35deb26da8a0968fd5b1800ba25c02fdc87e2cc5735fea710f98",
+      "source": "resources/pet/img_res/clean/100020135.gif"
+    },
+    "img_res/commodity/100020136.gif": {
+      "high": "reference/img_res/clean/100020136@2x.png",
+      "sha256": "b94c8c8bd452d25b013c159b01a0c405908e1c758e1463e2719e4c67cb2b93d5",
+      "source": "resources/pet/img_res/clean/100020136.gif"
+    },
+    "img_res/commodity/100020137.gif": {
+      "high": "reference/img_res/clean/100020137@2x.png",
+      "sha256": "b0057a24b04a779d4d014743f9f70b1fc154ad8e63a8a9b796721c4242e6d2cf",
+      "source": "resources/pet/img_res/clean/100020137.gif"
+    },
+    "img_res/commodity/100020138.gif": {
+      "high": "reference/img_res/clean/100020138@2x.png",
+      "sha256": "22df0bd37f884e90bd8e13c0687364ee5840f26655fdc56dc0dde66a903fa7da",
+      "source": "resources/pet/img_res/clean/100020138.gif"
+    },
+    "img_res/commodity/100020139.gif": {
+      "high": "reference/img_res/clean/100020139@2x.png",
+      "sha256": "005b1a012aa8ffb19940d7bb00fa14d0bb4916c94bdfd53bd1d8b49e7edaefe2",
+      "source": "resources/pet/img_res/clean/100020139.gif"
+    },
+    "img_res/commodity/100020140.gif": {
+      "high": "reference/img_res/clean/100020140@2x.png",
+      "sha256": "02d70daaa4bcc7d86728a55304f365f9e42ab95fe8d5d11dd1bcb9f2a31fb642",
+      "source": "resources/pet/img_res/clean/100020140.gif"
+    },
+    "img_res/commodity/100020141.gif": {
+      "high": "reference/img_res/clean/100020141@2x.png",
+      "sha256": "2d8ee8f20a3277fbd621fab9f9021f327018f86615ca5888e4c253896e0e82c0",
+      "source": "resources/pet/img_res/clean/100020141.gif"
+    },
+    "img_res/commodity/100020142.gif": {
+      "high": "reference/img_res/clean/100020142@2x.png",
+      "sha256": "d6c9b4fccc3b53b5c662e3814b2e15933abe31e2c73cd52f07eb403c5b0b826b",
+      "source": "resources/pet/img_res/clean/100020142.gif"
+    },
+    "img_res/commodity/100020143.gif": {
+      "high": "reference/img_res/clean/100020143@2x.png",
+      "sha256": "9fe65cf0f50b8aa5e7f8ec11a2efa8d67415d1c6f634ada7ba482b83bd35a585",
+      "source": "resources/pet/img_res/clean/100020143.gif"
+    },
+    "img_res/commodity/100020144.gif": {
+      "high": "reference/img_res/clean/100020144@2x.png",
+      "sha256": "a9ccd3101e46d4fcc8ad3cf1c5cc5746d4e12e6d38cb42f77c179d77cf976021",
+      "source": "resources/pet/img_res/clean/100020144.gif"
+    },
+    "img_res/commodity/100020145.gif": {
+      "high": "reference/img_res/clean/100020145@2x.png",
+      "sha256": "ed1144e494631b2cc02312ed78201fac405763b46a362b4a74bd1f156330f29f",
+      "source": "resources/pet/img_res/clean/100020145.gif"
+    },
+    "img_res/commodity/100020146.gif": {
+      "high": "reference/img_res/clean/100020146@2x.png",
+      "sha256": "9f7b30ac9351c0d10760d85c9bb3b05e6dd981c411a851536d34278b0d4dbb4a",
+      "source": "resources/pet/img_res/clean/100020146.gif"
+    },
+    "img_res/commodity/100020147.gif": {
+      "high": "reference/img_res/clean/100020147@2x.png",
+      "sha256": "0c4e7f7fb770a979cf41f00d3ff319db96b0e5749cd3dc2c6eb3965842ba699f",
+      "source": "resources/pet/img_res/clean/100020147.gif"
+    },
+    "img_res/commodity/100020148.gif": {
+      "high": "reference/img_res/clean/100020148@2x.png",
+      "sha256": "dda3127fbc2514d334d8d42d532628f76b08e10ffdf512abe5dc98d22278391a",
+      "source": "resources/pet/img_res/clean/100020148.gif"
+    },
+    "img_res/commodity/100020149.gif": {
+      "high": "reference/img_res/clean/100020149@2x.png",
+      "sha256": "ecd39bbaa8dd888ea6b8df5aec7e4ca3b4435a8483a2670a8135fc1d36b4e626",
+      "source": "resources/pet/img_res/clean/100020149.gif"
+    },
+    "img_res/commodity/100020150.gif": {
+      "high": "reference/img_res/clean/100020150@2x.png",
+      "sha256": "2e89c55c35184ccc63d372bbce2f6dc60c2fe939de8ca7c8da1c037dc8c5ed10",
+      "source": "resources/pet/img_res/clean/100020150.gif"
+    },
+    "img_res/commodity/100020151.gif": {
+      "high": "reference/img_res/clean/100020151@2x.png",
+      "sha256": "46de8bd45c4f43d4d224e041d92c92fd96ca6db1435655dc50e8b14575288807",
+      "source": "resources/pet/img_res/clean/100020151.gif"
+    },
+    "img_res/commodity/100020152.gif": {
+      "high": "reference/img_res/clean/100020152@2x.png",
+      "sha256": "0f721d2b5d0eccbf560a03c78df099f3c3cab8c3a45ddbeccd186a8772a70da7",
+      "source": "resources/pet/img_res/clean/100020152.gif"
+    },
+    "img_res/commodity/100020153.gif": {
+      "high": "reference/img_res/clean/100020153@2x.png",
+      "sha256": "c3a417c5b1070d9e80b550d134ea003ba60b34e7a147c1e924d21d47e19d670e",
+      "source": "resources/pet/img_res/clean/100020153.gif"
+    },
+    "img_res/commodity/100020154.gif": {
+      "high": "reference/img_res/clean/100020154@2x.png",
+      "sha256": "227f018ed28dfeafcf5e4222d5885947fa7d57b293953573162232110a533bf2",
+      "source": "resources/pet/img_res/clean/100020154.gif"
+    },
+    "img_res/commodity/100020155.gif": {
+      "high": "reference/img_res/clean/100020155@2x.png",
+      "sha256": "e2932726777193cab1fd794f3f2220c84a3ebcd3a9b92b19a27ab37da74517dd",
+      "source": "resources/pet/img_res/clean/100020155.gif"
+    },
+    "img_res/commodity/100020156.gif": {
+      "high": "reference/img_res/clean/100020156@2x.png",
+      "sha256": "147023cb6b214d3d32670cf622a03db1dd3cf39fbb17ffdd69fb3815e0a700ee",
+      "source": "resources/pet/img_res/clean/100020156.gif"
+    },
+    "img_res/commodity/100020157.gif": {
+      "high": "reference/img_res/clean/100020157@2x.png",
+      "sha256": "8bef941344024df6f965ae8b150fe70037fe91837925732e3694309106fb9c08",
+      "source": "resources/pet/img_res/clean/100020157.gif"
+    },
+    "img_res/commodity/100020158.gif": {
+      "high": "reference/img_res/clean/100020158@2x.png",
+      "sha256": "ede6388561f8c5b5dd2f7d74c3d2b8c487af246711045d7d8e084dc9dabdca6e",
+      "source": "resources/pet/img_res/clean/100020158.gif"
+    },
+    "img_res/commodity/100020159.gif": {
+      "high": "reference/img_res/clean/100020159@2x.png",
+      "sha256": "28e633b2adf15c31e6fc9b596f2c0349c92e0818d282ee23e210e0ff1519742d",
+      "source": "resources/pet/img_res/clean/100020159.gif"
+    },
+    "img_res/commodity/100020160.gif": {
+      "high": "reference/img_res/clean/100020160@2x.png",
+      "sha256": "b8e9c8f8613ea6fd212a245deff623b7a5f2395041cc365618966ef1d39450b7",
+      "source": "resources/pet/img_res/clean/100020160.gif"
+    },
+    "img_res/commodity/100020161.gif": {
+      "high": "reference/img_res/clean/100020161@2x.png",
+      "sha256": "daf4e6d1ccce6f29cb02a0257d63a06a98318ca8a233bd5adce6a96ae6bbac67",
+      "source": "resources/pet/img_res/clean/100020161.gif"
+    },
+    "img_res/commodity/100020162.gif": {
+      "high": "reference/img_res/clean/100020162@2x.png",
+      "sha256": "3360a42c3c45364d58c5ac23cfde052e7093b8fd44598b763c97cd35c5ea986f",
+      "source": "resources/pet/img_res/clean/100020162.gif"
+    },
+    "img_res/commodity/100020163.gif": {
+      "high": "reference/img_res/clean/100020163@2x.png",
+      "sha256": "796ae4950a32f8877bc9e654039b42cc1b5e00dc984f45ccf1d64a7350d80055",
+      "source": "resources/pet/img_res/clean/100020163.gif"
+    },
+    "img_res/commodity/100020164.gif": {
+      "high": "reference/img_res/clean/100020164@2x.png",
+      "sha256": "6a6079256922e43804aa38123efec0c7d36d6030c22b7386bcb65ac7086fee20",
+      "source": "resources/pet/img_res/clean/100020164.gif"
+    },
+    "img_res/commodity/100020165.gif": {
+      "high": "reference/img_res/clean/100020165@2x.png",
+      "sha256": "2ae8b3b77e7d85d45c69e231fe19488bc04d2fecd2e41b98597a465d7be33b1b",
+      "source": "resources/pet/img_res/clean/100020165.gif"
+    },
+    "img_res/commodity/100020166.gif": {
+      "high": "reference/img_res/clean/100020166@2x.png",
+      "sha256": "cbb7633fbeb1dbd8656f4c37e1d758593e62e16b91a8c7b7536a2bec1b7e3300",
+      "source": "resources/pet/img_res/clean/100020166.gif"
+    },
+    "img_res/commodity/100020167.gif": {
+      "high": "reference/img_res/clean/100020167@2x.png",
+      "sha256": "fe2cf162c51bb1e1a834fabece44e1b6cb83a6c49e20c955ec440cf9bc74424d",
+      "source": "resources/pet/img_res/clean/100020167.gif"
+    },
+    "img_res/commodity/100020168.gif": {
+      "high": "reference/img_res/clean/100020168@2x.png",
+      "sha256": "2fd08632b6416d9ea6a50b7ac0ae33eb691a9a37dc00af03d0dc7fa4a2e2c453",
+      "source": "resources/pet/img_res/clean/100020168.gif"
+    },
+    "img_res/commodity/100020169.gif": {
+      "high": "reference/img_res/clean/100020169@2x.png",
+      "sha256": "4f0a9d9f34ca83c58db57c60c2c8f6b801d3f2f5f692190fdcb30d026106e990",
+      "source": "resources/pet/img_res/clean/100020169.gif"
+    },
+    "img_res/commodity/100020170.gif": {
+      "high": "reference/img_res/clean/100020170@2x.png",
+      "sha256": "7c8fb8c14638b74acc9abd534e7882cd0c7c8d1c654d1b0bac049285506efe4a",
+      "source": "resources/pet/img_res/clean/100020170.gif"
+    },
+    "img_res/commodity/100020171.gif": {
+      "high": "reference/img_res/clean/100020171@2x.png",
+      "sha256": "0b2c11330e576ba2a49f4baba9233730452c4b678d071fe717d04c1fdd2d0c93",
+      "source": "resources/pet/img_res/clean/100020171.gif"
+    },
+    "img_res/commodity/100020172.gif": {
+      "high": "reference/img_res/clean/100020172@2x.png",
+      "sha256": "2359081deaebaad0b1db2ecb67e36fcaadd5600fa1663da5377accbf01ca05d7",
+      "source": "resources/pet/img_res/clean/100020172.gif"
+    },
+    "img_res/commodity/100020173.gif": {
+      "high": "reference/img_res/clean/100020173@2x.png",
+      "sha256": "24381b93bc9829831bd9d852313cc78bc31864ce2e31f950d8e14fdcd3a140e5",
+      "source": "resources/pet/img_res/clean/100020173.gif"
+    },
+    "img_res/commodity/100020174.gif": {
+      "high": "reference/img_res/clean/100020174@2x.png",
+      "sha256": "33d525d5f808956d5191086bd705040a856fb1f0459fbee6648a2502f671bd65",
+      "source": "resources/pet/img_res/clean/100020174.gif"
+    },
+    "img_res/commodity/100020175.gif": {
+      "high": "reference/img_res/clean/100020175@2x.png",
+      "sha256": "baa9884603a1e0da0d0c754d1219af9bfb20a55eacb6e77ce7e63814c7fbecea",
+      "source": "resources/pet/img_res/clean/100020175.gif"
+    },
+    "img_res/commodity/100020176.gif": {
+      "high": "reference/img_res/clean/100020176@2x.png",
+      "sha256": "d070745b33e27cb08a3ee6d7cd54a4358419315969dd45d011215293af3a6175",
+      "source": "resources/pet/img_res/clean/100020176.gif"
+    },
+    "img_res/commodity/100020177.gif": {
+      "high": "reference/img_res/clean/100020177@2x.png",
+      "sha256": "ee67e9ca5e88bee289e5755d49f9285ceecbd2aebc43a775a87fba08c881e7ac",
+      "source": "resources/pet/img_res/clean/100020177.gif"
+    },
+    "img_res/commodity/100020178.gif": {
+      "high": "reference/img_res/clean/100020178@2x.png",
+      "sha256": "b3824cb86b36fcb8454da1912cf0275a38c6317b12e0d4063ea20cc8ca5fdd53",
+      "source": "resources/pet/img_res/clean/100020178.gif"
+    },
+    "img_res/commodity/100020179.gif": {
+      "high": "reference/img_res/clean/100020179@2x.png",
+      "sha256": "5c4720772696f2684d00a96a143c6fcae3270f22c8a632eacdc5d549a9b732f1",
+      "source": "resources/pet/img_res/clean/100020179.gif"
+    },
+    "img_res/commodity/100020180.gif": {
+      "high": "reference/img_res/clean/100020180@2x.png",
+      "sha256": "efdc95d017c9199d51460a2330497763b6eeaaca21e79a91892d344834d08867",
+      "source": "resources/pet/img_res/clean/100020180.gif"
+    },
+    "img_res/commodity/100020181.gif": {
+      "high": "reference/img_res/clean/100020181@2x.png",
+      "sha256": "8f92220a03c4c0364b39544b53ed2c0849447a43efee4219cf179d6c6ccf856d",
+      "source": "resources/pet/img_res/clean/100020181.gif"
+    },
+    "img_res/commodity/100020182.gif": {
+      "high": "reference/img_res/clean/100020182@2x.png",
+      "sha256": "9a45853f498a773824cae113042d74ce4ef673ef3f91cca41f6cde37a4adbd48",
+      "source": "resources/pet/img_res/clean/100020182.gif"
+    },
+    "img_res/commodity/100020183.gif": {
+      "high": "reference/img_res/clean/100020183@2x.png",
+      "sha256": "82eaf3418b0caa9494bdac2d9975086c2a887685f5865f0e6d8c52c3ce5608c6",
+      "source": "resources/pet/img_res/clean/100020183.gif"
+    },
+    "img_res/commodity/100020184.gif": {
+      "high": "reference/img_res/clean/100020184@2x.png",
+      "sha256": "6b032a981d598481a28655460b94260f2ec80a09741e1be526650474c8b7618c",
+      "source": "resources/pet/img_res/clean/100020184.gif"
+    },
+    "img_res/commodity/100020185.gif": {
+      "high": "reference/img_res/clean/100020185@2x.png",
+      "sha256": "bcfea1eead71eefed331697476c873c793f6f6206245ab0e4eaee67aa9869e8d",
+      "source": "resources/pet/img_res/clean/100020185.gif"
+    },
+    "img_res/commodity/100020186.gif": {
+      "high": "reference/img_res/clean/100020186@2x.png",
+      "sha256": "266d5a55c7a0095191fb3fbf6922517f70b0807e8443458f03291a281ae83c98",
+      "source": "resources/pet/img_res/clean/100020186.gif"
+    },
+    "img_res/commodity/100020187.gif": {
+      "high": "reference/img_res/clean/100020187@2x.png",
+      "sha256": "ecf818a4f9f54b370b4c9e223fa7fd8d72f36184a8de80ad01a14a5042563f4c",
+      "source": "resources/pet/img_res/clean/100020187.gif"
+    },
+    "img_res/commodity/100020188.gif": {
+      "high": "reference/img_res/clean/100020188@2x.png",
+      "sha256": "f34773ac466d032c353f5fc84a54eb133967dde41d59d9aa58a05f2a7db2870b",
+      "source": "resources/pet/img_res/clean/100020188.gif"
+    },
+    "img_res/commodity/100020189.gif": {
+      "high": "reference/img_res/clean/100020189@2x.png",
+      "sha256": "5b179ecfe9c374b561e245107dbf7727db8e1cd53e2dec7696605132f71caf88",
+      "source": "resources/pet/img_res/clean/100020189.gif"
+    },
+    "img_res/commodity/100020190.gif": {
+      "high": "reference/img_res/clean/100020190@2x.png",
+      "sha256": "2e5359a0f0c1615b8658b063b81d7465e528e327c464a8413759bf253450ec88",
+      "source": "resources/pet/img_res/clean/100020190.gif"
+    },
+    "img_res/commodity/100020191.gif": {
+      "high": "reference/img_res/clean/100020191@2x.png",
+      "sha256": "49d4ebb6035f8fc9ef75aefb4cdc88020307222edf38d93e0aabf9dd97e98717",
+      "source": "resources/pet/img_res/clean/100020191.gif"
+    },
+    "img_res/commodity/100020192.gif": {
+      "high": "reference/img_res/clean/100020192@2x.png",
+      "sha256": "29a343fcbeebc851b851f2eb87e03a2513a9b7cd049fa2a455dfe35a9d346378",
+      "source": "resources/pet/img_res/clean/100020192.gif"
+    },
+    "img_res/commodity/100020193.gif": {
+      "high": "reference/img_res/clean/100020193@2x.png",
+      "sha256": "6f9b7603296eedf53e21e996b3fa1937a37ab9fbb550343f05d987c1f207ab45",
+      "source": "resources/pet/img_res/clean/100020193.gif"
+    },
+    "img_res/commodity/100020194.gif": {
+      "high": "reference/img_res/clean/100020194@2x.png",
+      "sha256": "91f8bb8c16c9a5e88f10f66361eb23ab11853b736f309396ae0492e2afda279f",
+      "source": "resources/pet/img_res/clean/100020194.gif"
+    },
+    "img_res/commodity/100020195.gif": {
+      "high": "reference/img_res/clean/100020195@2x.png",
+      "sha256": "73bc9d5886f2355ad6bd900bb1fe4a152289cab867c8fe166475e1a48f0be077",
+      "source": "resources/pet/img_res/clean/100020195.gif"
+    },
+    "img_res/commodity/100020196.gif": {
+      "high": "reference/img_res/clean/100020196@2x.png",
+      "sha256": "63cc8adc61ddd75dfe9a01c62926e43c260e3af9539f733c6d6aa002c677cd85",
+      "source": "resources/pet/img_res/clean/100020196.gif"
+    },
+    "img_res/commodity/100020197.gif": {
+      "high": "reference/img_res/clean/100020197@2x.png",
+      "sha256": "dca4885a471cf0269654c762dd3aaaf40c4f783722533655a859adca96c25f76",
+      "source": "resources/pet/img_res/clean/100020197.gif"
+    },
+    "img_res/commodity/100020198.gif": {
+      "high": "reference/img_res/clean/100020198@2x.png",
+      "sha256": "6636d7463f25c1834601de526d361cc3f3dd768ec3acfb821e81b251d5f7ce97",
+      "source": "resources/pet/img_res/clean/100020198.gif"
+    },
+    "img_res/commodity/100020199.gif": {
+      "high": "reference/img_res/clean/100020199@2x.png",
+      "sha256": "397848bbd5384193f26e943fe8fee58c1588145029b43c1aa0ffdc6640473627",
+      "source": "resources/pet/img_res/clean/100020199.gif"
+    },
+    "img_res/commodity/100020200.gif": {
+      "high": "reference/img_res/clean/100020200@2x.png",
+      "sha256": "b479c4626d4b622adfa7a33d5d823c1d0c43bbfdf46a28642197cf3a7d007126",
+      "source": "resources/pet/img_res/clean/100020200.gif"
+    },
+    "img_res/commodity/100020201.gif": {
+      "high": "reference/img_res/clean/100020201@2x.png",
+      "sha256": "7a27592d7a557b2d5bb45a9bc320c6b7dbfaddf4661092265d8a4ede9e36e310",
+      "source": "resources/pet/img_res/clean/100020201.gif"
+    },
+    "img_res/commodity/100020202.gif": {
+      "high": "reference/img_res/clean/100020202@2x.png",
+      "sha256": "0c14e7bb15d8b0459ea3eaac86c3d84749e38fff0b74e88eed4cf114d80af425",
+      "source": "resources/pet/img_res/clean/100020202.gif"
+    },
+    "img_res/commodity/100020203.gif": {
+      "high": "reference/img_res/clean/100020203@2x.png",
+      "sha256": "5098eb1d0d5196ddf8e72ab3426fe66c197f9a3f1662a3b81aee406758430f61",
+      "source": "resources/pet/img_res/clean/100020203.gif"
+    },
+    "img_res/commodity/100020204.gif": {
+      "high": "reference/img_res/clean/100020204@2x.png",
+      "sha256": "3df72c6e4ea3d1ea462fd3b57b67744e20b5332454f3baade6fd98010d3eedd0",
+      "source": "resources/pet/img_res/clean/100020204.gif"
+    },
+    "img_res/commodity/100020205.gif": {
+      "high": "reference/img_res/clean/100020205@2x.png",
+      "sha256": "c6d8d95e7009f524218b5992fc7379291c93ef8f5db33f125a6c1bca17c796b8",
+      "source": "resources/pet/img_res/clean/100020205.gif"
+    },
+    "img_res/commodity/100020206.gif": {
+      "high": "reference/img_res/clean/100020206@2x.png",
+      "sha256": "f8b0a6c298e99dc1a94ec23775861857ed85b61b22593b39033290046b18aff7",
+      "source": "resources/pet/img_res/clean/100020206.gif"
+    },
+    "img_res/commodity/100020207.gif": {
+      "high": "reference/img_res/clean/100020207@2x.png",
+      "sha256": "69e3eb4c093b80805f8c14feb7a5d066e9d5ade6788a7f6cf92a60231e80857a",
+      "source": "resources/pet/img_res/clean/100020207.gif"
+    },
+    "img_res/commodity/100020208.gif": {
+      "high": "reference/img_res/clean/100020208@2x.png",
+      "sha256": "25603204008a041b6d2c86fa71083187f2d6bb891c2cffd7f1044a2497628335",
+      "source": "resources/pet/img_res/clean/100020208.gif"
+    },
+    "img_res/commodity/100020209.gif": {
+      "high": "reference/img_res/clean/100020209@2x.png",
+      "sha256": "e77370e9289af0e84e282775d0a1d69a1e04c8d8fd933e6a385846bb53bbe96d",
+      "source": "resources/pet/img_res/clean/100020209.gif"
+    },
+    "img_res/commodity/100020210.gif": {
+      "high": "reference/img_res/clean/100020210@2x.png",
+      "sha256": "27a1b56a7bfe7fb7ab5c4c15fbf01057c403696e15d71a04b79067df4905449c",
+      "source": "resources/pet/img_res/clean/100020210.gif"
+    },
+    "img_res/commodity/100020211.gif": {
+      "high": "reference/img_res/clean/100020211@2x.png",
+      "sha256": "04d89d4d59b91670eba63afd252383a7e9bc4230dc04d2af67f7bf743defd9c0",
+      "source": "resources/pet/img_res/clean/100020211.gif"
+    },
+    "img_res/commodity/100020212.gif": {
+      "high": "reference/img_res/clean/100020212@2x.png",
+      "sha256": "9d6922a064f7accb9fb485c6344347440290b51c01b96056769f0e6180ca3fbd",
+      "source": "resources/pet/img_res/clean/100020212.gif"
+    },
+    "img_res/commodity/100020213.gif": {
+      "high": "reference/img_res/clean/100020213@2x.png",
+      "sha256": "106610b4aa019f9a1a0c2f10f73c0d26e709a1ea537b18180f41a491a99e839e",
+      "source": "resources/pet/img_res/clean/100020213.gif"
+    },
+    "img_res/commodity/100020214.gif": {
+      "high": "reference/img_res/clean/100020214@2x.png",
+      "sha256": "37ed521bb67b55c5b4d375b71d839a38f2e56e5a0460e2c58c4895d2c87c9964",
+      "source": "resources/pet/img_res/clean/100020214.gif"
+    },
+    "img_res/commodity/100020215.gif": {
+      "high": "reference/img_res/clean/100020215@2x.png",
+      "sha256": "0cf41142b2bfa78a52ea617344684856e74a9784ce9198b7df0e21eddd78245f",
+      "source": "resources/pet/img_res/clean/100020215.gif"
+    },
+    "img_res/commodity/100020216.gif": {
+      "high": "reference/img_res/clean/100020216@2x.png",
+      "sha256": "d0d187750ffdfa43e1482bf3c968f608d169920e971e70142d5bb018f9be0397",
+      "source": "resources/pet/img_res/clean/100020216.gif"
+    },
+    "img_res/commodity/100020217.gif": {
+      "high": "reference/img_res/clean/100020217@2x.png",
+      "sha256": "492a950ac7fa9409bb39a46f65ce6457fde86343f7b54f1b0121c45e3ac117d1",
+      "source": "resources/pet/img_res/clean/100020217.gif"
+    },
+    "img_res/commodity/100020218.gif": {
+      "high": "reference/img_res/clean/100020218@2x.png",
+      "sha256": "5884d2e1af68516d053da104e8fc9d5a16baf3795339d39d47ac1589809da641",
+      "source": "resources/pet/img_res/clean/100020218.gif"
+    },
+    "img_res/commodity/100020219.gif": {
+      "high": "reference/img_res/clean/100020219@2x.png",
+      "sha256": "7adf5d575066cc898d926b95a89fefe943e96315021885c5b9187d400825f957",
+      "source": "resources/pet/img_res/clean/100020219.gif"
+    },
+    "img_res/commodity/100020220.gif": {
+      "high": "reference/img_res/clean/100020220@2x.png",
+      "sha256": "486421c4de79297281bd6b8ffc105f5a718b7d779b8eaf7138fd8095d00dd65b",
+      "source": "resources/pet/img_res/clean/100020220.gif"
+    },
+    "img_res/commodity/100020221.gif": {
+      "high": "reference/img_res/clean/100020221@2x.png",
+      "sha256": "80844daad14411c0913c6e95c23be870c12ea68d4b715b87774ad8b03a90ae5f",
+      "source": "resources/pet/img_res/clean/100020221.gif"
+    },
+    "img_res/commodity/100020222.gif": {
+      "high": "reference/img_res/clean/100020222@2x.png",
+      "sha256": "bafff9b1e853393d5e184c1579b91c828f2cfe29a3da78b7c3c2939e37eb886f",
+      "source": "resources/pet/img_res/clean/100020222.gif"
+    },
+    "img_res/commodity/100020223.gif": {
+      "high": "reference/img_res/clean/100020223@2x.png",
+      "sha256": "4ef339cc51e4483869b48c47fa3ca93dc536290cc50f2f50733aba38fb22da4d",
+      "source": "resources/pet/img_res/clean/100020223.gif"
+    },
+    "img_res/commodity/100020224.gif": {
+      "high": "reference/img_res/clean/100020224@2x.png",
+      "sha256": "25df9081a369271736e3d53c3a510873a176affc6612b4232f90b739c7988443",
+      "source": "resources/pet/img_res/clean/100020224.gif"
+    },
+    "img_res/commodity/100020225.gif": {
+      "high": "reference/img_res/clean/100020225@2x.png",
+      "sha256": "93ebb0e967be355c4c7cac2e69505c0dda51dd02b2fab5a3f907dfb7238bf995",
+      "source": "resources/pet/img_res/clean/100020225.gif"
+    },
+    "img_res/commodity/100020226.gif": {
+      "high": "reference/img_res/clean/100020226@2x.png",
+      "sha256": "71b0b21b927cfd64c5fede6ae9ac57c07fbe1fe6284b32d7f0d285c606c558fa",
+      "source": "resources/pet/img_res/clean/100020226.gif"
+    },
+    "img_res/commodity/100020227.gif": {
+      "high": "reference/img_res/clean/100020227@2x.png",
+      "sha256": "9a6e2e56af45bfbe2ea5bb4fb9292000d9e381fcb1f5290655c0b647ac2df39c",
+      "source": "resources/pet/img_res/clean/100020227.gif"
+    },
+    "img_res/commodity/100020228.gif": {
+      "high": "reference/img_res/clean/100020228@2x.png",
+      "sha256": "9780a51dbd7554dce885d66990b99ea73b226cfea68a991a918f67b73d756833",
+      "source": "resources/pet/img_res/clean/100020228.gif"
+    },
+    "img_res/commodity/100020229.gif": {
+      "high": "reference/img_res/clean/100020229@2x.png",
+      "sha256": "7d6ef20ae3736dee320f3ca3840aa6154c013dfaeca8c8d2fa8ab1cd59f519bd",
+      "source": "resources/pet/img_res/clean/100020229.gif"
+    },
+    "img_res/commodity/100020230.gif": {
+      "high": "reference/img_res/clean/100020230@2x.png",
+      "sha256": "4205f9198e18cb5c41444037408d5328a0665a68850f2137335b1d8adcaaae41",
+      "source": "resources/pet/img_res/clean/100020230.gif"
+    },
+    "img_res/commodity/100020231.gif": {
+      "high": "reference/img_res/clean/100020231@2x.png",
+      "sha256": "43cff48808a79e0d6f629d3ea3d5e0d63a72a18c4b8062d19633e6d867f6ac61",
+      "source": "resources/pet/img_res/clean/100020231.gif"
+    },
+    "img_res/commodity/100020232.gif": {
+      "high": "reference/img_res/clean/100020232@2x.png",
+      "sha256": "d2e1cd4fff0cb287a5044c60e7bebfadd5d2cd10fcc1fcd972839d9f90adaab7",
+      "source": "resources/pet/img_res/clean/100020232.gif"
+    },
+    "img_res/commodity/100020233.gif": {
+      "high": "reference/img_res/clean/100020233@2x.png",
+      "sha256": "4512415535d2c74bb36813a31d3aef9b57072b0b786285b2b6e839cab7c6df20",
+      "source": "resources/pet/img_res/clean/100020233.gif"
+    },
+    "img_res/commodity/100020234.gif": {
+      "high": "reference/img_res/clean/100020234@2x.png",
+      "sha256": "ef61caec8d04a541fea527e34931f705bee270a1391a3c995c421f3309e0a0d5",
+      "source": "resources/pet/img_res/clean/100020234.gif"
+    },
+    "img_res/commodity/100020235.gif": {
+      "high": "reference/img_res/clean/100020235@2x.png",
+      "sha256": "6b21329d9b449e86fe4cb392a79ada01697954492cf4087cf35a5db5673d62f2",
+      "source": "resources/pet/img_res/clean/100020235.gif"
+    },
+    "img_res/commodity/100020236.gif": {
+      "high": "reference/img_res/clean/100020236@2x.png",
+      "sha256": "98e09906e3f94370ce7b0f42e6e520d9a6f93d06ecfeca182b424b276ad554e3",
+      "source": "resources/pet/img_res/clean/100020236.gif"
+    },
+    "img_res/commodity/100020237.gif": {
+      "high": "reference/img_res/clean/100020237@2x.png",
+      "sha256": "c4725a8abd0564c0d1a863c5b9314a61b27d65cee211b5534a381a5b9e8f625e",
+      "source": "resources/pet/img_res/clean/100020237.gif"
+    },
+    "img_res/commodity/100020238.gif": {
+      "high": "reference/img_res/clean/100020238@2x.png",
+      "sha256": "f638998244d96b965077b561876501fdd6c39dfd5fc9243e0aa40a06f7913cd2",
+      "source": "resources/pet/img_res/clean/100020238.gif"
+    },
+    "img_res/commodity/100020239.gif": {
+      "high": "reference/img_res/clean/100020239@2x.png",
+      "sha256": "053e93557c132cceee376d9f7e83424ab6c5ae2aeb8358ebd99a1d7a9c21fe51",
+      "source": "resources/pet/img_res/clean/100020239.gif"
+    },
+    "img_res/commodity/100020240.gif": {
+      "high": "reference/img_res/clean/100020240@2x.png",
+      "sha256": "68cbbd7a7577d3ae42643d9c824a2a5724cb3218a62b98447ea26c19648dac3c",
+      "source": "resources/pet/img_res/clean/100020240.gif"
+    },
+    "img_res/commodity/10002031.gif": {
+      "high": "reference/img_res/clean/10002031@2x.png",
+      "sha256": "9c1d5a93a051f313bc18e8702bb191eb42ba4596a0a4ac1b62db42fd5353c196",
+      "source": "resources/pet/img_res/clean/10002031.gif"
+    },
+    "img_res/commodity/10021001.gif": {
+      "high": "reference/img_res/clean/10021001@2x.png",
+      "sha256": "e5166efd6395e51e163d53656e2a8666f1884b485d3b5589a5d8239a43a5f18b",
+      "source": "resources/pet/img_res/clean/10021001.gif"
+    },
+    "img_res/commodity/10021002.gif": {
+      "high": "reference/img_res/clean/10021002@2x.png",
+      "sha256": "978f7b56d82169a95c03bfbc6e2b8d0199b10ec9f3b2fb62af137398bf2db260",
+      "source": "resources/pet/img_res/clean/10021002.gif"
+    },
+    "img_res/commodity/10021003.gif": {
+      "high": "reference/img_res/clean/10021003@2x.png",
+      "sha256": "2a35208da725f5b87065a1807009b4dfe131c4b6be58b8c9f319f68f75f0eec9",
+      "source": "resources/pet/img_res/clean/10021003.gif"
+    },
+    "img_res/commodity/10021004.gif": {
+      "high": "reference/img_res/clean/10021004@2x.png",
+      "sha256": "c5749651f176784ca6c993799fc6be135d74b511c5bbe991d86b42bfa0dcb447",
+      "source": "resources/pet/img_res/clean/10021004.gif"
+    },
+    "img_res/commodity/10021005.gif": {
+      "high": "reference/img_res/clean/10021005@2x.png",
+      "sha256": "5ac2697b9f4d08b6aa129061e65217640cba599d646084cd957686e5942caf18",
+      "source": "resources/pet/img_res/clean/10021005.gif"
+    },
+    "img_res/commodity/10021006.gif": {
+      "high": "reference/img_res/clean/10021006@2x.png",
+      "sha256": "432a0d7fcd518852fa68325f1c31f74ead535e96e146892d1a3acf1b8e10c1e5",
+      "source": "resources/pet/img_res/clean/10021006.gif"
+    },
+    "img_res/commodity/10021007.gif": {
+      "high": "reference/img_res/clean/10021007@2x.png",
+      "sha256": "bcf1fbd5e555eba734b86a311fe9a69de867961f47d2142fccb52ddaf1d7d9af",
+      "source": "resources/pet/img_res/clean/10021007.gif"
+    },
+    "img_res/commodity/10021008.gif": {
+      "high": "reference/img_res/clean/10021008@2x.png",
+      "sha256": "1c2fa4bdc1be4f91f3f3b61fbe13be4a36ffc7a09115d5ba827bf8dfa52da4fa",
+      "source": "resources/pet/img_res/clean/10021008.gif"
+    },
+    "img_res/commodity/10021009.gif": {
+      "high": "reference/img_res/clean/10021009@2x.png",
+      "sha256": "80c42717a94d7520f437f9ef5823009b6342684ac78b5cd5ab1d7cc354392706",
+      "source": "resources/pet/img_res/clean/10021009.gif"
+    },
+    "img_res/commodity/10021010.gif": {
+      "high": "reference/img_res/clean/10021010@2x.png",
+      "sha256": "e24e58618e8e02aca812c70c37fb7be374d46975df009b67e303491f86961e3f",
+      "source": "resources/pet/img_res/clean/10021010.gif"
+    },
+    "img_res/commodity/10021011.gif": {
+      "high": "reference/img_res/clean/10021011@2x.png",
+      "sha256": "7276a5da43e7a5c7dec08650de6b4396b4d7d82a7f8e4c6f61cd8002856985b6",
+      "source": "resources/pet/img_res/clean/10021011.gif"
+    },
+    "img_res/commodity/10021012.gif": {
+      "high": "reference/img_res/clean/10021012@2x.png",
+      "sha256": "dce7fd15d52e940f0601a5f8eb0b88b438696c3e29121af85a2df552ee229511",
+      "source": "resources/pet/img_res/clean/10021012.gif"
+    },
+    "img_res/commodity/10021013.gif": {
+      "high": "reference/img_res/clean/10021013@2x.png",
+      "sha256": "82651f74b6827096b6f4c672e6e0adde2f3004a443d5596b4ac71dd472cb34e5",
+      "source": "resources/pet/img_res/clean/10021013.gif"
+    },
+    "img_res/commodity/10021014.gif": {
+      "high": "reference/img_res/clean/10021014@2x.png",
+      "sha256": "1f959cc0e5349bf3b8b30b8a2135a8486631e657962f159d12b08dca23f93f4f",
+      "source": "resources/pet/img_res/clean/10021014.gif"
+    },
+    "img_res/commodity/10021015.gif": {
+      "high": "reference/img_res/clean/10021015@2x.png",
+      "sha256": "02f7138a0889c8049cb7401bb9719fae8f8ef050976fd6a60d1b25bb11b65d67",
+      "source": "resources/pet/img_res/clean/10021015.gif"
+    },
+    "img_res/commodity/10021016.gif": {
+      "high": "reference/img_res/clean/10021016@2x.png",
+      "sha256": "8c4bb12bb84d176576b25247f67d086024f3581e9388f55d90f0fd6be3d95843",
+      "source": "resources/pet/img_res/clean/10021016.gif"
+    },
+    "img_res/commodity/10021017.gif": {
+      "high": "reference/img_res/clean/10021017@2x.png",
+      "sha256": "d692447952672733697ce59db77fb0b42bdb1c111a274d4d8d8b7e0de7824f35",
+      "source": "resources/pet/img_res/clean/10021017.gif"
+    },
+    "img_res/commodity/10021018.gif": {
+      "high": "reference/img_res/clean/10021018@2x.png",
+      "sha256": "3f251e120a220d0a76a630b1e4938df27c0d2a49bd43eb3416884bd88044eac5",
+      "source": "resources/pet/img_res/clean/10021018.gif"
+    },
+    "img_res/commodity/10021019.gif": {
+      "high": "reference/img_res/clean/10021019@2x.png",
+      "sha256": "0d660b93c9c7a1f8af98fa2f69828d32b85af3a073d2676af699cd9944a87c76",
+      "source": "resources/pet/img_res/clean/10021019.gif"
+    },
+    "img_res/commodity/10021020.gif": {
+      "high": "reference/img_res/clean/10021020@2x.png",
+      "sha256": "6572bc03ea62fec00b089404d10608639b5ab9ef038a347e8ed904ea781d8aae",
+      "source": "resources/pet/img_res/clean/10021020.gif"
+    },
+    "img_res/commodity/10021021.gif": {
+      "high": "reference/img_res/clean/10021021@2x.png",
+      "sha256": "1b3031304bb57496bb62c41b6e379fb6d4605e3698dca829116ae5e48fd25705",
+      "source": "resources/pet/img_res/clean/10021021.gif"
+    },
+    "img_res/commodity/10021022.gif": {
+      "high": "reference/img_res/clean/10021022@2x.png",
+      "sha256": "ef51117288fc9d5fdbbf6c1feb083e85d56bff24d511bf9b02ea4b7953437145",
+      "source": "resources/pet/img_res/clean/10021022.gif"
+    },
+    "img_res/commodity/10021023.gif": {
+      "high": "reference/img_res/clean/10021023@2x.png",
+      "sha256": "55a1494620746a50fd098b6ba554496b400d7e38c14b25bcc7bca48a62f6d0b5",
+      "source": "resources/pet/img_res/clean/10021023.gif"
+    },
+    "img_res/commodity/10021024.gif": {
+      "high": "reference/img_res/clean/10021024@2x.png",
+      "sha256": "83c62499cbb0afdfd02a2be6f6f16c4aafb0ab316cca0048008969f6df253328",
+      "source": "resources/pet/img_res/clean/10021024.gif"
+    },
+    "img_res/commodity/10021025.gif": {
+      "high": "reference/img_res/clean/10021025@2x.png",
+      "sha256": "e8a36d09a46ee5a300e5ebb7cb7cbec848b08a942dbb730c9072a4aefe6d75dd",
+      "source": "resources/pet/img_res/clean/10021025.gif"
+    },
+    "img_res/commodity/10021026.gif": {
+      "high": "reference/img_res/clean/10021026@2x.png",
+      "sha256": "d68a1a68b4743e1491a52df116f7ba3dba88fe0c318a78aef3293d141fe27f15",
+      "source": "resources/pet/img_res/clean/10021026.gif"
+    },
+    "img_res/commodity/10021027.gif": {
+      "high": "reference/img_res/clean/10021027@2x.png",
+      "sha256": "d460f10d53fb4fa2e2fd2c2da450afb919879b1957ea38ca6b06a47df80408b1",
+      "source": "resources/pet/img_res/clean/10021027.gif"
+    },
+    "img_res/commodity/10021028.gif": {
+      "high": "reference/img_res/clean/10021028@2x.png",
+      "sha256": "97c079516ba0c56c4faa652617f13540f811305de9f567ddd0503bc70d0b0118",
+      "source": "resources/pet/img_res/clean/10021028.gif"
+    },
+    "img_res/commodity/10021029.gif": {
+      "high": "reference/img_res/clean/10021029@2x.png",
+      "sha256": "4518da6aa90b8ea064d70b4ce146ce0b0c6d6060cd09ab87d5d0423decdcd4fb",
+      "source": "resources/pet/img_res/clean/10021029.gif"
+    },
+    "img_res/commodity/10021030.gif": {
+      "high": "reference/img_res/clean/10021030@2x.png",
+      "sha256": "32bfe7b1a9b2297e2a0891e6693016091218c5880a0fefe71da7a1aa5b9c84b8",
+      "source": "resources/pet/img_res/clean/10021030.gif"
+    },
+    "img_res/commodity/102020001.gif": {
+      "high": "reference/img_res/clean/102020001@2x.png",
+      "sha256": "a0ad5bdaa7e33aa83f4dfda9174c913b06e9dfec4c86d1ca7c57484a0ebb12f1",
+      "source": "resources/pet/img_res/clean/102020001.gif"
+    },
+    "img_res/commodity/102020002.gif": {
+      "high": "reference/img_res/clean/102020002@2x.png",
+      "sha256": "7c1795be9e0f9624a82a3683956bcc64c1b786904d020076fd4cda01bbe0f2ea",
+      "source": "resources/pet/img_res/clean/102020002.gif"
+    },
+    "img_res/commodity/102020003.gif": {
+      "high": "reference/img_res/clean/102020003@2x.png",
+      "sha256": "88db9def37af7fba2b46a58af76d4eafaaeecf18e608e2e63b7c8c7eac960e1a",
+      "source": "resources/pet/img_res/clean/102020003.gif"
+    },
+    "img_res/commodity/102020005.gif": {
+      "high": "reference/img_res/clean/102020005@2x.png",
+      "sha256": "468b6ddf3dffc1d5aba19b18e03d8e774f8ee267f75268f4fef2b3c55707abc0",
+      "source": "resources/pet/img_res/clean/102020005.gif"
+    },
+    "img_res/commodity/102020006.gif": {
+      "high": "reference/img_res/clean/102020006@2x.png",
+      "sha256": "b8843798a0370b7bba3c0089c91eb7bdd3e2f614aaf1f6dc779ca044964b7bbe",
+      "source": "resources/pet/img_res/clean/102020006.gif"
+    },
+    "img_res/commodity/102020007.gif": {
+      "high": "reference/img_res/clean/102020007@2x.png",
+      "sha256": "10cdfe888f839f31e90e68e5fb539155bf398d355bf1fb5dea577d79732a5bcc",
+      "source": "resources/pet/img_res/clean/102020007.gif"
+    },
+    "img_res/commodity/102020008.gif": {
+      "high": "reference/img_res/clean/102020008@2x.png",
+      "sha256": "51ef9782b9ca31503c0e5a9426b21ad17e9bf545de3251244c4546225e05bd2a",
+      "source": "resources/pet/img_res/clean/102020008.gif"
+    },
+    "img_res/commodity/102020009.gif": {
+      "high": "reference/img_res/clean/102020009@2x.png",
+      "sha256": "b8e34847b7f17b726c0d2ec8bc1010787ceb45c0b93d39d1d5b94db5d996dde1",
+      "source": "resources/pet/img_res/clean/102020009.gif"
+    },
+    "img_res/commodity/102020010.gif": {
+      "high": "reference/img_res/clean/102020010@2x.png",
+      "sha256": "8428d334a80d1275918f09cb9578b492a4bbddd20493e352cd77b8c9d3b8827a",
+      "source": "resources/pet/img_res/clean/102020010.gif"
+    },
+    "img_res/commodity/102020011.gif": {
+      "high": "reference/img_res/clean/102020011@2x.png",
+      "sha256": "101559b93af9561146ddd537e3af022d800f2956760387abdfe8a71049667cd4",
+      "source": "resources/pet/img_res/clean/102020011.gif"
+    },
+    "img_res/commodity/102020012.gif": {
+      "high": "reference/img_res/clean/102020012@2x.png",
+      "sha256": "40f81cff86407011d32eace1fc9b1b57f89d1019f0590dcedbe022d4a3e3f630",
+      "source": "resources/pet/img_res/clean/102020012.gif"
+    },
+    "img_res/commodity/102020013.gif": {
+      "high": "reference/img_res/clean/102020013@2x.png",
+      "sha256": "9491973734e3b09680837b6ad653149dcd0ebd58fbab076334cd642e4d6db20e",
+      "source": "resources/pet/img_res/clean/102020013.gif"
+    },
+    "img_res/commodity/102020014.gif": {
+      "high": "reference/img_res/clean/102020014@2x.png",
+      "sha256": "73138bae4528f6003eb7cd6344ac55409a569dd4b293b530b1634fab4c3df916",
+      "source": "resources/pet/img_res/clean/102020014.gif"
+    },
+    "img_res/commodity/102020015.gif": {
+      "high": "reference/img_res/clean/102020015@2x.png",
+      "sha256": "3b8c87b0e7cafd38287d03937a02b70524472705bcf1e0ea1b4545fd44944c7f",
+      "source": "resources/pet/img_res/clean/102020015.gif"
+    },
+    "img_res/commodity/102020016.gif": {
+      "high": "reference/img_res/clean/102020016@2x.png",
+      "sha256": "553bd8155556fc925c82e32be9c25661af870bea93d30da268546faf8981fe59",
+      "source": "resources/pet/img_res/clean/102020016.gif"
+    },
+    "img_res/commodity/102020017.gif": {
+      "high": "reference/img_res/clean/102020017@2x.png",
+      "sha256": "72863a77e190834608b5486aca04c6f5907a9b89445a01cbcc03e9622aa78c7d",
+      "source": "resources/pet/img_res/clean/102020017.gif"
+    },
+    "img_res/commodity/102020018.gif": {
+      "high": "reference/img_res/clean/102020018@2x.png",
+      "sha256": "d4e3bb53855da37128374672716fdd7f4ffaa09e11fc863941ce4c629b54ed31",
+      "source": "resources/pet/img_res/clean/102020018.gif"
+    },
+    "img_res/commodity/102020019.gif": {
+      "high": "reference/img_res/clean/102020019@2x.png",
+      "sha256": "15e655c203a95245153599d37fe9e97acceaa2fe853f460b008459a9df080a86",
+      "source": "resources/pet/img_res/clean/102020019.gif"
+    },
+    "img_res/commodity/102020020.gif": {
+      "high": "reference/img_res/clean/102020020@2x.png",
+      "sha256": "9311c8f5ac41960ce770ef0684800753b6b6a85dd3d68e48edfdeaef45c551a8",
+      "source": "resources/pet/img_res/clean/102020020.gif"
+    },
+    "img_res/commodity/102020021.gif": {
+      "high": "reference/img_res/clean/102020021@2x.png",
+      "sha256": "fcf075789bcbd58d86dc0340465b994a8261275cfb0114a6d46e937f3549c4e2",
+      "source": "resources/pet/img_res/clean/102020021.gif"
+    },
+    "img_res/commodity/102020022.gif": {
+      "high": "reference/img_res/clean/102020022@2x.png",
+      "sha256": "4b1a7925e0bb48e63dcf307f323f5795d56ebf98d3eb93df5afcdd3e382f50a2",
+      "source": "resources/pet/img_res/clean/102020022.gif"
+    },
+    "img_res/commodity/102020023.gif": {
+      "high": "reference/img_res/clean/102020023@2x.png",
+      "sha256": "71893fadeb3c32d599447101f12a0dcf53a9e1248a7fbafbaa9dba0228f7a586",
+      "source": "resources/pet/img_res/clean/102020023.gif"
+    },
+    "img_res/commodity/102020024.gif": {
+      "high": "reference/img_res/clean/102020024@2x.png",
+      "sha256": "01be1fab578d0f4913ad92088445aef25e9bfa69e18decaa020d4841d16cf031",
+      "source": "resources/pet/img_res/clean/102020024.gif"
+    },
+    "img_res/commodity/102020025.gif": {
+      "high": "reference/img_res/clean/102020025@2x.png",
+      "sha256": "f4a502a2554c1ce5d648733347cba2695199799c9cc063892abbe327f5a2b4aa",
+      "source": "resources/pet/img_res/clean/102020025.gif"
+    },
+    "img_res/commodity/102020026.gif": {
+      "high": "reference/img_res/clean/102020026@2x.png",
+      "sha256": "2f6c80cee237b5d40f177fcb08d657465c6705ecaf72c0e2f418f1a56c1c7221",
+      "source": "resources/pet/img_res/clean/102020026.gif"
+    },
+    "img_res/commodity/102020027.gif": {
+      "high": "reference/img_res/clean/102020027@2x.png",
+      "sha256": "2c9636a7d5c6107e3fccbaa4f0d3ce57f14751345e73762af5f44e1249e775c4",
+      "source": "resources/pet/img_res/clean/102020027.gif"
+    },
+    "img_res/commodity/102020028.gif": {
+      "high": "reference/img_res/clean/102020028@2x.png",
+      "sha256": "5a4bfb2593041400fe146038a096486a23e635946b5ed696d53e62ef6454d178",
+      "source": "resources/pet/img_res/clean/102020028.gif"
+    },
+    "img_res/commodity/102020029.gif": {
+      "high": "reference/img_res/clean/102020029@2x.png",
+      "sha256": "5e2894f3fd8f9e2477d226525eab6d8b6666f0f23613e9cfcd6f517f0005de41",
+      "source": "resources/pet/img_res/clean/102020029.gif"
+    },
+    "img_res/commodity/102020030.gif": {
+      "high": "reference/img_res/clean/102020030@2x.png",
+      "sha256": "79a08700e111b8c5dc63f45320c8677926138724100b42c4812507f50a5ee8c0",
+      "source": "resources/pet/img_res/clean/102020030.gif"
+    },
+    "img_res/commodity/102020031.gif": {
+      "high": "reference/img_res/clean/102020031@2x.png",
+      "sha256": "5691b6dee6b26d792136065c161b7297a799af219b524d4c6f8dadb2badcd5ca",
+      "source": "resources/pet/img_res/clean/102020031.gif"
+    },
+    "img_res/commodity/102020032.gif": {
+      "high": "reference/img_res/clean/102020032@2x.png",
+      "sha256": "43b52a01888e8a58bf73cf369cb6aad632fa90a247e9a1a3bfa495d0103fa593",
+      "source": "resources/pet/img_res/clean/102020032.gif"
+    },
+    "img_res/commodity/102020033.gif": {
+      "high": "reference/img_res/clean/102020033@2x.png",
+      "sha256": "bcfbaf2a0105eaa1cb4a71f2d8295cc0dccadb781a363867960263f8c3c60c4a",
+      "source": "resources/pet/img_res/clean/102020033.gif"
+    },
+    "img_res/commodity/102020034.gif": {
+      "high": "reference/img_res/clean/102020034@2x.png",
+      "sha256": "cff04d578e750ecc9d29887c5585998b60182b6338347874c13253b004ac5143",
+      "source": "resources/pet/img_res/clean/102020034.gif"
+    },
+    "img_res/commodity/102020035.gif": {
+      "high": "reference/img_res/clean/102020035@2x.png",
+      "sha256": "1b9dde6c62fefed3011bd7894a8fead1e05b73f10585c5b815f86f0693a859f4",
+      "source": "resources/pet/img_res/clean/102020035.gif"
+    },
+    "img_res/commodity/102020036.gif": {
+      "high": "reference/img_res/clean/102020036@2x.png",
+      "sha256": "af372362f0f46a295dc9f0e5e2a98adb6875ba8805c15fe60300cad055e41ab3",
+      "source": "resources/pet/img_res/clean/102020036.gif"
+    },
+    "img_res/commodity/102020037.gif": {
+      "high": "reference/img_res/clean/102020037@2x.png",
+      "sha256": "e3fd964d05c1f4bf13790d28d7980364d7721b787e965c1ded7f7f8a7b06120b",
+      "source": "resources/pet/img_res/clean/102020037.gif"
+    },
+    "img_res/commodity/102020038.gif": {
+      "high": "reference/img_res/clean/102020038@2x.png",
+      "sha256": "fa160e23de3c220b11f60b4459b0404f8f974133e5f4806ed0ae36da38995c11",
+      "source": "resources/pet/img_res/clean/102020038.gif"
+    },
+    "img_res/commodity/102020039.gif": {
+      "high": "reference/img_res/clean/102020039@2x.png",
+      "sha256": "6eb0d308816a270d703673526cb23309fe224b450a7652571f3614add1ce36df",
+      "source": "resources/pet/img_res/clean/102020039.gif"
+    },
+    "img_res/commodity/102020040.gif": {
+      "high": "reference/img_res/clean/102020040@2x.png",
+      "sha256": "562d6ee82ba00db714a6df215be2f6dbc2a754f1abf198411059406aa0d5e080",
+      "source": "resources/pet/img_res/clean/102020040.gif"
+    },
+    "img_res/commodity/102020041.gif": {
+      "high": "reference/img_res/clean/102020041@2x.png",
+      "sha256": "84427a612a680a45039eb5455c61b63239a14ee765489d81ac10abd61fd3f849",
+      "source": "resources/pet/img_res/clean/102020041.gif"
+    },
+    "img_res/commodity/102020042.gif": {
+      "high": "reference/img_res/clean/102020042@2x.png",
+      "sha256": "a0199f84f40be84b9f5e056a0cc06053a66ac3c4c428c87500b80efb1955a749",
+      "source": "resources/pet/img_res/clean/102020042.gif"
+    },
+    "img_res/commodity/102020047.gif": {
+      "high": "reference/img_res/clean/102020047@2x.png",
+      "sha256": "5388de91034cb8c0c334a2af0f9e0bd893f3d2a824774bcb596f1edce8122489",
+      "source": "resources/pet/img_res/clean/102020047.gif"
+    },
+    "img_res/commodity/102020048.gif": {
+      "high": "reference/img_res/clean/102020048@2x.png",
+      "sha256": "60e3686005a6ba42e3a961e4bd9bd1e4e10c9b000fea7c8c869210d30acc0bac",
+      "source": "resources/pet/img_res/clean/102020048.gif"
+    },
+    "img_res/commodity/102020049.gif": {
+      "high": "reference/img_res/clean/102020049@2x.png",
+      "sha256": "1e054dae1aa2156df3caeb66d10db44b801663094a590c8d95f6da2d049cd861",
+      "source": "resources/pet/img_res/clean/102020049.gif"
+    },
+    "img_res/commodity/102020050.gif": {
+      "high": "reference/img_res/clean/102020050@2x.png",
+      "sha256": "d92c05746568bbba296beea979e23a3fc25a44c6eb4028e2ce9bd54d3614c6ca",
+      "source": "resources/pet/img_res/clean/102020050.gif"
+    },
+    "img_res/commodity/102020051.gif": {
+      "high": "reference/img_res/clean/102020051@2x.png",
+      "sha256": "8e0f2b68ff8259084927c2536c1c7aa1223808890e89f2b67ff3a7b5217cb5bf",
+      "source": "resources/pet/img_res/clean/102020051.gif"
+    },
+    "img_res/commodity/102020052.gif": {
+      "high": "reference/img_res/clean/102020052@2x.png",
+      "sha256": "1ca0c7fcab7d51bcf11e6cc6b355f7559d72cb95e7b1c1aa26980fa2b15a2ad0",
+      "source": "resources/pet/img_res/clean/102020052.gif"
+    },
+    "img_res/commodity/102020053.gif": {
+      "high": "reference/img_res/clean/102020053@2x.png",
+      "sha256": "c852b15375adb91c681c2846e42d122120fb498eacec3019e9512f418a155660",
+      "source": "resources/pet/img_res/clean/102020053.gif"
+    },
+    "img_res/commodity/102020054.gif": {
+      "high": "reference/img_res/clean/102020054@2x.png",
+      "sha256": "6705fd1c4516d1048f504a426c3c031ace1253faa035a39a1f9693a295179b1f",
+      "source": "resources/pet/img_res/clean/102020054.gif"
+    },
+    "img_res/commodity/102020055.gif": {
+      "high": "reference/img_res/clean/102020055@2x.png",
+      "sha256": "ceb3d7b1ff928e0d00d06459d6faddc604912758d165c7adf5500af613959feb",
+      "source": "resources/pet/img_res/clean/102020055.gif"
+    },
+    "img_res/commodity/1021200001.gif": {
+      "high": "reference/img_res/clean/1021200001@2x.png",
+      "sha256": "0c1c43cea18afc5fd616a5ae62fbf5a919921bc72f2aaa43dd8a8bae92fbb7a3",
+      "source": "resources/pet/img_res/clean/1021200001.gif"
+    },
+    "img_res/commodity/1021200002.gif": {
+      "high": "reference/img_res/clean/1021200002@2x.png",
+      "sha256": "43d237f181e561f3d18466d3ebe11936af356c8b93e76ba94824f04507593852",
+      "source": "resources/pet/img_res/clean/1021200002.gif"
+    },
+    "login/UI/Button_close_00.png": {
+      "high": "reference/answerQuestions/Button_close_00@2x.png",
+      "sha256": "55086d0e5d77f50672b0176270d92fbdc3ac8ec67db582ea6c3ef8a7d16ad5e4",
+      "source": "resources/pet/answerQuestions/Button_close_00.png"
+    },
+    "login/UI/Button_close_01.png": {
+      "high": "reference/answerQuestions/Button_close_01@2x.png",
+      "sha256": "679bb07d167bc1afb363b9b705fb9f33060cb8cc427c554cb1adbaa12f941dce",
+      "source": "resources/pet/answerQuestions/Button_close_01.png"
+    },
+    "login/UI/Button_close_02.png": {
+      "high": "reference/answerQuestions/Button_close_02@2x.png",
+      "sha256": "f70af483f756d9325e8fa90024248fab768796ad9acc7856b0291066e901d3a8",
+      "source": "resources/pet/answerQuestions/Button_close_02.png"
+    },
+    "login/UI/Button_exit_00.png": {
+      "high": "reference/answerQuestions/Button_exit_00@2x.png",
+      "sha256": "b6de981a3be321a55d95913efdcd9242451b465d283815541732263d7dec61ad",
+      "source": "resources/pet/answerQuestions/Button_exit_00.png"
+    },
+    "login/UI/Button_exit_01.png": {
+      "high": "reference/answerQuestions/Button_exit_01@2x.png",
+      "sha256": "0dd0b17003a1fd901ab776f7e244f4099c7355f179d4f6e5e4e3a6628aaf1a42",
+      "source": "resources/pet/answerQuestions/Button_exit_01.png"
+    },
+    "login/UI/Button_exit_02.png": {
+      "high": "reference/answerQuestions/Button_exit_02@2x.png",
+      "sha256": "206d2385e1611e9c063bd0216b090f556686d2c6057e049f8491a53314a5e9ed",
+      "source": "resources/pet/answerQuestions/Button_exit_02.png"
+    },
+    "login/UI/exitbg.png": {
+      "high": "reference/answerQuestions/exitbg@2x.png",
+      "sha256": "fa7cc931f1fddef57ebb3424e5a10c6e16ba38db83fc35d817fffc2b16d562c4",
+      "source": "resources/pet/answerQuestions/exitbg.png"
+    },
+    "shop/store/Store_img/Card_Items.png": {
+      "high": "reference/shppingMall/bk/Card_Items@2x.png",
+      "sha256": "669bf40e65071a69c06f5a5e51df54db17596dd967b56c300381b7a06fb071ef",
+      "source": "resources/pet/shppingMall/bk/Card_Items.png"
+    },
+    "shop/store/Store_img/Items_SubTag_Selected.png": {
+      "high": "reference/shppingMall/menu/Items_SubTag_Selected@2x.png",
+      "sha256": "48553deb7a86eef3ae62b3211ddba6bb5fa376a2ac3a3112161f0206fe37135d",
+      "source": "resources/pet/shppingMall/menu/Items_SubTag_Selected.png"
+    },
+    "shop/store/Store_img/Sale_SubTag.png": {
+      "high": "reference/shppingMall/bk/Sale_SubTag@2x.png",
+      "sha256": "41131bc93e34622b7dad2069e5690466b32def84cc1c135cd0fc3556cb30f7ad",
+      "source": "resources/pet/shppingMall/bk/Sale_SubTag.png"
+    },
+    "shop/store/Store_img/Sale_SubTag_Selected.png": {
+      "high": "reference/shppingMall/menu/Sale_SubTag_Selected@2x.png",
+      "sha256": "e1705767ed956753d32324d507cf8f13d0b608eb9a5b47bd7b32f900ef50d163",
+      "source": "resources/pet/shppingMall/menu/Sale_SubTag_Selected.png"
+    },
+    "shop/store/Store_img/attr.gif": {
+      "high": "reference/shppingMall/bk/hot_8@2x.png",
+      "sha256": "0d182ff9e815faa598ee280a46eccdfd430b2b26e2b5bd7301adef32317818e0",
+      "source": "resources/pet/shppingMall/bk/hot_8.gif"
+    },
+    "shop/store/Store_img/discount.gif": {
+      "high": "reference/shppingMall/bk/hot_4@2x.png",
+      "sha256": "f0be91535fc92668360f042e433942eafd4eb36c9cb7fb787ecea2a4d910f9ca",
+      "source": "resources/pet/shppingMall/bk/hot_4.gif"
+    },
+    "shop/store/Store_img/hot.gif": {
+      "high": "reference/shppingMall/bk/hot_2@2x.png",
+      "sha256": "a4b9b8b6e0bd3c4abe6b574b4fdd2378fcf7d26b006a13ee94f2cf0559fed21b",
+      "source": "resources/pet/shppingMall/bk/hot_2.gif"
+    },
+    "shop/store/Store_img/new.gif": {
+      "high": "reference/shppingMall/bk/hot_1@2x.png",
+      "sha256": "bfa1147eb4e71e42b326cb8738bd9253b70e86f7f9963800e33df50ab6b0e7d0",
+      "source": "resources/pet/shppingMall/bk/hot_1.gif"
+    },
+    "shop/store/Store_img/page_first.png": {
+      "high": "reference/shppingMall/bk/page_first@2x.png",
+      "sha256": "a82749aeaf505e6beb4a83888becf950571bf26ac97542eb865857c4d15be816",
+      "source": "resources/pet/shppingMall/bk/page_first.png"
+    },
+    "shop/store/Store_img/page_last.png": {
+      "high": "reference/shppingMall/bk/page_last@2x.png",
+      "sha256": "8fe3cb035fd58533b0d015898cb14845e1423819451027728c523399332819db",
+      "source": "resources/pet/shppingMall/bk/page_last.png"
+    },
+    "shop/store/Store_img/page_left.png": {
+      "high": "reference/shppingMall/bk/page_left@2x.png",
+      "sha256": "e7a301680a02088a94097e8163769516c616e1d638f22f250948faf1064568dd",
+      "source": "resources/pet/shppingMall/bk/page_left.png"
+    },
+    "shop/store/Store_img/page_right.png": {
+      "high": "reference/shppingMall/bk/page_right@2x.png",
+      "sha256": "c2b9bc82dd8e187a61339bbc80b6918f7e0bdd1c1b9f6815ce61fcd3e51285f6",
+      "source": "resources/pet/shppingMall/bk/page_right.png"
+    },
+    "shop/store/Store_img/recommand.gif": {
+      "high": "reference/shppingMall/bk/hot_7@2x.png",
+      "sha256": "d74435c7a6936c05da30d03c3fc441a487545cb807ca0ee559668501428f0eec",
+      "source": "resources/pet/shppingMall/bk/hot_7.gif"
+    },
+    "shop/store/alert/alert_03.gif": {
+      "high": "reference/sysSeting/but@2x.png",
+      "sha256": "2ced9a442132a17b139819101015d183d910bbbf41939856e6d3dcc14a6e2dfc",
+      "source": "resources/pet/sysSeting/but.gif"
+    },
+    "shop/store/images/btn_empty.gif": {
+      "high": "reference/shppingMall/bk/btn_empty@2x.png",
+      "sha256": "0e68bf9489ac06d461eea001a875fbf85eed2659ec45295fd6bb353cf7e4c03e",
+      "source": "resources/pet/shppingMall/bk/btn_empty.gif"
+    },
+    "shop/store/images/buttom_03.gif": {
+      "high": "reference/shppingMall/bk/buttom_03@2x.png",
+      "sha256": "afac84b98fedf7aa44c583eca8fb84b1d988d7fe14224aa7503ea71704273d35",
+      "source": "resources/pet/shppingMall/bk/buttom_03.gif"
+    },
+    "shop/store/images/buy_03.gif": {
+      "high": "reference/shppingMall/bk/buy_03@2x.png",
+      "sha256": "3ef09489c784ff34df53899ce26f73a2291cc0eebfd56a3a8326e75a5135aeda",
+      "source": "resources/pet/shppingMall/bk/buy_03.gif"
+    },
+    "shop/store/images/hot_1.gif": {
+      "high": "reference/shppingMall/bk/hot_1@2x.png",
+      "sha256": "bfa1147eb4e71e42b326cb8738bd9253b70e86f7f9963800e33df50ab6b0e7d0",
+      "source": "resources/pet/shppingMall/bk/hot_1.gif"
+    },
+    "shop/store/images/hot_10.gif": {
+      "high": "reference/shppingMall/bk/hot_10@2x.png",
+      "sha256": "d6a858bcf43e429cd8bf101dfe5e4bb7c8ce9b91029d151a84bd4a91f89c8c9e",
+      "source": "resources/pet/shppingMall/bk/hot_10.gif"
+    },
+    "shop/store/images/hot_2.gif": {
+      "high": "reference/shppingMall/bk/hot_2@2x.png",
+      "sha256": "a4b9b8b6e0bd3c4abe6b574b4fdd2378fcf7d26b006a13ee94f2cf0559fed21b",
+      "source": "resources/pet/shppingMall/bk/hot_2.gif"
+    },
+    "shop/store/images/hot_3.gif": {
+      "high": "reference/shppingMall/bk/hot_3@2x.png",
+      "sha256": "6d5e3c248251eeb1e1b351e74f0a0b08a67c2b93e708e062375587101e490339",
+      "source": "resources/pet/shppingMall/bk/hot_3.gif"
+    },
+    "shop/store/images/hot_4.gif": {
+      "high": "reference/shppingMall/bk/hot_4@2x.png",
+      "sha256": "f0be91535fc92668360f042e433942eafd4eb36c9cb7fb787ecea2a4d910f9ca",
+      "source": "resources/pet/shppingMall/bk/hot_4.gif"
+    },
+    "shop/store/images/hot_5.gif": {
+      "high": "reference/shppingMall/bk/hot_5@2x.png",
+      "sha256": "b395e5652793737607f98c23686e47cc65e31486e0351b2c8838cd37c8b34d19",
+      "source": "resources/pet/shppingMall/bk/hot_5.gif"
+    },
+    "shop/store/images/hot_6.gif": {
+      "high": "reference/shppingMall/bk/hot_6@2x.png",
+      "sha256": "77b211de74bf42dddb0270476ba24a598aa04bd5b570c00f96514c2c38d8b635",
+      "source": "resources/pet/shppingMall/bk/hot_6.gif"
+    },
+    "shop/store/images/hot_7.gif": {
+      "high": "reference/shppingMall/bk/hot_7@2x.png",
+      "sha256": "d74435c7a6936c05da30d03c3fc441a487545cb807ca0ee559668501428f0eec",
+      "source": "resources/pet/shppingMall/bk/hot_7.gif"
+    },
+    "shop/store/images/hot_8.gif": {
+      "high": "reference/shppingMall/bk/hot_8@2x.png",
+      "sha256": "0d182ff9e815faa598ee280a46eccdfd430b2b26e2b5bd7301adef32317818e0",
+      "source": "resources/pet/shppingMall/bk/hot_8.gif"
+    },
+    "shop/store/images/hot_9.gif": {
+      "high": "reference/shppingMall/bk/hot_9@2x.png",
+      "sha256": "5e3b7ccc953ebf2c99f2d9957ef5d31258c7a1c67460d55445c55f54374deb35",
+      "source": "resources/pet/shppingMall/bk/hot_9.gif"
+    },
+    "shop/store/images/left_28.gif": {
+      "high": "reference/shppingMall/bk/left_28@2x.png",
+      "sha256": "37ab48ea74f91c5441887a4c6d8efe1f71f3ce23ef509e2e218766979f43f0f8",
+      "source": "resources/pet/shppingMall/bk/left_28.gif"
+    },
+    "shop/store/images/mallr_03.gif": {
+      "high": "reference/shppingMall/bk/mallr_03@2x.png",
+      "sha256": "6a6c6f45d744622b932584581e3ea1560477b3b06e9a319a10dd4dfd4e9bd1db",
+      "source": "resources/pet/shppingMall/bk/mallr_03.gif"
+    },
+    "shop/store/images/malr_03.gif": {
+      "high": "reference/shppingMall/bk/malr_03@2x.png",
+      "sha256": "aa530bfb3c3384acb9ea66954712e38f7d711529bfc7d914469e26867b8eaef7",
+      "source": "resources/pet/shppingMall/bk/malr_03.gif"
+    },
+    "shop/store/images/menu/lmenu_30.gif": {
+      "high": "reference/shppingMall/menu/lmenu_30@2x.png",
+      "sha256": "822f67e027a8c35c2d83955c902d669018068cf98646ddbe253e9121d15bff28",
+      "source": "resources/pet/shppingMall/menu/lmenu_30.gif"
+    },
+    "shop/store/images/menu/lmenu_31.gif": {
+      "high": "reference/shppingMall/menu/lmenu_31@2x.png",
+      "sha256": "476098b3524a998575686e7ca6b52df37dcc3fb7ffb5c2dcfdac38503b943f21",
+      "source": "resources/pet/shppingMall/menu/lmenu_31.gif"
+    },
+    "shop/store/images/menu/lmenu_32.gif": {
+      "high": "reference/shppingMall/menu/lmenu_32@2x.png",
+      "sha256": "3833c4162c0bb8d12df134721be9331c86664643764430771f0063102e8047c2",
+      "source": "resources/pet/shppingMall/menu/lmenu_32.gif"
+    },
+    "shop/store/images/menu/lmenu_43.gif": {
+      "high": "reference/shppingMall/menu/lmenu_43@2x.png",
+      "sha256": "d4c765769ad85c2324e1d4ae622ea9b637deac5b4698da51c7a5bce22f963eb5",
+      "source": "resources/pet/shppingMall/menu/lmenu_43.gif"
+    },
+    "shop/store/images/menu/lmenu_44.gif": {
+      "high": "reference/shppingMall/menu/lmenu_44@2x.png",
+      "sha256": "03badb0fdfcea447cea17e663eacb63b17c98ce75ddbaa945f9d6f7478eaedc6",
+      "source": "resources/pet/shppingMall/menu/lmenu_44.gif"
+    },
+    "shop/store/images/menu/lsmenu1_30.gif": {
+      "high": "reference/shppingMall/menu/lsmenu1_30@2x.png",
+      "sha256": "980892f787cf19d5fbeccaeccbb0b22d500b296608a829d7abddce18970de9e6",
+      "source": "resources/pet/shppingMall/menu/lsmenu1_30.gif"
+    },
+    "shop/store/images/menu/lsmenu1_31.gif": {
+      "high": "reference/shppingMall/menu/lsmenu1_31@2x.png",
+      "sha256": "eb98c32bc3856a07538de248fc53c77037b502c4da81bd4b19fa006415dba70b",
+      "source": "resources/pet/shppingMall/menu/lsmenu1_31.gif"
+    },
+    "shop/store/images/menu/lsmenu1_32.gif": {
+      "high": "reference/shppingMall/menu/lsmenu1_32@2x.png",
+      "sha256": "27c022cbaee4dba0dc91ac4ff36e3d58e04e440c8833b35595e1678ab7324c95",
+      "source": "resources/pet/shppingMall/menu/lsmenu1_32.gif"
+    },
+    "shop/store/images/menu/mal6_01.gif": {
+      "high": "reference/shppingMall/menu/mal6_01@2x.png",
+      "sha256": "d1ab495bd8880db02a4586137f1a3402fff785fcc2df0759cc4e56eab3c0a3c2",
+      "source": "resources/pet/shppingMall/menu/mal6_01.gif"
+    },
+    "shop/store/images/menu/mal6_02.gif": {
+      "high": "reference/shppingMall/menu/mal6_02@2x.png",
+      "sha256": "78840cd7f46bcd517b72b4ed158b72e8c67ea855c3c7a6a9e8d745eb029d45b5",
+      "source": "resources/pet/shppingMall/menu/mal6_02.gif"
+    },
+    "shop/store/images/menu/mal6_03.gif": {
+      "high": "reference/shppingMall/menu/mal6_03@2x.png",
+      "sha256": "bc991fe5095127f798a1f7c97a444a9303de2b1e68c8d1a0f5fee24354522e43",
+      "source": "resources/pet/shppingMall/menu/mal6_03.gif"
+    },
+    "shop/store/images/menu/mal6_04.gif": {
+      "high": "reference/shppingMall/menu/mal6_04@2x.png",
+      "sha256": "afd3e0e25d2f7227195701b3db41b791b46baeb3f1f417b4a92d0f5f389fedd0",
+      "source": "resources/pet/shppingMall/menu/mal6_04.gif"
+    },
+    "shop/store/images/menu/mal6_05.gif": {
+      "high": "reference/shppingMall/menu/mal6_05@2x.png",
+      "sha256": "069bce2c227a3e15092f0531e53067c1d8a05ec6527c9feedb0c42245efa1feb",
+      "source": "resources/pet/shppingMall/menu/mal6_05.gif"
+    },
+    "shop/store/images/menu/mal_06.gif": {
+      "high": "reference/shppingMall/menu/mal_06@2x.png",
+      "sha256": "64cdc9e0db4022aab8eb076a404d714ed551cdf5cc792033110035a9c3148e78",
+      "source": "resources/pet/shppingMall/menu/mal_06.gif"
+    },
+    "shop/store/images/menu/mal_07.gif": {
+      "high": "reference/shppingMall/menu/mal_07@2x.png",
+      "sha256": "2b3b061dfbb1e5cce623e89c16eaf57035e7a4b43ec065c744ac52b371c5c20f",
+      "source": "resources/pet/shppingMall/menu/mal_07.gif"
+    },
+    "shop/store/images/menu/mal_08.gif": {
+      "high": "reference/shppingMall/menu/mal_08@2x.png",
+      "sha256": "74b0f90070d7c9f1156fd6eb577f79c3024c8bc11182e8226dcba89a7c1f889d",
+      "source": "resources/pet/shppingMall/menu/mal_08.gif"
+    },
+    "shop/store/images/menu/mal_09.gif": {
+      "high": "reference/shppingMall/menu/mal_09@2x.png",
+      "sha256": "19ab02181b4364ae4a36b1ad8c9140d89108a1ca9a4471a05e30458a4f9aa34a",
+      "source": "resources/pet/shppingMall/menu/mal_09.gif"
+    },
+    "shop/store/images/menu/mal_10.gif": {
+      "high": "reference/shppingMall/menu/mal_10@2x.png",
+      "sha256": "b0f0f9457b99c8fc0a7cf72528e330def6b23ce762d2cc839732e7b59badc454",
+      "source": "resources/pet/shppingMall/menu/mal_10.gif"
+    },
+    "shop/store/images/menu/mal_14.gif": {
+      "high": "reference/shppingMall/menu/mal_14@2x.png",
+      "sha256": "e565dceab230dcd2d59e56440d4a0f3a20425d88076e99ed03763b2b5d57ca3f",
+      "source": "resources/pet/shppingMall/menu/mal_14.gif"
+    },
+    "shop/store/images/menu/mal_15.gif": {
+      "high": "reference/shppingMall/menu/mal_15@2x.png",
+      "sha256": "bbe02c764284c2f25096504defb8b919117b8bf90a47cf804ab95d4db37a2f66",
+      "source": "resources/pet/shppingMall/menu/mal_15.gif"
+    },
+    "shop/store/images/menu/mal_16.gif": {
+      "high": "reference/shppingMall/menu/mal_16@2x.png",
+      "sha256": "0e765a24da223b5addd84f73322018c1bd908ea14c375b6bbf6a3183fcc936c4",
+      "source": "resources/pet/shppingMall/menu/mal_16.gif"
+    },
+    "shop/store/images/menu/mal_17.gif": {
+      "high": "reference/shppingMall/menu/mal_17@2x.png",
+      "sha256": "5382ca4e4cb2d496c318806e47d41f008d5487019b175e55ed915ef0ceadd887",
+      "source": "resources/pet/shppingMall/menu/mal_17.gif"
+    },
+    "shop/store/images/menu/mal_18.gif": {
+      "high": "reference/shppingMall/menu/mal_18@2x.png",
+      "sha256": "6ba0f5ba96a6f22bad62f87cf2434b9fd2b874a432a2dd551f4114689a8d3eaa",
+      "source": "resources/pet/shppingMall/menu/mal_18.gif"
+    },
+    "shop/store/images/menu/mal_19.gif": {
+      "high": "reference/shppingMall/menu/mal_19@2x.png",
+      "sha256": "e67c63ae04d1057f2e9515e6524e58981b4cd5d8a2f92196ed09bd648980f331",
+      "source": "resources/pet/shppingMall/menu/mal_19.gif"
+    },
+    "shop/store/images/menu/mal_20.gif": {
+      "high": "reference/shppingMall/menu/mal_20@2x.png",
+      "sha256": "7fcebd4e5182247f1f47fb93a74fb3809c49f49858c39785664e02006a8dd0e5",
+      "source": "resources/pet/shppingMall/menu/mal_20.gif"
+    },
+    "shop/store/images/menu/mal_21.gif": {
+      "high": "reference/shppingMall/menu/mal_21@2x.png",
+      "sha256": "f94eaa499d701363ca8695772ad3d21580474937c660840fbd26ff8a7c122856",
+      "source": "resources/pet/shppingMall/menu/mal_21.gif"
+    },
+    "shop/store/images/menu/mal_22.gif": {
+      "high": "reference/shppingMall/menu/mal_22@2x.png",
+      "sha256": "f144bae308c210637403d688acef2c708916ad970a8d6e387b654a36ce4d70fc",
+      "source": "resources/pet/shppingMall/menu/mal_22.gif"
+    },
+    "shop/store/images/menu/mal_29.gif": {
+      "high": "reference/shppingMall/menu/mal_29@2x.png",
+      "sha256": "5bdd5d854e562dfb90737c0d1adbe4560f28fde5f35c0ee602d936f1eb0300ce",
+      "source": "resources/pet/shppingMall/menu/mal_29.gif"
+    },
+    "shop/store/images/menu/mal_30.gif": {
+      "high": "reference/shppingMall/menu/mal_30@2x.png",
+      "sha256": "f29e85766237bbce318687549bdccffd4a83213e3ec947962cb07d2627737aa1",
+      "source": "resources/pet/shppingMall/menu/mal_30.gif"
+    },
+    "shop/store/images/menu/mal_31.gif": {
+      "high": "reference/shppingMall/menu/mal_31@2x.png",
+      "sha256": "6e410bf9fd46404f8c52d75a0c6b6277d41d794a00f8619e2da0f518273ca8ce",
+      "source": "resources/pet/shppingMall/menu/mal_31.gif"
+    },
+    "shop/store/images/menu/mal_32.gif": {
+      "high": "reference/shppingMall/menu/mal_32@2x.png",
+      "sha256": "8e2b1cff1078fd4749eb070fa06ac1fec9d0d7a0e8a55ca5a8e75979b4520c1d",
+      "source": "resources/pet/shppingMall/menu/mal_32.gif"
+    },
+    "shop/store/images/menu/mal_33.gif": {
+      "high": "reference/shppingMall/menu/mal_33@2x.png",
+      "sha256": "1825fd7d3cb7c11e7cff906b78e5b4c7497e273ffbf32220d20242a637ca0cc4",
+      "source": "resources/pet/shppingMall/menu/mal_33.gif"
+    },
+    "shop/store/images/menu/mal_34.gif": {
+      "high": "reference/shppingMall/menu/mal_34@2x.png",
+      "sha256": "bed193727ee32a3b3500222206b06b469dad4410731d889336efd59b898104e5",
+      "source": "resources/pet/shppingMall/menu/mal_34.gif"
+    },
+    "shop/store/images/menu/mal_35.gif": {
+      "high": "reference/shppingMall/menu/mal_35@2x.png",
+      "sha256": "82e634707bbf520879a8cb8d40f8e61195d3e123a8a2421e48b971d1a47a9c70",
+      "source": "resources/pet/shppingMall/menu/mal_35.gif"
+    },
+    "shop/store/images/menu/mal_36.gif": {
+      "high": "reference/shppingMall/menu/mal_36@2x.png",
+      "sha256": "f628350637512f91b1debff6f00bd478f8f7ec4ee7def742963cc8f311876467",
+      "source": "resources/pet/shppingMall/menu/mal_36.gif"
+    },
+    "shop/store/images/menu/mal_37.gif": {
+      "high": "reference/shppingMall/menu/mal_37@2x.png",
+      "sha256": "a229f647fa275421930ad4b04579d7d80fa4d3b705f298aeed93d4e4b5a9492d",
+      "source": "resources/pet/shppingMall/menu/mal_37.gif"
+    },
+    "shop/store/images/menu/mal_38.gif": {
+      "high": "reference/shppingMall/menu/mal_38@2x.png",
+      "sha256": "641f85f06e8ec8b4689fe0bf54c5910025ac765013274ddc26fad151a1d08258",
+      "source": "resources/pet/shppingMall/menu/mal_38.gif"
+    },
+    "shop/store/images/menu/mall1_06.gif": {
+      "high": "reference/shppingMall/menu/mall1_06@2x.png",
+      "sha256": "d72b6252d0f9e301b01844b1b5c8eaa3b7fa8186c39525a58a1feca6e50a35c0",
+      "source": "resources/pet/shppingMall/menu/mall1_06.gif"
+    },
+    "shop/store/images/menu/mall1_24.gif": {
+      "high": "reference/shppingMall/menu/mall1_24@2x.png",
+      "sha256": "8a093d542cc777e8509c7a14b0cf7af8ac9eab360914bd8de3c69ff08652211e",
+      "source": "resources/pet/shppingMall/menu/mall1_24.gif"
+    },
+    "shop/store/images/menu/mall1_25.gif": {
+      "high": "reference/shppingMall/menu/mall1_25@2x.png",
+      "sha256": "f6512898cd579ed479febf94413137b31066d764fd686f771f4cbb7f336db155",
+      "source": "resources/pet/shppingMall/menu/mall1_25.gif"
+    },
+    "shop/store/images/menu/mall1_26.gif": {
+      "high": "reference/shppingMall/menu/mall1_26@2x.png",
+      "sha256": "5da2f9bee5038b20e6ecd302c9fccac96699f0d9178c611292dec9a9127c0377",
+      "source": "resources/pet/shppingMall/menu/mall1_26.gif"
+    },
+    "shop/store/images/menu/mall1_27.gif": {
+      "high": "reference/shppingMall/menu/mall1_27@2x.png",
+      "sha256": "5b4fafe5dff7863ae1ca26752e204cf66c2c1b1f27080653a2f1dd2e75952361",
+      "source": "resources/pet/shppingMall/menu/mall1_27.gif"
+    },
+    "shop/store/images/menu/mall2_06.gif": {
+      "high": "reference/shppingMall/menu/mall2_06@2x.png",
+      "sha256": "4b4d2b66a43160725ad8d299d16b1be3038c77b741107c12faf862d4d98b23e6",
+      "source": "resources/pet/shppingMall/menu/mall2_06.gif"
+    },
+    "shop/store/images/menu/mall3_06.gif": {
+      "high": "reference/shppingMall/menu/mall3_06@2x.png",
+      "sha256": "5593e919fb7cc333511e7cffe2c1ee248c5cc468b3d4d00fc4481b4dec25f114",
+      "source": "resources/pet/shppingMall/menu/mall3_06.gif"
+    },
+    "shop/store/images/menu/mall4_06.gif": {
+      "high": "reference/shppingMall/menu/mall4_06@2x.png",
+      "sha256": "e3e44bc4712c75a68cd3f30d50483d5f769f0fa51d3eea10929f732768d4c2a9",
+      "source": "resources/pet/shppingMall/menu/mall4_06.gif"
+    },
+    "shop/store/images/menu/mall6_01.gif": {
+      "high": "reference/shppingMall/menu/mall6_01@2x.png",
+      "sha256": "4fed05ff821d75ccda893f64750618d8812799da2d339f6217291f0d50833c99",
+      "source": "resources/pet/shppingMall/menu/mall6_01.gif"
+    },
+    "shop/store/images/menu/mall6_02.gif": {
+      "high": "reference/shppingMall/menu/mall6_02@2x.png",
+      "sha256": "eb3f22d93b1be6abba4a1a22a3a318cf43c51a0eb2b89762bae9fd90bcd695a5",
+      "source": "resources/pet/shppingMall/menu/mall6_02.gif"
+    },
+    "shop/store/images/menu/mall6_03.gif": {
+      "high": "reference/shppingMall/menu/mall6_03@2x.png",
+      "sha256": "3f49b553fcdf23fc7cc5896b35601cfd66cbbe8beec3c5bacc5e231e10661237",
+      "source": "resources/pet/shppingMall/menu/mall6_03.gif"
+    },
+    "shop/store/images/menu/mall6_04.gif": {
+      "high": "reference/shppingMall/menu/mall6_04@2x.png",
+      "sha256": "80adb6592014bae33c68084f7cd2dee7943bf1ee727254fca5af7eb791ac7d4a",
+      "source": "resources/pet/shppingMall/menu/mall6_04.gif"
+    },
+    "shop/store/images/menu/mall6_05.gif": {
+      "high": "reference/shppingMall/menu/mall6_05@2x.png",
+      "sha256": "64dd7931bd699a52c11e14df13d3177dacaefc6f9bbfe526ce23d44fc8743358",
+      "source": "resources/pet/shppingMall/menu/mall6_05.gif"
+    },
+    "shop/store/images/menu/mall_06.gif": {
+      "high": "reference/shppingMall/menu/mall_06@2x.png",
+      "sha256": "93f1b46a8e1bf14c55ad357f9fce08e7a7fda6d49074f553a526fc490504e4d6",
+      "source": "resources/pet/shppingMall/menu/mall_06.gif"
+    },
+    "shop/store/images/menu/mall_07.gif": {
+      "high": "reference/shppingMall/menu/mall_07@2x.png",
+      "sha256": "192aaa10a8e1c8706f5340c32d2c90e1e52a9058c3d8f7a1b819ae107c1c9a6d",
+      "source": "resources/pet/shppingMall/menu/mall_07.gif"
+    },
+    "shop/store/images/menu/mall_08.gif": {
+      "high": "reference/shppingMall/menu/mall_08@2x.png",
+      "sha256": "2e1216e9973e199da75803899d0a1920f93898a0276b8f0ecc48365e7c418b27",
+      "source": "resources/pet/shppingMall/menu/mall_08.gif"
+    },
+    "shop/store/images/menu/mall_09.gif": {
+      "high": "reference/shppingMall/menu/mall_09@2x.png",
+      "sha256": "60f1319caeaaef53399492b4fdff8a4286e90e8a9316ec656a995b80e093680a",
+      "source": "resources/pet/shppingMall/menu/mall_09.gif"
+    },
+    "shop/store/images/menu/mall_10.gif": {
+      "high": "reference/shppingMall/menu/mall_10@2x.png",
+      "sha256": "ee775af2587d7bc42eacae9bbabf382e4d5d6f1b4e15bdfb0a0de5752da01273",
+      "source": "resources/pet/shppingMall/menu/mall_10.gif"
+    },
+    "shop/store/images/menu/mall_14.gif": {
+      "high": "reference/shppingMall/menu/mall_14@2x.png",
+      "sha256": "7368576e4cb31c07ea0f35f893280e6c2d8acd5c78d6ef1d359def42d4a8e13e",
+      "source": "resources/pet/shppingMall/menu/mall_14.gif"
+    },
+    "shop/store/images/menu/mall_15.gif": {
+      "high": "reference/shppingMall/menu/mall_15@2x.png",
+      "sha256": "c0b3eb00ced95a4f769452084a2ecf9c06129e25aa16a548142d4963bc388127",
+      "source": "resources/pet/shppingMall/menu/mall_15.gif"
+    },
+    "shop/store/images/menu/mall_16.gif": {
+      "high": "reference/shppingMall/menu/mall_16@2x.png",
+      "sha256": "82acd1881d806d35e8955532cccd01da4bc6dc9f8b216396590bbb83ea403fef",
+      "source": "resources/pet/shppingMall/menu/mall_16.gif"
+    },
+    "shop/store/images/menu/mall_17.gif": {
+      "high": "reference/shppingMall/menu/mall_17@2x.png",
+      "sha256": "271134f06e73ed1ccf375fa97f89337c31876d2044d46d998d41c9a341ac8bc2",
+      "source": "resources/pet/shppingMall/menu/mall_17.gif"
+    },
+    "shop/store/images/menu/mall_18.gif": {
+      "high": "reference/shppingMall/menu/mall_18@2x.png",
+      "sha256": "07e8c749420af58ca2256c1f8c6e701c26ae6d3c2fc66fba17079f0a4587bff0",
+      "source": "resources/pet/shppingMall/menu/mall_18.gif"
+    },
+    "shop/store/images/menu/mall_19.gif": {
+      "high": "reference/shppingMall/menu/mall_19@2x.png",
+      "sha256": "d137d385c4385df43768bbeb2c320936d3aed38b763e32d0a052a725840f3099",
+      "source": "resources/pet/shppingMall/menu/mall_19.gif"
+    },
+    "shop/store/images/menu/mall_20.gif": {
+      "high": "reference/shppingMall/menu/mall_20@2x.png",
+      "sha256": "2df61872eae0d345f0a57dab35212c4d3a07a6b012d0c3a1e0352a1ab82c4c40",
+      "source": "resources/pet/shppingMall/menu/mall_20.gif"
+    },
+    "shop/store/images/menu/mall_21.gif": {
+      "high": "reference/shppingMall/menu/mall_21@2x.png",
+      "sha256": "08c65ca3b7a6776dec2ad01c17562a66de1d72b3737e340a267b27c6bc6f2222",
+      "source": "resources/pet/shppingMall/menu/mall_21.gif"
+    },
+    "shop/store/images/menu/mall_22.gif": {
+      "high": "reference/shppingMall/menu/mall_22@2x.png",
+      "sha256": "8d2b94494a2e86f09874e1dff4aa7235e10dcaf226aeebbefcbaee2d528bdef1",
+      "source": "resources/pet/shppingMall/menu/mall_22.gif"
+    },
+    "shop/store/images/menu/mall_24.gif": {
+      "high": "reference/shppingMall/menu/mall_24@2x.png",
+      "sha256": "5e879d224de4b8e667f748d52a580f9ff7df90a7f473b8f56d902aaba9a69a88",
+      "source": "resources/pet/shppingMall/menu/mall_24.gif"
+    },
+    "shop/store/images/menu/mall_25.gif": {
+      "high": "reference/shppingMall/menu/mall_25@2x.png",
+      "sha256": "16aac7fe12e07cfdd7f9bba3273ace7b1470b2630e554ff412a92bddcfcd6c47",
+      "source": "resources/pet/shppingMall/menu/mall_25.gif"
+    },
+    "shop/store/images/menu/mall_26.gif": {
+      "high": "reference/shppingMall/menu/mall_26@2x.png",
+      "sha256": "593585bb6d0e5255e7e0c7f09e7957b53d8bcdf7dd798360ea07f5f3bee2a3c4",
+      "source": "resources/pet/shppingMall/menu/mall_26.gif"
+    },
+    "shop/store/images/menu/mall_27.gif": {
+      "high": "reference/shppingMall/menu/mall_27@2x.png",
+      "sha256": "ceb46d83a4c33d9abf9f6e5c7ed14202d935a52b98d76b4557d50709faec4917",
+      "source": "resources/pet/shppingMall/menu/mall_27.gif"
+    },
+    "shop/store/images/menu/mall_29.gif": {
+      "high": "reference/shppingMall/menu/mall_29@2x.png",
+      "sha256": "99336453299d0edd3d3b64fa1b91504416e335a8bf058bdd9d0f1402c355e810",
+      "source": "resources/pet/shppingMall/menu/mall_29.gif"
+    },
+    "shop/store/images/menu/mall_30.gif": {
+      "high": "reference/shppingMall/menu/mall_30@2x.png",
+      "sha256": "a16aece5a916c81ebf033266e9817e239f6f1e5d4aae5fe78887ef0099af3e3c",
+      "source": "resources/pet/shppingMall/menu/mall_30.gif"
+    },
+    "shop/store/images/menu/mall_31.gif": {
+      "high": "reference/shppingMall/menu/mall_31@2x.png",
+      "sha256": "526054256a87eb0a16c0440fd20726b879c4768c41d2988844e7e8f5177b6c81",
+      "source": "resources/pet/shppingMall/menu/mall_31.gif"
+    },
+    "shop/store/images/menu/mall_32.gif": {
+      "high": "reference/shppingMall/menu/mall_32@2x.png",
+      "sha256": "4f8a0cc62f5dbbd55a9a1bffbcc137a8c59fab7917bdc10b604900c0fa7252fa",
+      "source": "resources/pet/shppingMall/menu/mall_32.gif"
+    },
+    "shop/store/images/menu/mall_33.gif": {
+      "high": "reference/shppingMall/menu/mall_33@2x.png",
+      "sha256": "717046ed9f778e9ad9020f2a84a0fe4674489305b05766ccf8a5863119aae82d",
+      "source": "resources/pet/shppingMall/menu/mall_33.gif"
+    },
+    "shop/store/images/menu/mall_34.gif": {
+      "high": "reference/shppingMall/menu/mall_34@2x.png",
+      "sha256": "4776b1428b417e22b1738e905d8b008c6f20e2bc67acbcbc21c477b6b5f191e7",
+      "source": "resources/pet/shppingMall/menu/mall_34.gif"
+    },
+    "shop/store/images/menu/mall_35.gif": {
+      "high": "reference/shppingMall/menu/mall_35@2x.png",
+      "sha256": "57a123fcbb004f90ffdaaf95fdf24594f2d0ca4f1dd6267758148f55b8618f30",
+      "source": "resources/pet/shppingMall/menu/mall_35.gif"
+    },
+    "shop/store/images/menu/mall_36.gif": {
+      "high": "reference/shppingMall/menu/mall_36@2x.png",
+      "sha256": "fe5bdf0af241ee7d05a1fb1b690d1c156d0bca62be110e011d20d8cc784aeab7",
+      "source": "resources/pet/shppingMall/menu/mall_36.gif"
+    },
+    "shop/store/images/menu/mall_37.gif": {
+      "high": "reference/shppingMall/menu/mall_37@2x.png",
+      "sha256": "e756124a71eb8f662ed57d7df9f91e4f70838c73f00ed153566e099b04f1bac5",
+      "source": "resources/pet/shppingMall/menu/mall_37.gif"
+    },
+    "shop/store/images/menu/mall_38.gif": {
+      "high": "reference/shppingMall/menu/mall_38@2x.png",
+      "sha256": "e5a71a1b5abc262da8fc306fbde8bf0c0c2de2cbe83df2ffda1c23245d2ce967",
+      "source": "resources/pet/shppingMall/menu/mall_38.gif"
+    },
+    "shop/store/images/menu/rightclose.gif": {
+      "high": "reference/shppingMall/bk/rightclose@2x.png",
+      "sha256": "cdd92bf82f3f5726c534d935981e1a6996c8eba4da945ff309b2925fc2125e2c",
+      "source": "resources/pet/shppingMall/bk/rightclose.gif"
+    },
+    "shop/store/images/menu/rsmen_14.gif": {
+      "high": "reference/shppingMall/menu/rsmen_14@2x.png",
+      "sha256": "fba5ee61a2e977cbfbe6541443170d4dd35a9544cefd83bccea8cb475f0b0127",
+      "source": "resources/pet/shppingMall/menu/rsmen_14.gif"
+    },
+    "shop/store/images/menu/rsmen_15.gif": {
+      "high": "reference/shppingMall/menu/rsmen_15@2x.png",
+      "sha256": "14ef172a3d878ab2f7c9350bf3fad55098efde98895b197fb9f454610cb2add7",
+      "source": "resources/pet/shppingMall/menu/rsmen_15.gif"
+    },
+    "shop/store/images/menu/rsmen_16.gif": {
+      "high": "reference/shppingMall/menu/rsmen_16@2x.png",
+      "sha256": "7cb044ac8448976b56ffd6a3894bc3e875df4bd8f23e552dce6b167aa097c63d",
+      "source": "resources/pet/shppingMall/menu/rsmen_16.gif"
+    },
+    "shop/store/images/menu/rsmenu_14.gif": {
+      "high": "reference/shppingMall/menu/rsmenu_14@2x.png",
+      "sha256": "6eaa8009af9e8e55dfd0992423e8237b1c20fc1a2e509768af2a3f211f480a9c",
+      "source": "resources/pet/shppingMall/menu/rsmenu_14.gif"
+    },
+    "shop/store/images/menu/rsmenu_15.gif": {
+      "high": "reference/shppingMall/menu/rsmenu_15@2x.png",
+      "sha256": "036348d88b27e236443e3b409c68e38ed1c8e4daddc909d16f4bf4cd761f57bc",
+      "source": "resources/pet/shppingMall/menu/rsmenu_15.gif"
+    },
+    "shop/store/images/menu/rsmenu_16.gif": {
+      "high": "reference/shppingMall/menu/rsmenu_16@2x.png",
+      "sha256": "d8725f7fb91cde4a6fb41d261ac8b8d8f5b10432f270c8d2da7cad709eec13b2",
+      "source": "resources/pet/shppingMall/menu/rsmenu_16.gif"
+    },
+    "shop/store/images/rightclose.gif": {
+      "high": "reference/shppingMall/bk/rightclose@2x.png",
+      "sha256": "cdd92bf82f3f5726c534d935981e1a6996c8eba4da945ff309b2925fc2125e2c",
+      "source": "resources/pet/shppingMall/bk/rightclose.gif"
+    },
+    "shop/store/images/s09.gif": {
+      "high": "reference/shppingMall/bk/s09@2x.png",
+      "sha256": "4e20546799608ab2db4bdab05b95c42c3bbf73795c9b08d976a9af2514f2c8a6",
+      "source": "resources/pet/shppingMall/bk/s09.gif"
+    },
+    "shop/store/images/shoping_07.gif": {
+      "high": "reference/shppingMall/bk/shoping_07@2x.png",
+      "sha256": "213c69e60febf2641701393ec2e9f41fff4c73e6a405a9c52287269761b6d8fb",
+      "source": "resources/pet/shppingMall/bk/shoping_07.gif"
+    },
+    "shop/store/images/shoping_09.gif": {
+      "high": "reference/shppingMall/bk/shoping_09@2x.png",
+      "sha256": "6af52bfe8aa6c116ea29e3aaf105ba88aa9df05467f86d72bc71da1c9329aace",
+      "source": "resources/pet/shppingMall/bk/shoping_09.gif"
+    },
+    "shop/store/images/shoping_30.gif": {
+      "high": "reference/shppingMall/bk/shoping_30@2x.png",
+      "sha256": "6dc6d6b822a4f7f73e3a0fea6d8c2cec8e4c03142fea1f5aca28a37984fd8063",
+      "source": "resources/pet/shppingMall/bk/shoping_30.gif"
+    },
+    "shop/store/images/shoping_33.gif": {
+      "high": "reference/shppingMall/bk/shoping_33@2x.png",
+      "sha256": "6da7086787cfdbe05f5ca4c1bbc871c02fe32d7c148c2aa43409280a9b60ed7b",
+      "source": "resources/pet/shppingMall/bk/shoping_33.gif"
+    },
+    "shop/store/images/ss09.gif": {
+      "high": "reference/shppingMall/bk/ss09@2x.png",
+      "sha256": "c180531ba70c161ce31225a934c929a76670861b9bb28cefce58ecf86a1a98a3",
+      "source": "resources/pet/shppingMall/bk/ss09.gif"
+    },
+    "shop/store/images/sss09.gif": {
+      "high": "reference/shppingMall/bk/sss09@2x.png",
+      "sha256": "a13962ade559a7b1a04290853c3161dd92ac7ef1f71ecc7900898826a656b039",
+      "source": "resources/pet/shppingMall/bk/sss09.gif"
+    },
+    "stateInfo/bluejidutiao_01.png": {
+      "high": "reference/stateInfo/bluejindutiao00@2x.png",
+      "sha256": "e40150a1d4200291c2245a54133bf983ab661b3b19252db5a0df4102333546c8",
+      "source": "resources/pet/stateInfo/bluejindutiao00.png"
+    },
+    "stateInfo/bluejidutiao_02.png": {
+      "high": "reference/stateInfo/bluejindutiao01@2x.png",
+      "sha256": "6bd411f0477ec6707f0cbd3173245da6257bd8734e664892666c1db8435f3f76",
+      "source": "resources/pet/stateInfo/bluejindutiao01.png"
+    },
+    "stateInfo/bluejidutiao_03.png": {
+      "high": "reference/stateInfo/bluejindutiao02@2x.png",
+      "sha256": "a333b526bfc20dc06921952599bf24974a931324fc1fc247f795adb5898c56f5",
+      "source": "resources/pet/stateInfo/bluejindutiao02.png"
+    },
+    "tip/alert/btncancel_00.png": {
+      "high": "reference/windowTip/alert/btncancel_00@2x.png",
+      "sha256": "2981a1b2abcf643d1d6f3894ed460e3462f8245b3e334ccf545a7c24f0987288",
+      "source": "resources/pet/windowTip/alert/btncancel_00.png"
+    },
+    "tip/alert/btncancel_01.png": {
+      "high": "reference/windowTip/alert/btncancel_01@2x.png",
+      "sha256": "509862ea096f1464a8b1eefc33258bb2b6386b4c94b701847fc16e0d33c6f821",
+      "source": "resources/pet/windowTip/alert/btncancel_01.png"
+    },
+    "tip/alert/btncancel_02.png": {
+      "high": "reference/windowTip/alert/btncancel_02@2x.png",
+      "sha256": "31a464411bb1d3f7c8fe254b2aefb623de126d4444e04f5254a0045d93ed32ea",
+      "source": "resources/pet/windowTip/alert/btncancel_02.png"
+    },
+    "tip/alert/btnclose_00.png": {
+      "high": "reference/windowTip/alert/btnclose_00@2x.png",
+      "sha256": "d889d555da33c7902d3d05843a951da52540197be4248391608aa2f4c188b0dd",
+      "source": "resources/pet/windowTip/alert/btnclose_00.png"
+    },
+    "tip/alert/btnclose_01.png": {
+      "high": "reference/windowTip/alert/btnclose_01@2x.png",
+      "sha256": "b4d2509c53d9e31a5fefd47cd68c8e31a9100c58768636fbe00ece734aa632f4",
+      "source": "resources/pet/windowTip/alert/btnclose_01.png"
+    },
+    "tip/alert/btnclose_02.png": {
+      "high": "reference/windowTip/alert/btnclose_02@2x.png",
+      "sha256": "abef61cf64f40769104f8d90a28d464d3bd46e65430729d460dbbe1b337f1c8c",
+      "source": "resources/pet/windowTip/alert/btnclose_02.png"
+    },
+    "tip/alert/btnok_00.png": {
+      "high": "reference/windowTip/alert/btnok_00@2x.png",
+      "sha256": "a89dd6e6da8a157a5ca55d9d41103fd5573fda7674e7d01a923f7a946373c871",
+      "source": "resources/pet/windowTip/alert/btnok_00.png"
+    },
+    "tip/alert/btnok_01.png": {
+      "high": "reference/windowTip/alert/btnok_01@2x.png",
+      "sha256": "0c2879e61673337c05c4e6775e3d588dec561da63db4f6ef678b1ea401891ebd",
+      "source": "resources/pet/windowTip/alert/btnok_01.png"
+    },
+    "tip/alert/btnok_02.png": {
+      "high": "reference/windowTip/alert/btnok_02@2x.png",
+      "sha256": "1405fb38e24cd20e85220f7c838511927d597bcc91d1c5aa2ec0dbf370fa29de",
+      "source": "resources/pet/windowTip/alert/btnok_02.png"
+    },
+    "tip/alert/icon.png": {
+      "high": "reference/windowTip/alert/icon@2x.png",
+      "sha256": "111a15bc6f8f9630c10fe51a722c26bfd1220aab1c5b61a5a85955e755877b0f",
+      "source": "resources/pet/windowTip/alert/icon.png"
+    }
+  }
+}
