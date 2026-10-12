@@ -4,7 +4,7 @@ const { companion } = require('../../../service/gameplay/companion');
 const GAMES = [
   {dir:'guess',name:'猜动作',help:'点击企鹅开始，记住右侧轮廓，再选择与它动作一致的一项。连续猜对 5 次可获得奖励。'},
   {dir:'paopao2',name:'吹泡泡',help:'点击企鹅开始，再点破吹出的泡泡。'},
-  {dir:'rope',name:'跳绳'},
+  {dir:'rope',name:'跳绳',help:'点击企鹅开始，看准绳子转到身前，再点击企鹅跳起来。连续跳过 5 次可获得奖励。'},
   {dir:'mouse',name:'捉老鼠',help:'点击企鹅开始。老鼠跑近时点击企鹅跳起来，躲过 5 只就能获得奖励。'},
   {dir:'ball',name:'颠球',help:'点击企鹅开始，再点击抛起的球接住它。'},
   {dir:'100ceng',name:'下一百层',kidOnly:true,help:'点击企鹅开始，使用左右方向键移动，继续往下跳。'}

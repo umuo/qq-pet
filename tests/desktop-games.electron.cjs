@@ -49,10 +49,47 @@ app.whenReady().then(async()=>{
     if(process.env.QQPET_TEST_BUBBLE_REWARD)await until(()=>win.webContents.executeJavaScript("typeof desktopGameView.wins.get('main')?.player?.['Main.onMouseDownBubble']==='function'"));
     const variant=`1${game.kidOnly||level<9?0:2}${sex==='MM'?3:2}`;assert.ok(requested.get(win).some(url=>url.endsWith('/'+game.dir+'/main_'+variant+'.swf')),'actual SWF request must match '+sex+'/'+level+'/'+game.dir+'/main_'+variant);
     if(process.env.QQPET_TEST_GUESS_REWARD)await win.webContents.executeJavaScript("(()=>{const api=desktopGameView.wins.get('main').frame.contentWindow.API,remote=api.RemoteCall;window.guessEvents=[];api.RemoteCall=(name,fn,...args)=>{guessEvents.push({name,fn,args});if(fn==='Action.onResultShow'||fn.startsWith('CountStatus.'))console.log('GUESS_RESULT',JSON.stringify({name,fn,args}));return remote(name,fn,...args);};})()");
+    if(process.env.QQPET_TEST_ROPE_REWARD)await win.webContents.executeJavaScript("(()=>{const frame=desktopGameView.wins.get('main').frame.contentWindow,get=frame.TICKLE_GetFeeling,api=frame.API,remote=api.RemoteCall;window.ropeStart=0;window.ropeCounts=[];frame.TICKLE_GetFeeling=(...args)=>{ropeStart=Date.now();return get(...args)};api.RemoteCall=(name,fn,...args)=>{if(fn==='CountStatus.onCountUpdate')ropeCounts.push(args[0]);return remote(name,fn,...args)};})()");
     // Hit the ball game's body: the footer can be transparent for the GG kid.
     let point=await win.webContents.executeJavaScript(`(()=>{const r=document.querySelector('[data-name=main]').getBoundingClientRect();return {x:Math.round(r.x+r.width/2),y:Math.round(${['ball','paopao2','mouse'].includes(game.dir)?'r.y+95':'r.bottom-25'})}})()`);
     for(const type of ['mouseMove','mouseDown','mouseUp']){win.webContents.sendInputEvent({type,...point,button:'left',clickCount:1});await delay(100);}
-    await delay(process.env.QQPET_TEST_MOUSE_REWARD?100:1500);
+    await delay(process.env.QQPET_TEST_MOUSE_REWARD||process.env.QQPET_TEST_ROPE_REWARD?100:1500);
+    if(process.env.QQPET_TEST_ROPE_REWARD){
+      assert.equal(game.dir,'rope');const before=Number(getPetInfo().info.yb);
+      // Wait for the original game to start, then watch its visible rope phase.
+      for(let i=0;i<20&&!await win.webContents.executeJavaScript('!!ropeStart');i++){
+        point=await win.webContents.executeJavaScript("(()=>{const r=document.querySelector('[data-name=main]').getBoundingClientRect();return {x:Math.round(r.x+r.width/2),y:Math.round(r.y+95)}})()");
+        for(const type of ['mouseMove','mouseDown','mouseUp']){win.webContents.sendInputEvent({type,...point,button:'left',clickCount:1});await delay(1);}
+        await delay(50);
+      }
+      const started=await win.webContents.executeJavaScript('ropeStart');assert.ok(started,'native body click starts actual rope animation');
+      let lastJump=0,jumps=0;
+      for(let i=0;i<150&&!win.isDestroyed()&&Number(getPetInfo().info.yb)===before;i++){
+        const rect=await win.webContents.executeJavaScript("(()=>{const r=document.querySelector('[data-name=main]').getBoundingClientRect();return {x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)}})()");
+        const shot=nativeImage.createFromBuffer((await win.webContents.capturePage()).toPNG()),factor=shot.getSize().width/await win.webContents.executeJavaScript('window.innerWidth');
+        const crop=shot.crop(Object.fromEntries(Object.entries(rect).map(([k,v])=>[k,Math.round(v*factor)]))),size=crop.getSize(),pixels=crop.toBitmap();let pink=0;
+        // The original rope turns pink as it passes in front of the pet.
+        // Observe those rendered pixels rather than guessing the random cycle.
+        for(let y=Math.floor(size.height*.3);y<size.height*.97;y++)for(let x=Math.floor(size.width*.1);x<size.width*.9;x++){
+          const at=(y*size.width+x)*4,r=pixels[at],g=pixels[at+1],b=pixels[at+2];
+          if((x<size.width*.3||x>size.width*.7)&&Math.max(r,b)>235&&Math.min(r,b)>40&&Math.min(r,b)<140&&g<110)pink++;
+        }
+        if(pink>15&&Date.now()-lastJump>700){
+          fs.writeFileSync(path.join(temp,`rope-jump-${jumps}.png`),crop.toPNG());
+          point={x:rect.x+Math.round(rect.width/2),y:rect.y+115};
+          for(const type of ['mouseMove','mouseDown','mouseUp']){win.webContents.sendInputEvent({type,...point,button:'left',clickCount:1});await delay(1);}
+          lastJump=Date.now();jumps++;await delay(30);
+          console.log('Rope native visual jump',JSON.stringify({jumps,pink,elapsed:Date.now()-started,counts:await win.webContents.executeJavaScript('ropeCounts')}));
+        }
+        await delay(20);
+      }
+      await until(()=>Number(getPetInfo().info.yb)>before||win.isDestroyed());
+      assert.deepEqual(await win.webContents.executeJavaScript('ropeCounts'),[1,2,3,4,5],'original rope callback reports five actual jumps');
+      await until(()=>win.webContents.executeJavaScript("document.getElementById('game-status').textContent.includes('元宝 +1')"));
+      await delay(300);fs.writeFileSync(path.join(temp,'rope-score.png'),(await win.webContents.capturePage()).toPNG());
+      console.log('Rope native reward',JSON.stringify({before,after:getPetInfo().info.yb,screenshots:temp}));
+      assert.equal(Number(getPetInfo().info.yb),before+1);assert.equal(getPetInfo().info.mood,905);
+    }
     if(game.dir==='ball')assert.ok(await win.webContents.executeJavaScript("desktopGameView.wins.has('WND_NAME_BALL')"),'native body click starts the ball game before its idle quit timer');
     if(process.env.QQPET_TEST_GUESS_REWARD){
       assert.equal(game.dir,'guess');const before=Number(getPetInfo().info.yb);let selections=0,lastRound='';const remembered=new Map(),roundSeen=new Map();
@@ -167,8 +204,8 @@ app.whenReady().then(async()=>{
       assert.ok(quit,'original renderer sends the quit event');
       assert.equal(Number(getPetInfo().info.yb),rewarded,'miss/automatic close cannot re-award');
       console.log('PASS original no-input ball motion, automatic quit event and unchanged reward');
-    }else if(process.env.QQPET_TEST_BUBBLE_FINISH||process.env.QQPET_TEST_MOUSE_FINISH||process.env.QQPET_TEST_GUESS_FINISH){
-      assert.equal(game.dir,process.env.QQPET_TEST_GUESS_FINISH?'guess':process.env.QQPET_TEST_MOUSE_FINISH?'mouse':'paopao2');const rewarded=Number(getPetInfo().info.yb);let quit=false;
+    }else if(process.env.QQPET_TEST_BUBBLE_FINISH||process.env.QQPET_TEST_MOUSE_FINISH||process.env.QQPET_TEST_GUESS_FINISH||process.env.QQPET_TEST_ROPE_FINISH){
+      assert.equal(game.dir,process.env.QQPET_TEST_ROPE_FINISH?'rope':process.env.QQPET_TEST_GUESS_FINISH?'guess':process.env.QQPET_TEST_MOUSE_FINISH?'mouse':'paopao2');const rewarded=Number(getPetInfo().info.yb);let quit=false;
       win.webContents.on('ipc-message',(_event,channel,data)=>{if(channel==='desktopGames_h_event'&&data?.type==='quit')quit=true;});
       for(let i=0;i<120&&!win.isDestroyed();i++)await delay(500);
       assert.ok(win.isDestroyed(),'stopping input naturally ends the original game');

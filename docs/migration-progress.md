@@ -296,3 +296,20 @@ Electron 测试仍使用内存宠物与临时 userData，不能替代真实存�
 各版本同时验证子播放器、小手、活动清理、独立奖励回执和渲染器崩溃只结算一次。超时退出没有追加元宝。命令为 `QQPET_TEST_GUESS_REWARD=1 QQPET_TEST_GUESS_FINISH=1 QQPET_TEST_GAME=guess QQPET_TEST_SEX=GG|MM QQPET_TEST_LEVEL=6|20 node_modules/.bin/electron tests/desktop-games.electron.cjs`（成年 GG 未启用 FINISH）。首次奖励与退出子任务完成；10 次以上难度、更高分及连续多局仍属后续验收，不代表整体移植完成。
 
 发布前检查：78 项 Node 测试全部通过（含农场真实进程重启、本机 AI HTTP 传输）；115 个新增/修改的自有 JavaScript 文件语法检查通过，`git diff --check` 通过。普通沙箱首次运行因本机监听和 Electron 权限失败，获批运行后全部通过。1.8.4 同步 package 与 lockfile 版本，沿用现有 `v*` 标签触发三平台构建；运行日志排除提交。
+
+## 跳绳首次成绩奖励及自然退出验收完成
+
+2026-10-12 完成原版跳绳四种性别/年龄素材的实际玩法验证。生产仅补充对应操作提示：看准绳子转到身前点击企鹅，连续跳过 5 次发奖；没有改动原版 SWF。初始固定节拍诊断只计分 0～4 次，不能作为通过；后来全图粉色判断被女企鹅服饰、眼睛和男企鹅幼年红围巾干扰，也未通过。成年 MM 的一次未通过进程最后触及 120 秒上限（exit 2），不是正常退出证据。
+
+最终测试用渲染截图中身体两侧的绳子颜色确定时机，发送原生鼠标输入；只观察公开心情查询与计分回调，不读取 Flash 私有帧/答案，不修改随机数或直接调用成绩、奖励方法。四个版本均观察到原版 `CountStatus.onCountUpdate` 严格为 `[1,2,3,4,5]`，元宝 300→301、心情 850→905、奖励计数 1。停止点击后原版漏跳自然 quit，窗口销毁、活动清空，元宝保持 301；独立奖励回执和渲染器崩溃结算验证也通过。
+
+| 版本 | 最终隔离验证目录 |
+|---|---|
+| 成年 GG / main_122 | qq-pet-desktop-games-Xd1EMK |
+| 成年 MM / main_123 | qq-pet-desktop-games-9N53JM |
+| 幼年 GG / main_102 | qq-pet-desktop-games-NXGMM6 |
+| 幼年 MM / main_103 | qq-pet-desktop-games-EzyXHt |
+
+命令：`QQPET_TEST_ROPE_REWARD=1 QQPET_TEST_ROPE_FINISH=1 QQPET_TEST_GAME=rope QQPET_TEST_SEX=GG|MM QQPET_TEST_LEVEL=6|20 node_modules/.bin/electron tests/desktop-games.electron.cjs`。各进程 exit 0，实际资源请求、子播放器和小手检查通过。目视检查成年 MM 的 `rope-score.png`，确认原版企鹅、05 计分、游戏内心情 +55/元宝 +1 与页面回执。桌面奖励规则、全部导入资源哈希/依赖三项测试通过，两个改动代码文件语法及 diff 校验通过。本次未使用用户存档，未覆盖 10 次以上、更高分、多局或所有动画随机组合；下一百层真实成绩及整体移植继续验收。
+
+1.8.4 已由 GitHub Actions run `38041553970` 成功完成三平台构建，正式 Release 及 Windows/macOS/Linux 安装包已确认发布。本轮跳绳提示与测试按用户要求提交为后续 1.8.5 版本，不视为整体移植完成。
