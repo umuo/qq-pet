@@ -1,7 +1,25 @@
 let saveOpt = {},
   saveTime = null;
+let saveSequence=0,savePackets=[],fishClosing=false;
+function drainFishSave() {
+  if (saveTime) clearTimeout(saveTime);
+  saveTime=null;
+  if (Object.keys(saveOpt).length) {
+    savePackets.push({...saveOpt,sequence:++saveSequence});
+    saveOpt={};
+  }
+  return {packets:JSON.parse(JSON.stringify(savePackets))};
+}
+function settleFishSave() { fishClosing=true;return drainFishSave(); }
+function ackFishSave(sequence) { savePackets=savePackets.filter(packet=>packet.sequence>sequence); }
+function restoreFishSave(data) {
+  saveOpt={};savePackets=[];if(saveTime)clearTimeout(saveTime);saveTime=null;
+  loadFrist=true;setPetInfo(data);
+}
 // 设置键值对到 Cookie 中，过期时间为 1 年
 function setCookie(key, value, save) {
+  if (save&&fishClosing) return;
+  if (save&&key==='yb'&&!Object.hasOwn(saveOpt,'yb')) saveOpt.walletBase=Number(getCookie('yb'));
   const now = new Date();
   now.setFullYear(now.getFullYear() + 1); // 设置 1 年后为过期时间
   document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(
@@ -15,13 +33,7 @@ function setCookie(key, value, save) {
     //加入需要保存的数据
     saveOpt[key] = value + "";
     saveTime = setTimeout(() => {
-      console.log("saveOpt", saveOpt);
-      if (!saveInfoData) {
-        return;
-      }
-      // 保存
-      saveInfoData && saveInfoData(JSON.parse(JSON.stringify(saveOpt)));
-      saveOpt = {};
+      if (typeof window.saveInfoData==='function') window.saveInfoData(drainFishSave());
     }, 500);
   }
 }
@@ -531,14 +543,14 @@ var shop = [
 ];
 var player;
 
-let i = 0;
-const setPETEVENT = (ResultData) => {
-  if (i++ > 30) return;
-  if (player.PETEventOnReceived) {
+const setPETEVENT = (ResultData, deadline=performance.now()+20000) => {
+  if (fishClosing) return;
+  if (typeof player?.PETEventOnReceived==='function') {
     player.PETEventOnReceived(JSON.stringify(ResultData));
   } else {
+    if (performance.now()>=deadline) {console.error('鱼塘播放器初始化超时');return;}
     setTimeout(() => {
-      setPETEVENT(ResultData);
+      setPETEVENT(ResultData,deadline);
     }, 50);
   }
 };
@@ -734,7 +746,12 @@ canusecnt */
   setCookie("petname", petInfo.info.name);
   setCookie("username", petInfo.info.host);
   setCookie("gender", g);
-  setCookie("yb", petInfo.info.yb); //给定初始元宝
+  if (Object.hasOwn(saveOpt,'yb')) {
+    const delta=Number(saveOpt.yb)-Number(saveOpt.walletBase);
+    saveOpt.walletBase=Number(petInfo.info.yb);
+    saveOpt.yb=Number(petInfo.info.yb)+delta;
+    setCookie('yb',saveOpt.yb);
+  } else setCookie("yb", petInfo.info.yb);
   setCookie("level", petInfo.maxInfo.level);
   setCookie("isvip", petInfo.otherOptions.pinkDiamond ? 1 : 0);
   setCookie("vipLv", petInfo.otherOptions.pinkDiamondLevel);
@@ -865,6 +882,7 @@ window.SNS_GetSelfPetInfo = function () {
 
 // //flash.external.ExternalInterface.call("console.log","showPageAt");
 window.PETSendData = function (dataOl) {
+  if (fishClosing) return;
   //console.log("PETSendData_start");
   var data = JSON.parse(dataOl);
   console.log("data 选择", data);
@@ -1136,6 +1154,6 @@ window.PETSendData = function (dataOl) {
     head: data.head,
   };
   console.log("ResultData", ResultData);
-  player.PETEventOnReceived(JSON.stringify(ResultData));
+  setPETEVENT(ResultData);
   //console.log("PETSendData_end");
 };

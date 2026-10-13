@@ -35,11 +35,33 @@
                 wsMethods: h
               } = e;
               let a = JSON.parse(JSON.stringify(getPetInfo()));
+              const {PondSave}=require('../../../service/gameplay/pondSave');
+              const pond=new PondSave();let closing=false,settled=false;s.lastSaveError=null;
+              const applySave=data=>{
+                try {
+                  const sequence=pond.commit(data);a=JSON.parse(JSON.stringify(getPetInfo()));
+                  if(!i.isDestroyed())i.webContents.send('fishing_m_bus_h',{type:'saveAck',sequence});
+                } catch(error) {
+                  const sequence=pond.discard(data);
+                  if(!i.isDestroyed())i.webContents.send('fishing_m_bus_h',{type:'saveRejected',sequence,data:JSON.parse(JSON.stringify(getPetInfo()))});
+                  if(typeof openSpeak==='function')openSpeak({data:{type:'text',data:'鱼塘操作未保存，请重试。'+error.message},active:'speak'});
+                }
+              };
+              i.on('close',event=>{
+                if(settled)return;event.preventDefault();if(closing)return;closing=true;i.setEnabled(false);
+                let timeout;
+                Promise.race([
+                  i.webContents.executeJavaScript("(()=>{const f=document.querySelector('iframe')?.contentWindow;return f?.settleFishSave?.()||{packets:[]};})()"),
+                  new Promise((_resolve,reject)=>{timeout=setTimeout(()=>reject(Error('鱼塘保存结算超时，请重新打开鱼塘后再导出。')),4000);})
+                ]).then(applySave).catch(error=>{s.lastSaveError=error;console.error('鱼塘关闭结算失败',error);})
+                  .finally(()=>{clearTimeout(timeout);settled=true;if(!i.isDestroyed())i.close();});
+              });
               t({
                 fishing_h_say_m: (e, s) => {
                   console.log(s, " --- fishing_h_say_m say");
                 },
                 fishing_h_bus_m: (e, t) => {
+                  if(e.sender!==i.webContents||i.isDestroyed())return;
                   if (t.event == "mounted") {
                     i.webContents.send("fishing_m_bus_h", {
                       data: n,
@@ -51,34 +73,7 @@
                       type: "setPetInfo"
                     });
                   } else if (t.event == "saveDatas") {
-                    let e = {};
-                    if (t.data?.fishes || t.data?.harvestfish || t.data?.canusecnt) {
-                      e.fishing ||= {};
-                      if (t.data.fishes) {
-                        e.fishing.fishes = t.data.fishes;
-                        try {
-                          e.fishing.fishes = JSON.parse(t.data.fishes);
-                        } catch (e) {}
-                        a.fishing.fishes = e.fishing.fishes;
-                      }
-                      if (t.data.harvestfish) {
-                        e.fishing.harvestfish = t.data.harvestfish;
-                      }
-                      if (t.data.canusecnt) {
-                        e.fishing.canusecnt = t.data.canusecnt;
-                      }
-                    }
-                    if (t.data?.yb) {
-                      e.info ||= {};
-                      e.info.yb = +t.data.yb;
-                    }
-                    setPetInfo(e);
-                    if (t.data.getPetInfo) {
-                      i.webContents.send("fishing_m_bus_h", {
-                        data: a,
-                        type: "setPetInfo"
-                      });
-                    }
+                    applySave(t.data);
                   } else if (t.event == "close") {
                     s.doClose();
                   }

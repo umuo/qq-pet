@@ -31,6 +31,11 @@
           seeApp();
         } else if (r.type == "setPetInfo" && t) {
           t.setPetInfo(r.data);
+        } else if (r.type == 'saveAck' && t) {
+          t.ackFishSave?.(r.sequence);
+        } else if (r.type == 'saveRejected' && t) {
+          t.ackFishSave?.(r.sequence);
+          t.restoreFishSave?.(r.data);
         }
       });
       o({

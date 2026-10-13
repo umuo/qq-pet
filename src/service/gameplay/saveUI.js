@@ -14,6 +14,7 @@ async function settleWindows() {
       function done() {clearTimeout(timer);resolve();}
       win.once('closed',done);win.close();
     });
+    if (name==='fishing' && require('../../windows/popups/fishing/main').lastSaveError) throw require('../../windows/popups/fishing/main').lastSaveError;
   }
 }
 async function run(action, parent) {
