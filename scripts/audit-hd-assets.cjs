@@ -57,9 +57,11 @@ for (const high of highs) {
     for (const item of lowIndex.get(originals.get(source))||[]) {
       if (!fits(item)) continue;
       covered.add(high);
+      if (item.low.endsWith('.ico') && !item.low.startsWith('img_res/Tray/')) continue;
       const previous = aliases[item.low];
-      const sameName = path.basename(item.low)===path.basename(source);
-      if (!previous || (sameName && path.basename(item.low)!==path.basename(previous.source))) {
+      const canonical = item.low.replace(/^img_res\/Tray\/Boy\//,'img_res/Tray/GG/').replace(/^img_res\/Tray\/Girl\//,'img_res/Tray/MM/').replace(/\/deafult\.ico$/,'/normal/1.ico').replace(/^img_res\/commodity\//,'img_res/clean/');
+      const rank = candidate => candidate==='resources/pet/'+canonical ? 2 : path.basename(item.low)===path.basename(candidate) ? 1 : 0;
+      if (!previous || rank(source)>rank(previous.source)) {
         aliases[item.low] = {high:'reference/'+high,sha256:item.sha256,source};
       }
     }

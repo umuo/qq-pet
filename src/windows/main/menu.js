@@ -7,10 +7,25 @@ const {
   nativeImage
 } = _require("electron");
 const path = _require("path");
+const fs = _require("node:fs");
+const { hdImagePath } = _require("../util/hdImages");
 const icons = path.join(__dirname, "../../assets/tray-icon.png");
 const loadTrayIcon = function (p) {
   try {
-    let img = nativeImage.createFromPath(p);
+    const high = hdImagePath(p, typeof getSys !== 'function' || getSys()?.hdImages !== false);
+    if (high !== p) {
+      try {
+        const bytes = fs.readFileSync(high);
+        const img = nativeImage.createFromBuffer(bytes);
+        if (!img.isEmpty()) {
+          const resized = nativeImage.createEmpty();
+          resized.addRepresentation({scaleFactor:1,dataURL:img.resize({width:18,height:18}).toDataURL()});
+          resized.addRepresentation({scaleFactor:2,dataURL:img.resize({width:36,height:36}).toDataURL()});
+          return resized;
+        }
+      } catch (_) { /* A missing HD file still tries the original icon. */ }
+    }
+    const img = nativeImage.createFromPath(p);
     if (img.isEmpty()) {
       return nativeImage.createFromPath(icons);
     }
@@ -80,7 +95,8 @@ class MenuCreate {
     }
     let n = e => {
       try {
-        this.tray.setImage(loadTrayIcon(path.join(__dirname, "../../assets/img_res/Tray/" + s.sex + "/" + s.name + "/" + e + ".ico")));
+        const directory = s.name === 'trip' ? 'travel' : s.name;
+        this.tray.setImage(loadTrayIcon(path.join(__dirname, "../../assets/img_res/Tray/" + s.sex + "/" + directory + "/" + e + ".ico")));
       } catch (e) {}
       this.activeTraysIconTime = setTimeout(() => {
         let t = e + 1 > s.opt.end ? s.opt.start : e + 1;
@@ -108,7 +124,8 @@ class MenuCreate {
 try {
   if (module) {
     module.exports = {
-      MenuCreate
+      MenuCreate,
+      loadTrayIcon
     };
   }
 } catch (e) {}

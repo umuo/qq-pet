@@ -10,6 +10,21 @@ function imageSize(buffer) {
   if (buffer.length >= 10 && /^GIF8[79]a/.test(buffer.toString('ascii', 0, 6))) {
     return [buffer.readUInt16LE(6), buffer.readUInt16LE(8)];
   }
+  if (buffer.length >= 22 && buffer.readUInt16LE(0) === 0 && buffer.readUInt16LE(2) === 1) {
+    const count = buffer.readUInt16LE(4), end = 6 + count * 16;
+    if (!count || end > buffer.length) return null;
+    let dimensions;
+    for (let i=0;i<count;i++) {
+      const at=6+i*16, width=buffer[at]||256, height=buffer[at+1]||256;
+      const length=buffer.readUInt32LE(at+8), start=buffer.readUInt32LE(at+12);
+      if (!length || start<end || start+length>buffer.length) return null;
+      // Multi-resolution ICO files have no single intrinsic density. Only
+      // accept the original tray files whose entries share one size.
+      if (dimensions && (width!==dimensions[0] || height!==dimensions[1])) return null;
+      dimensions=[width,height];
+    }
+    return dimensions;
+  }
   if (buffer.length < 4 || buffer[0] !== 0xff || buffer[1] !== 0xd8) return null;
   let offset = 2;
   while (offset < buffer.length) {
@@ -114,4 +129,10 @@ function installHdImages(map) {
   }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['src', 'style'] });
 }
 function hdScript(enabled) { return enabled ? `(${installHdImages.toString()})(${JSON.stringify(hdPairs())});void 0;` : ''; }
-module.exports = { hdPairs, hdCss, hdScript, imageSize };
+function hdImagePath(file, enabled=true) {
+  if (!enabled) return file;
+  const key=path.relative(assets,file).split(path.sep).join('/');
+  const high=hdPairs()[key];
+  return high ? path.join(assets,high) : file;
+}
+module.exports = { hdPairs, hdCss, hdScript, imageSize, hdImagePath };

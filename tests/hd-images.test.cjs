@@ -27,8 +27,21 @@ test('changed original bytes invalidate an alias without changing project files'
 });
 
 test('incomplete image headers safely retain original resources',()=>{
-  for(const file of ['sysSeting/guanbi00.png','img_res/food/100010032.gif','img_res/food/100010238.gif']) {
+  for(const file of ['sysSeting/guanbi00.png','img_res/food/100010032.gif','img_res/food/100010238.gif','img_res/Tray/Boy/normal/1.ico']) {
     const bytes=fs.readFileSync(path.join(assets,file));
     for(const length of [0,1,4,8])assert.equal(imageSize(bytes.subarray(0,length)),null);
+  }
+});
+
+test('tray ICO entries have one unambiguous density and retain state identity',()=>{
+  const bytes=fs.readFileSync(path.join(assets,'img_res/Tray/Boy/normal/1.ico'));
+  assert.deepEqual(imageSize(bytes),[16,16]);
+  const mixed=Buffer.from(bytes);mixed[22]=32;
+  assert.equal(imageSize(mixed),null,'multi-resolution ICO entries cannot be treated as one intrinsic size');
+  const incomplete=Buffer.from(bytes);incomplete.writeUInt32LE(bytes.length,18);
+  assert.equal(imageSize(incomplete),null,'an out-of-bounds ICO payload retains the original');
+  for(const [low,high] of Object.entries(hdPairs()).filter(([low])=>low.startsWith('img_res/Tray/'))){
+    const expected='reference/'+low.replace('/Boy/','/GG/').replace('/Girl/','/MM/').replace('/deafult.ico','/normal/1.ico').replace('.ico','@2x.png');
+    assert.equal(high,expected,'shared low-resolution bytes cannot mix different tray states');
   }
 });

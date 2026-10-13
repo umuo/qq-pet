@@ -136,6 +136,426 @@
       "sha256": "072edd1b8ff0c198cb5ef5cdf027c9e94594ee124f6929bb12753d6b47b4146b",
       "source": "resources/pet/email/close_over.png"
     },
+    "img_res/Tray/Boy/dead/1.ico": {
+      "high": "reference/img_res/Tray/GG/dead/1@2x.png",
+      "sha256": "f536b5ba586cbf9215ed640a40f5906d56202c357ddbe8b08225e0ebee4f1250",
+      "source": "resources/pet/img_res/Tray/GG/dead/1.ico"
+    },
+    "img_res/Tray/Boy/dead/2.ico": {
+      "high": "reference/img_res/Tray/GG/dead/2@2x.png",
+      "sha256": "0a82973574e94eccd40e99d2d24c47deadb00c9fef0e227ce2ad0e21db831aa3",
+      "source": "resources/pet/img_res/Tray/GG/dead/2.ico"
+    },
+    "img_res/Tray/Boy/deafult.ico": {
+      "high": "reference/img_res/Tray/GG/normal/1@2x.png",
+      "sha256": "08757737fca0d16aa38e5f28939f61854b2778d9620502813e9dab4b28d7ce45",
+      "source": "resources/pet/img_res/Tray/GG/normal/1.ico"
+    },
+    "img_res/Tray/Boy/dirty/1.ico": {
+      "high": "reference/img_res/Tray/GG/dirty/1@2x.png",
+      "sha256": "7d85c6a41c70899d7ec705e4b1cdc37bc3cbf70dd7f763125201e81c22a971d5",
+      "source": "resources/pet/img_res/Tray/GG/dirty/1.ico"
+    },
+    "img_res/Tray/Boy/dirty/2.ico": {
+      "high": "reference/img_res/Tray/GG/dirty/2@2x.png",
+      "sha256": "f9505ac6acf821d85e0a5d53f7273e9d41f8334ee83f1b33b862e402922b97ff",
+      "source": "resources/pet/img_res/Tray/GG/dirty/2.ico"
+    },
+    "img_res/Tray/Boy/dirty/3.ico": {
+      "high": "reference/img_res/Tray/GG/dirty/3@2x.png",
+      "sha256": "cb64082972a1f26f267d9c407c520c7317dc937e6d12d309ecb0374291184e79",
+      "source": "resources/pet/img_res/Tray/GG/dirty/3.ico"
+    },
+    "img_res/Tray/Boy/dirty/4.ico": {
+      "high": "reference/img_res/Tray/GG/dirty/4@2x.png",
+      "sha256": "47ed85af7cbf2c62113778d1c67aabc2e1122ccadb82a8e4dc82c51e8931fdc0",
+      "source": "resources/pet/img_res/Tray/GG/dirty/4.ico"
+    },
+    "img_res/Tray/Boy/event/1.ico": {
+      "high": "reference/img_res/Tray/GG/event/1@2x.png",
+      "sha256": "b90aaddc5725605533f6b7468055b99512b28e3245b4afda9334523d1e940da9",
+      "source": "resources/pet/img_res/Tray/GG/event/1.ico"
+    },
+    "img_res/Tray/Boy/event/2.ico": {
+      "high": "reference/img_res/Tray/GG/event/2@2x.png",
+      "sha256": "071328b491d2c520ef70faaa69aafb1373a15881dfc0872f845b43674f39071d",
+      "source": "resources/pet/img_res/Tray/GG/event/2.ico"
+    },
+    "img_res/Tray/Boy/feast/1.ico": {
+      "high": "reference/img_res/Tray/GG/feast/1@2x.png",
+      "sha256": "d34484898c684a5b3d46e76a587920846102de3f7e5191f24df86356a2b877fa",
+      "source": "resources/pet/img_res/Tray/GG/feast/1.ico"
+    },
+    "img_res/Tray/Boy/feast/2.ico": {
+      "high": "reference/img_res/Tray/GG/feast/2@2x.png",
+      "sha256": "df1a7e5ac4b90e6652ab3b286fc538fcd6707e0ecceb1fa55fbb4ddab358528c",
+      "source": "resources/pet/img_res/Tray/GG/feast/2.ico"
+    },
+    "img_res/Tray/Boy/feast/3.ico": {
+      "high": "reference/img_res/Tray/GG/feast/3@2x.png",
+      "sha256": "d34484898c684a5b3d46e76a587920846102de3f7e5191f24df86356a2b877fa",
+      "source": "resources/pet/img_res/Tray/GG/feast/3.ico"
+    },
+    "img_res/Tray/Boy/game/1.ico": {
+      "high": "reference/img_res/Tray/GG/game/1@2x.png",
+      "sha256": "eb4fec05b57a3ad35e8dd172cc4b02d36548b4a7328bbc948eb0da0f821e7778",
+      "source": "resources/pet/img_res/Tray/GG/game/1.ico"
+    },
+    "img_res/Tray/Boy/game/2.ico": {
+      "high": "reference/img_res/Tray/GG/game/2@2x.png",
+      "sha256": "2b7760c83fd3517e392aee4b80f59f58b2faf5deda15e5c1290a76ad5968cf28",
+      "source": "resources/pet/img_res/Tray/GG/game/2.ico"
+    },
+    "img_res/Tray/Boy/game/3.ico": {
+      "high": "reference/img_res/Tray/GG/game/3@2x.png",
+      "sha256": "1322836312fb63ff40bdfac6c66065f76cd1e10a951f870d576a0d5751d356b2",
+      "source": "resources/pet/img_res/Tray/GG/game/3.ico"
+    },
+    "img_res/Tray/Boy/game/4.ico": {
+      "high": "reference/img_res/Tray/GG/game/4@2x.png",
+      "sha256": "2b7760c83fd3517e392aee4b80f59f58b2faf5deda15e5c1290a76ad5968cf28",
+      "source": "resources/pet/img_res/Tray/GG/game/4.ico"
+    },
+    "img_res/Tray/Boy/hungry/1.ico": {
+      "high": "reference/img_res/Tray/GG/hungry/1@2x.png",
+      "sha256": "08757737fca0d16aa38e5f28939f61854b2778d9620502813e9dab4b28d7ce45",
+      "source": "resources/pet/img_res/Tray/GG/hungry/1.ico"
+    },
+    "img_res/Tray/Boy/hungry/2.ico": {
+      "high": "reference/img_res/Tray/GG/hungry/2@2x.png",
+      "sha256": "c1e33a1d6719ad006b16e0cc7d3ba6265b01dab068b4364f440dbe0a8069266a",
+      "source": "resources/pet/img_res/Tray/GG/hungry/2.ico"
+    },
+    "img_res/Tray/Boy/hungry/3.ico": {
+      "high": "reference/img_res/Tray/GG/hungry/3@2x.png",
+      "sha256": "1d31f80c612d639c754a26e1447a6f599282d0abc08a782759c8dec987b52cd2",
+      "source": "resources/pet/img_res/Tray/GG/hungry/3.ico"
+    },
+    "img_res/Tray/Boy/hungry/4.ico": {
+      "high": "reference/img_res/Tray/GG/hungry/4@2x.png",
+      "sha256": "c1e33a1d6719ad006b16e0cc7d3ba6265b01dab068b4364f440dbe0a8069266a",
+      "source": "resources/pet/img_res/Tray/GG/hungry/4.ico"
+    },
+    "img_res/Tray/Boy/ill/1.ico": {
+      "high": "reference/img_res/Tray/GG/ill/1@2x.png",
+      "sha256": "7512cc899e2a976acb4ce9e0743b2caf28e590293127107e95eb9a58e9d12dbc",
+      "source": "resources/pet/img_res/Tray/GG/ill/1.ico"
+    },
+    "img_res/Tray/Boy/ill/2.ico": {
+      "high": "reference/img_res/Tray/GG/ill/2@2x.png",
+      "sha256": "d3ff0c795d0005a79806c0fd711899da7151e9ec3665df1ce4377e7bc5a9d3fe",
+      "source": "resources/pet/img_res/Tray/GG/ill/2.ico"
+    },
+    "img_res/Tray/Boy/leave.ico": {
+      "high": "reference/img_res/Tray/GG/leave@2x.png",
+      "sha256": "fba29ab641c1781c7a72406fa419203c7a325a24f41bc068d332856a82184e00",
+      "source": "resources/pet/img_res/Tray/GG/leave.ico"
+    },
+    "img_res/Tray/Boy/normal/1.ico": {
+      "high": "reference/img_res/Tray/GG/normal/1@2x.png",
+      "sha256": "08757737fca0d16aa38e5f28939f61854b2778d9620502813e9dab4b28d7ce45",
+      "source": "resources/pet/img_res/Tray/GG/normal/1.ico"
+    },
+    "img_res/Tray/Boy/normal/2.ico": {
+      "high": "reference/img_res/Tray/GG/normal/2@2x.png",
+      "sha256": "c1e33a1d6719ad006b16e0cc7d3ba6265b01dab068b4364f440dbe0a8069266a",
+      "source": "resources/pet/img_res/Tray/GG/normal/2.ico"
+    },
+    "img_res/Tray/Boy/normal/3.ico": {
+      "high": "reference/img_res/Tray/GG/normal/3@2x.png",
+      "sha256": "08757737fca0d16aa38e5f28939f61854b2778d9620502813e9dab4b28d7ce45",
+      "source": "resources/pet/img_res/Tray/GG/normal/3.ico"
+    },
+    "img_res/Tray/Boy/normal/4.ico": {
+      "high": "reference/img_res/Tray/GG/normal/4@2x.png",
+      "sha256": "d2f0ec788371a465e641eacf025a50e54d2ec1e312e6db4ebdac64f84a8455de",
+      "source": "resources/pet/img_res/Tray/GG/normal/4.ico"
+    },
+    "img_res/Tray/Boy/pause/1.ico": {
+      "high": "reference/img_res/Tray/GG/pause/1@2x.png",
+      "sha256": "08757737fca0d16aa38e5f28939f61854b2778d9620502813e9dab4b28d7ce45",
+      "source": "resources/pet/img_res/Tray/GG/pause/1.ico"
+    },
+    "img_res/Tray/Boy/pause/2.ico": {
+      "high": "reference/img_res/Tray/GG/pause/2@2x.png",
+      "sha256": "381a2df1dbe08bc279dc2756c1d33ef156224ac9b68692397adb12b9a8dabf2f",
+      "source": "resources/pet/img_res/Tray/GG/pause/2.ico"
+    },
+    "img_res/Tray/Boy/pause/3.ico": {
+      "high": "reference/img_res/Tray/GG/pause/3@2x.png",
+      "sha256": "247da003b52f25a94afba30ba94057424c305ca230bfb40339541026e7ccfb1a",
+      "source": "resources/pet/img_res/Tray/GG/pause/3.ico"
+    },
+    "img_res/Tray/Boy/pause/4.ico": {
+      "high": "reference/img_res/Tray/GG/pause/4@2x.png",
+      "sha256": "651a560f613981cc967d13312f7dd2e89620b405fcf7a1b98e8762d785fb076d",
+      "source": "resources/pet/img_res/Tray/GG/pause/4.ico"
+    },
+    "img_res/Tray/Boy/pause/5.ico": {
+      "high": "reference/img_res/Tray/GG/pause/5@2x.png",
+      "sha256": "7143be950213e5b5448148e6e9573f2b548b76d1c08b0bae073b9737fb92ebd8",
+      "source": "resources/pet/img_res/Tray/GG/pause/5.ico"
+    },
+    "img_res/Tray/Boy/study/1.ico": {
+      "high": "reference/img_res/Tray/GG/study/1@2x.png",
+      "sha256": "805397a1efa407294464080886e9cddc682b7122d3e4aa2dee7c536f224e288c",
+      "source": "resources/pet/img_res/Tray/GG/study/1.ico"
+    },
+    "img_res/Tray/Boy/study/2.ico": {
+      "high": "reference/img_res/Tray/GG/study/2@2x.png",
+      "sha256": "59aa2093bf32f54583781337b21f3b0c84723eda168fe30332639807fde33ea4",
+      "source": "resources/pet/img_res/Tray/GG/study/2.ico"
+    },
+    "img_res/Tray/Boy/study/3.ico": {
+      "high": "reference/img_res/Tray/GG/study/3@2x.png",
+      "sha256": "00d87b9719c2b6451458dd897f438328b13cfe3c79a08d2a50f129ac48d52f96",
+      "source": "resources/pet/img_res/Tray/GG/study/3.ico"
+    },
+    "img_res/Tray/Boy/study/4.ico": {
+      "high": "reference/img_res/Tray/GG/study/4@2x.png",
+      "sha256": "26299e654c08a74589cdb134edb6be3261bb1651e6170a19ced953d499fc7376",
+      "source": "resources/pet/img_res/Tray/GG/study/4.ico"
+    },
+    "img_res/Tray/Boy/travel/1.ico": {
+      "high": "reference/img_res/Tray/GG/travel/1@2x.png",
+      "sha256": "f1218fd124b650e491a1d053f24be74ea5b6eb4cd2aab2def9b2e6f6015ad42c",
+      "source": "resources/pet/img_res/Tray/GG/travel/1.ico"
+    },
+    "img_res/Tray/Boy/travel/2.ico": {
+      "high": "reference/img_res/Tray/GG/travel/2@2x.png",
+      "sha256": "ca45963ab3976098c118fb282181164ab2660404676d1b1948c39b2444a11862",
+      "source": "resources/pet/img_res/Tray/GG/travel/2.ico"
+    },
+    "img_res/Tray/Boy/travel/3.ico": {
+      "high": "reference/img_res/Tray/GG/travel/3@2x.png",
+      "sha256": "f1218fd124b650e491a1d053f24be74ea5b6eb4cd2aab2def9b2e6f6015ad42c",
+      "source": "resources/pet/img_res/Tray/GG/travel/3.ico"
+    },
+    "img_res/Tray/Boy/work/1.ico": {
+      "high": "reference/img_res/Tray/GG/work/1@2x.png",
+      "sha256": "b42b957e73444c66f52510d9bfd323983e29f4cab9db6c63768e8212d117bad4",
+      "source": "resources/pet/img_res/Tray/GG/work/1.ico"
+    },
+    "img_res/Tray/Boy/work/2.ico": {
+      "high": "reference/img_res/Tray/GG/work/2@2x.png",
+      "sha256": "eb941a756d1ba100ebd10491fad08b89898f6c52d40919ef57849b931d54012a",
+      "source": "resources/pet/img_res/Tray/GG/work/2.ico"
+    },
+    "img_res/Tray/Boy/work/3.ico": {
+      "high": "reference/img_res/Tray/GG/work/3@2x.png",
+      "sha256": "b42b957e73444c66f52510d9bfd323983e29f4cab9db6c63768e8212d117bad4",
+      "source": "resources/pet/img_res/Tray/GG/work/3.ico"
+    },
+    "img_res/Tray/Girl/dead/1.ico": {
+      "high": "reference/img_res/Tray/MM/dead/1@2x.png",
+      "sha256": "b74ab2b35b0f3dd3451c6353f0f5c8bd59d68e246ead12a6d42f22beb3561a5f",
+      "source": "resources/pet/img_res/Tray/MM/dead/1.ico"
+    },
+    "img_res/Tray/Girl/dead/2.ico": {
+      "high": "reference/img_res/Tray/MM/dead/2@2x.png",
+      "sha256": "7dac8532b7581dd5d63ddbc3dbd729bd1a5345bca3108eadd8bf3120eea9b93d",
+      "source": "resources/pet/img_res/Tray/MM/dead/2.ico"
+    },
+    "img_res/Tray/Girl/deafult.ico": {
+      "high": "reference/img_res/Tray/MM/normal/1@2x.png",
+      "sha256": "4194a144c9a0f277158fe9b1f5c5d1013a6ce2ca4ba8e37bd503d6d8a6df1e83",
+      "source": "resources/pet/img_res/Tray/MM/normal/1.ico"
+    },
+    "img_res/Tray/Girl/dirty/1.ico": {
+      "high": "reference/img_res/Tray/MM/dirty/1@2x.png",
+      "sha256": "3f228b6cb2754349a2991b53e0029c3df1ac00aebdfdf2f0cf86155297607060",
+      "source": "resources/pet/img_res/Tray/MM/dirty/1.ico"
+    },
+    "img_res/Tray/Girl/dirty/2.ico": {
+      "high": "reference/img_res/Tray/MM/dirty/2@2x.png",
+      "sha256": "1676c8f68253142af2466dac0a9939ae3df0630aa98b1c5502d3a50ad50be99f",
+      "source": "resources/pet/img_res/Tray/MM/dirty/2.ico"
+    },
+    "img_res/Tray/Girl/dirty/3.ico": {
+      "high": "reference/img_res/Tray/MM/dirty/3@2x.png",
+      "sha256": "f2c76f007bc892af8922039c74067f33f3996ecbb2f78fdec163f82ce297380b",
+      "source": "resources/pet/img_res/Tray/MM/dirty/3.ico"
+    },
+    "img_res/Tray/Girl/dirty/4.ico": {
+      "high": "reference/img_res/Tray/MM/dirty/4@2x.png",
+      "sha256": "ca48db0aa2e1f10d10f23b5e698f0a796303849312f13c0d5257e5857934d161",
+      "source": "resources/pet/img_res/Tray/MM/dirty/4.ico"
+    },
+    "img_res/Tray/Girl/event/1.ico": {
+      "high": "reference/img_res/Tray/MM/event/1@2x.png",
+      "sha256": "ba6b271b6fa1b227d456a48e4e53900ac69c733a42d74a129b80f05f8d7750e0",
+      "source": "resources/pet/img_res/Tray/MM/event/1.ico"
+    },
+    "img_res/Tray/Girl/event/2.ico": {
+      "high": "reference/img_res/Tray/MM/event/2@2x.png",
+      "sha256": "c55863b4952998054814fe694cefabc61b9923f79f1c02a9a322a9f74cf32587",
+      "source": "resources/pet/img_res/Tray/MM/event/2.ico"
+    },
+    "img_res/Tray/Girl/feast/1.ico": {
+      "high": "reference/img_res/Tray/MM/feast/1@2x.png",
+      "sha256": "38c1f3f713053b5c601cfd63a869c0aa36d6eb6e92be1d1dcc42d87806b2a2d2",
+      "source": "resources/pet/img_res/Tray/MM/feast/1.ico"
+    },
+    "img_res/Tray/Girl/feast/2.ico": {
+      "high": "reference/img_res/Tray/MM/feast/2@2x.png",
+      "sha256": "2ba57a0f9dec0a7ae589dcdf9e403dd497a6ba914d4f6f11d594acff4c4e02bc",
+      "source": "resources/pet/img_res/Tray/MM/feast/2.ico"
+    },
+    "img_res/Tray/Girl/feast/3.ico": {
+      "high": "reference/img_res/Tray/MM/feast/3@2x.png",
+      "sha256": "38c1f3f713053b5c601cfd63a869c0aa36d6eb6e92be1d1dcc42d87806b2a2d2",
+      "source": "resources/pet/img_res/Tray/MM/feast/3.ico"
+    },
+    "img_res/Tray/Girl/game/1.ico": {
+      "high": "reference/img_res/Tray/MM/game/1@2x.png",
+      "sha256": "7afb2da7f3435bf09d9ac28a92df19f6670523aa5f196363f4b56737aca65d02",
+      "source": "resources/pet/img_res/Tray/MM/game/1.ico"
+    },
+    "img_res/Tray/Girl/game/2.ico": {
+      "high": "reference/img_res/Tray/MM/game/2@2x.png",
+      "sha256": "d53fde95a73f9a0098036d2dead9577198368cbeec3d0f7f6bba49c1d266741a",
+      "source": "resources/pet/img_res/Tray/MM/game/2.ico"
+    },
+    "img_res/Tray/Girl/game/3.ico": {
+      "high": "reference/img_res/Tray/MM/game/3@2x.png",
+      "sha256": "1e7572caa7de7c964c237a72c6b5b064c20b1d043620f64b39810cd4024af5d1",
+      "source": "resources/pet/img_res/Tray/MM/game/3.ico"
+    },
+    "img_res/Tray/Girl/game/4.ico": {
+      "high": "reference/img_res/Tray/MM/game/4@2x.png",
+      "sha256": "d53fde95a73f9a0098036d2dead9577198368cbeec3d0f7f6bba49c1d266741a",
+      "source": "resources/pet/img_res/Tray/MM/game/4.ico"
+    },
+    "img_res/Tray/Girl/hungry/1.ico": {
+      "high": "reference/img_res/Tray/MM/hungry/1@2x.png",
+      "sha256": "9f211955fc7c15bfa5e784cd11163bdc5ee241f1f8fbab912b183fed49c2e208",
+      "source": "resources/pet/img_res/Tray/MM/hungry/1.ico"
+    },
+    "img_res/Tray/Girl/hungry/2.ico": {
+      "high": "reference/img_res/Tray/MM/hungry/2@2x.png",
+      "sha256": "28e597927cc30f80e4d64294f016a21b587906a046aaa63f374ed2a173037ea1",
+      "source": "resources/pet/img_res/Tray/MM/hungry/2.ico"
+    },
+    "img_res/Tray/Girl/hungry/3.ico": {
+      "high": "reference/img_res/Tray/MM/hungry/3@2x.png",
+      "sha256": "902d2073ee994982672c8ec4574898c10e8cc893b7c8fea3aad8f95cd4a24f3d",
+      "source": "resources/pet/img_res/Tray/MM/hungry/3.ico"
+    },
+    "img_res/Tray/Girl/hungry/4.ico": {
+      "high": "reference/img_res/Tray/MM/hungry/4@2x.png",
+      "sha256": "28e597927cc30f80e4d64294f016a21b587906a046aaa63f374ed2a173037ea1",
+      "source": "resources/pet/img_res/Tray/MM/hungry/4.ico"
+    },
+    "img_res/Tray/Girl/ill/1.ico": {
+      "high": "reference/img_res/Tray/MM/ill/1@2x.png",
+      "sha256": "82343f3050d4316ba8314b4a3c71d03a24443eb0b841e20654acb2da0a94822b",
+      "source": "resources/pet/img_res/Tray/MM/ill/1.ico"
+    },
+    "img_res/Tray/Girl/ill/2.ico": {
+      "high": "reference/img_res/Tray/MM/ill/2@2x.png",
+      "sha256": "d683d4dc126604ef6bb37d41889a25147ae3bbd801d525cd608177918c4e3c2e",
+      "source": "resources/pet/img_res/Tray/MM/ill/2.ico"
+    },
+    "img_res/Tray/Girl/leave.ico": {
+      "high": "reference/img_res/Tray/MM/leave@2x.png",
+      "sha256": "2bc5aec91a32016759806f3a828bd6470c5c3e45da46f7bb68d8aee26c75cb61",
+      "source": "resources/pet/img_res/Tray/MM/leave.ico"
+    },
+    "img_res/Tray/Girl/normal/1.ico": {
+      "high": "reference/img_res/Tray/MM/normal/1@2x.png",
+      "sha256": "4194a144c9a0f277158fe9b1f5c5d1013a6ce2ca4ba8e37bd503d6d8a6df1e83",
+      "source": "resources/pet/img_res/Tray/MM/normal/1.ico"
+    },
+    "img_res/Tray/Girl/normal/2.ico": {
+      "high": "reference/img_res/Tray/MM/normal/2@2x.png",
+      "sha256": "8577aa82870c6c0c2af28c3af2366d9b183f218c5773d1639bcf5e7de6b6a1c2",
+      "source": "resources/pet/img_res/Tray/MM/normal/2.ico"
+    },
+    "img_res/Tray/Girl/normal/3.ico": {
+      "high": "reference/img_res/Tray/MM/normal/3@2x.png",
+      "sha256": "4194a144c9a0f277158fe9b1f5c5d1013a6ce2ca4ba8e37bd503d6d8a6df1e83",
+      "source": "resources/pet/img_res/Tray/MM/normal/3.ico"
+    },
+    "img_res/Tray/Girl/normal/4.ico": {
+      "high": "reference/img_res/Tray/MM/normal/4@2x.png",
+      "sha256": "f4e746b6dc288c1c2427f571548a18e9533aa9d2a76a67d75baeead7abfa41d7",
+      "source": "resources/pet/img_res/Tray/MM/normal/4.ico"
+    },
+    "img_res/Tray/Girl/pause/1.ico": {
+      "high": "reference/img_res/Tray/MM/pause/1@2x.png",
+      "sha256": "c9fb20485c14509097f68df13b073158da7147f332ba694931f39dae5d1ffe5b",
+      "source": "resources/pet/img_res/Tray/MM/pause/1.ico"
+    },
+    "img_res/Tray/Girl/pause/2.ico": {
+      "high": "reference/img_res/Tray/MM/pause/2@2x.png",
+      "sha256": "803acc4c144c2630b1f1000331bad29f02758477672c74397adeabf99bf7af83",
+      "source": "resources/pet/img_res/Tray/MM/pause/2.ico"
+    },
+    "img_res/Tray/Girl/pause/3.ico": {
+      "high": "reference/img_res/Tray/MM/pause/3@2x.png",
+      "sha256": "5049bafead7ba95112b9e05b464688840bb1e09faf8f57cfccd5c6e1743909b9",
+      "source": "resources/pet/img_res/Tray/MM/pause/3.ico"
+    },
+    "img_res/Tray/Girl/pause/4.ico": {
+      "high": "reference/img_res/Tray/MM/pause/4@2x.png",
+      "sha256": "651a560f613981cc967d13312f7dd2e89620b405fcf7a1b98e8762d785fb076d",
+      "source": "resources/pet/img_res/Tray/MM/pause/4.ico"
+    },
+    "img_res/Tray/Girl/pause/5.ico": {
+      "high": "reference/img_res/Tray/MM/pause/5@2x.png",
+      "sha256": "7143be950213e5b5448148e6e9573f2b548b76d1c08b0bae073b9737fb92ebd8",
+      "source": "resources/pet/img_res/Tray/MM/pause/5.ico"
+    },
+    "img_res/Tray/Girl/study/1.ico": {
+      "high": "reference/img_res/Tray/MM/study/1@2x.png",
+      "sha256": "76838b5763eac97bc36d1c42443bd1dc17b3ebfb08f0f71add644bab7bacd5bb",
+      "source": "resources/pet/img_res/Tray/MM/study/1.ico"
+    },
+    "img_res/Tray/Girl/study/2.ico": {
+      "high": "reference/img_res/Tray/MM/study/2@2x.png",
+      "sha256": "5824083bac4e14a72163ff259ab3632256dbf1089f8076ef180d0d8312c3d0f4",
+      "source": "resources/pet/img_res/Tray/MM/study/2.ico"
+    },
+    "img_res/Tray/Girl/study/3.ico": {
+      "high": "reference/img_res/Tray/MM/study/3@2x.png",
+      "sha256": "edc29852e55c10c61885bda8ece670bd3f19bda40a113e5c924fdc65bd27cfd3",
+      "source": "resources/pet/img_res/Tray/MM/study/3.ico"
+    },
+    "img_res/Tray/Girl/study/4.ico": {
+      "high": "reference/img_res/Tray/MM/study/4@2x.png",
+      "sha256": "bc69e0806ce8c9611165bae57560647852d39cbfcb82a05b852ce194f72c0d06",
+      "source": "resources/pet/img_res/Tray/MM/study/4.ico"
+    },
+    "img_res/Tray/Girl/travel/1.ico": {
+      "high": "reference/img_res/Tray/MM/travel/1@2x.png",
+      "sha256": "db70211d0dd08023ab6886c5b525aacc1ce4f5dd41b70c1b98504aff05f2761c",
+      "source": "resources/pet/img_res/Tray/MM/travel/1.ico"
+    },
+    "img_res/Tray/Girl/travel/2.ico": {
+      "high": "reference/img_res/Tray/MM/travel/2@2x.png",
+      "sha256": "61159a0bb2c67ef755120fedb1e387f6d6637e91a4ef64b7f8799817752a9608",
+      "source": "resources/pet/img_res/Tray/MM/travel/2.ico"
+    },
+    "img_res/Tray/Girl/travel/3.ico": {
+      "high": "reference/img_res/Tray/MM/travel/3@2x.png",
+      "sha256": "db70211d0dd08023ab6886c5b525aacc1ce4f5dd41b70c1b98504aff05f2761c",
+      "source": "resources/pet/img_res/Tray/MM/travel/3.ico"
+    },
+    "img_res/Tray/Girl/work/1.ico": {
+      "high": "reference/img_res/Tray/MM/work/1@2x.png",
+      "sha256": "8f60ae4cdec4115d6311c28eb43ceb8ab2d3188199187c6bc0c2a436c4db6aeb",
+      "source": "resources/pet/img_res/Tray/MM/work/1.ico"
+    },
+    "img_res/Tray/Girl/work/2.ico": {
+      "high": "reference/img_res/Tray/MM/work/2@2x.png",
+      "sha256": "73e8b6a03df1c7aab0f4745372ba57c2412d689f943858fe4f250af95f17536a",
+      "source": "resources/pet/img_res/Tray/MM/work/2.ico"
+    },
+    "img_res/Tray/Girl/work/3.ico": {
+      "high": "reference/img_res/Tray/MM/work/3@2x.png",
+      "sha256": "8f60ae4cdec4115d6311c28eb43ceb8ab2d3188199187c6bc0c2a436c4db6aeb",
+      "source": "resources/pet/img_res/Tray/MM/work/3.ico"
+    },
     "img_res/commodity/100020032.gif": {
       "high": "reference/img_res/clean/100020032@2x.png",
       "sha256": "9ea2c9739d804cbf2b4c26a834fc81f0fa4766e53cc09e6297510d6172a2c47b",

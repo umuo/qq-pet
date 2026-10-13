@@ -12,7 +12,7 @@ const timeout = setTimeout(() => app.exit(2), 45000);
 app.whenReady().then(async () => {
   const hd = require('../src/windows/util/hdImages');
   const map = hd.hdPairs();
-  assert.equal(Object.keys(map).length, 1247);
+  assert.equal(Object.keys(map).length, 1331);
   const mislabeled = Object.entries(map).filter(([low]) => low.endsWith('.gif') && !/^GIF8[79]a/.test(fs.readFileSync(path.resolve(__dirname,'../src/assets',low)).toString('ascii',0,6))).map(([low,high]) => {
     const bytes=fs.readFileSync(path.resolve(__dirname,'../src/assets',high));
     return {low,high,width:bytes.readUInt32BE(16)/2,height:bytes.readUInt32BE(20)/2};
@@ -20,7 +20,7 @@ app.whenReady().then(async () => {
   assert.equal(mislabeled.length,131,'original PNG/JPEG icons with .gif filenames receive their exact-size HD counterpart');
   const changedKeys = new Set([...mislabeled.map(item=>item.low),...Object.keys(require('../src/windows/util/hdAliases.json').mappings)]);
   const changed = [...changedKeys].sort().map(low=>{const bytes=fs.readFileSync(path.resolve(__dirname,'../src/assets',map[low]));return {low,high:map[low],width:bytes.readUInt32BE(16)/2,height:bytes.readUInt32BE(20)/2};});
-  assert.equal(changed.length,537,'all new format and identity-verified alias mappings are exercised');
+  assert.equal(changed.length,621,'all new format and identity-verified alias mappings are exercised');
   async function checkFormats(win,enabled) {
     await win.webContents.executeJavaScript(`(()=>{const cases=${JSON.stringify(changed)};for(const [i,item] of cases.entries()){const img=document.createElement('img');img.id='formatProbe'+i;img.hidden=true;img.src='../assets/'+item.low;document.body.appendChild(img);}})();void 0;`);
     await until(()=>win.webContents.executeJavaScript(`Array.from(document.querySelectorAll('[id^=formatProbe]')).every(img=>img.complete&&img.naturalWidth>0&&img.currentSrc.includes('@2x.png')===${enabled})`));
