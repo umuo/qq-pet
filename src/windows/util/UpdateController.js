@@ -1,4 +1,16 @@
+const { shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
+
+function getReleaseUrl(info) {
+  if (info?.version) {
+    return `https://github.com/umuo/qq-pet/releases/tag/v${info.version}`;
+  }
+  return 'https://github.com/umuo/qq-pet/releases/latest';
+}
+
+function openReleasePage(info) {
+  shell.openExternal(getReleaseUrl(info));
+}
 
 // 防重入锁：防止重复点击导致多次检查/下载
 let isChecking = false;
@@ -24,11 +36,26 @@ const checkUpdate = (fn) => {
   currentCallback = fn;
   // 标记为手动检查，updater.js 的自动弹窗会跳过
   global.isManualUpdateCheck = true;
+  // macOS 无证书时禁用自动下载大 zip 包
+  autoUpdater.autoDownload = process.platform !== 'darwin';
 
   const onUpdateAvailable = (info) => {
-    // 只移除检查阶段的监听器，保留下载阶段的监听器
     cleanupCheck();
     isChecking = false;
+
+    if (process.platform === 'darwin') {
+      // macOS 无证书时无法使用 Squirrel.Mac 热更，直接引导下载 DMG
+      cleanup();
+      global.isManualUpdateCheck = false;
+      fn({
+        type: "down",
+        info: info,
+        msg: `发现新版本 ${info.version}，点击前往下载最新版~`,
+        btnText: "前往下载~",
+        fn: () => openReleasePage(info)
+      });
+      return;
+    }
 
     // autoDownload = true 时，electron-updater 会自动开始下载
     // 此时切换到下载状态
@@ -91,7 +118,25 @@ const checkUpdate = (fn) => {
     global.isManualUpdateCheck = false;
     lastProgressObj = null;
     lastProgressTime = 0;
-    fn({ type: "down", info: info, fn: installUpdate });
+
+    if (process.platform === 'darwin') {
+      fn({
+        type: "down",
+        info: info,
+        msg: `最新版本 ${info.version} 已准备好，点击前往下载~`,
+        btnText: "前往下载~",
+        fn: () => openReleasePage(info)
+      });
+      return;
+    }
+
+    fn({
+      type: "down",
+      info: info,
+      msg: "最新版本已下载完成，点击安装并重启~",
+      btnText: "立即安装~",
+      fn: () => installUpdate(info)
+    });
   };
 
   // 取消下载
@@ -108,8 +153,15 @@ const checkUpdate = (fn) => {
   };
 
   // 安装更新
-  const installUpdate = () => {
+  const installUpdate = (info) => {
+    if (process.platform === 'darwin') {
+      openReleasePage(info);
+      return;
+    }
     global.isQuittingForUpdate = true;
+    if (typeof global.setOutProjectMain === 'function') {
+      global.setOutProjectMain(true);
+    }
     autoUpdater.quitAndInstall();
   };
 

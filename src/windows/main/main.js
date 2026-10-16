@@ -612,7 +612,9 @@ class mainClass {
                       }, 0);
                     });
                   } else if (t.type == "down") {
-                    o("最新版本已下载完成，点击安装并重启~", "立即安装~", () => {
+                    const promptMsg = t.msg || "最新版本已下载完成，点击安装并重启~";
+                    const btnMsg = t.btnText || "立即安装~";
+                    o(promptMsg, btnMsg, () => {
                       if (t.fn) {
                         t.fn();
                       }

@@ -302,7 +302,10 @@ class addWindow {
     const option = entry.option;
 
     win.on("close", (event) => {
-      const isQuitting = typeof global.outProjectMain === "function" && global.outProjectMain();
+      const isQuitting = Boolean(
+        (typeof global.outProjectMain === "function" && global.outProjectMain()) ||
+        global.isQuittingForUpdate
+      );
       if (option.closeType === "hide" && !isQuitting) {
         if (typeof option.onhide === "function") option.onhide(win);
         event.preventDefault();
